@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Model_selection from "../components/Model_selection.vue";
+import Navigation_bar from "../components/Navigation_bar.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Model_selection",
-    component: Model_selection,
+    name: "Navigation_bar",
+    component: Navigation_bar,
   },
 ];
 
