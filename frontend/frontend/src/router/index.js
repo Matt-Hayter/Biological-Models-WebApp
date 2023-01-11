@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Navigation_bar from "../components/Navigation_bar.vue";
+import MalthusianPage from "@/views/MalthusianPage.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "Navigation_bar",
-    component: Navigation_bar,
+    path: "/MalthusianPage",
+    name: "MalthusianPage",
+    component: MalthusianPage,
   },
 ];
 
