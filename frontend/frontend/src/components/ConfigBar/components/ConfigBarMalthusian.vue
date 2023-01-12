@@ -1,9 +1,9 @@
 <!-- eslint-disable -->
 <template>
-  <div class="ConfigBarSingleSpecies">
+  <div class="ConfigBarMalthusian">
     <b-card
       class="rounded-0"
-      style="min-width: 25em;"
+      style="min-width: 25em; position: fixed"
       >
       <template #header>
         <p class="mt-2" style="font-size: 1.5em;">Model Parameters</p>
