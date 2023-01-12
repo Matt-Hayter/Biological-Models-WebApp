@@ -6,9 +6,9 @@
       style="min-width: 25em;"
       >
       <template #header>
-        <p style="font-size: 1.5em;">Model Parameters</p>
+        <p class="mt-2" style="font-size: 1.5em;">Model Parameters</p>
       </template>
-      <b-card-body style="min-height: 69.1vh;">
+      <b-card-body style="min-height: 68vh;">
       </b-card-body>
     </b-card>
   </div>
