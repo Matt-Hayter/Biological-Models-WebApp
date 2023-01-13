@@ -28,7 +28,7 @@
               class="nav-link"
               right
               text="Multiple Species Models"
-              v-bind:variant="multSpecHover"
+              :variant="multSpecHover"
               @mouseover.native="multSpecHover = 'light'"
               @mouseleave.native="multSpecHover = 'dark'"
             >
