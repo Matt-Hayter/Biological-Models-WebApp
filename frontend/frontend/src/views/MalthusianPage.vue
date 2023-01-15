@@ -1,11 +1,13 @@
 <template>
-  <div class="MalthusianPage">
+  <div class="malthusian-page">
     <TheNavBar />
-    <ConfigBarSingleSpecies
+    <!--Pass props to child component and handle emitted events for configuration bar-->
+    <ConfigBar
+      :all-slider-data="allSliderData"
       @changeInitialPopulation="updateInitialPopulation"
       @changeRate="updateRate"
     />
-    <div class="main-page" style="margin-left: 25em">
+    <div class="rhs-page-component" style="margin-left: 25em">
       <div class="top-section">
         <div class="title-and-formula">
           <h4 style="float: left">Malthusian Model</h4>
@@ -32,30 +34,52 @@
 </template>
 
 <script>
-import TheNavBar from "@/components/common/TheNavBar.vue";
-import ConfigBarSingleSpecies from "@/components/ConfigBar/components/ConfigBarMalthusian.vue";
+import TheNavBar from "@/components/TheNavBar.vue";
+import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 
 export default {
   components: {
     TheNavBar,
-    ConfigBarSingleSpecies,
+    ConfigBar,
     ModelInfo,
   },
   data() {
     return {
-      rate: 0,
-      initialPopulation: 0,
+      //Data used for running simulations
+      simData: {
+        rate: 0,
+        initialPopulation: 0,
+      },
+      //Create array containing data for each parameter slider on page
+      allSliderData: [
+        {
+          label: "$N_{0}$",
+          //Name of event emitted to page component to update simData upon input
+          emitEventName: "changeInitialPopulation",
+          min: 10,
+          max: 50,
+          step: 10,
+        },
+        {
+          label: "$r$",
+          emitEventName: "changeRate",
+          min: 1,
+          max: 5,
+          step: 1,
+        },
+      ],
     };
   },
   methods: {
+    //Update simulation data with emitted event data upon input
     updateInitialPopulation(newInitialPop) {
-      this.initialPopulation = newInitialPop;
-      console.log(this.initialPopulation);
+      this.simData.initialPopulation = newInitialPop;
+      console.log(this.simData.initialPopulation, "Pop");
     },
     updateRate(newRate) {
-      this.rate = newRate;
-      console.log(this.rate);
+      this.simData.rate = newRate;
+      console.log(this.simData.rate, "rate");
     },
   },
 };
