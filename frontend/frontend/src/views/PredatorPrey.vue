@@ -18,7 +18,7 @@
     <div class="rhs-page-component" style="margin-left: 25em">
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 style="float: left">Predator-Prey $($Lotka-Voltera$)$ Model</h4>
+          <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
           <div class="formula">
             <vue-mathjax formula="$$\Large\frac{dN}{dt}=N(a-bP)$$"></vue-mathjax>
             <br>

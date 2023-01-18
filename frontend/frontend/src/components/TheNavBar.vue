@@ -19,8 +19,8 @@
             >
               <b-dropdown-group header="Multiple Species Models">
                 <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item>Predator-Prey</b-dropdown-item>
-                <b-dropdown-item>Competing Species</b-dropdown-item>
+                <b-dropdown-item @click="onPredPreyClick">Predator-Prey</b-dropdown-item>
+                <b-dropdown-item @click="onCompSpecClick">Competing Species</b-dropdown-item>
               </b-dropdown-group>
             </b-dropdown>
           </li>
@@ -34,8 +34,12 @@
               @mouseover.native="disSpreadHover = 'light'"
               @mouseleave.native="disSpreadHover = 'dark'"
             >
-              <b-dropdown-item>SEIR Model</b-dropdown-item>
-              <b-dropdown-item>SEI$^{3}$D Model $($COVID$)$</b-dropdown-item>
+              <b-dropdown-item @click="onSEIRClick">SEIR Model</b-dropdown-item>
+              <b-dropdown-item class="tex2jax_ignore" @click="onSEI3DClick">
+                <template id="#text">
+                  SEI<sup>3</sup>RD Model (COVID)
+                </template>
+              </b-dropdown-item>
             </b-dropdown>
           </li>
         </ul>
@@ -100,6 +104,20 @@ export default {
   methods: {
     onClick() {
       console.log("Do Something");
+    },
+    onPredPreyClick() {
+      this.$router.push("/PredatorPrey");
+      this.VueMathjax.typeset();
+    },
+    onCompSpecClick() {
+      this.$router.push("/CompetingSpecies");
+      this.VueMathjax.typeset();
+    },
+    onSEIRClick() {
+      this.$router.push("/SEIR");
+    },
+    onSEI3RDClick() {
+      this.$router.push("/SEI3RD");
     },
   },
 };
