@@ -55,7 +55,7 @@
             Account
             <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
           </template>
-          <b-dropdown-form>
+          <b-dropdown-form style="width: 17em">
             <b-form-group
               label="Email"
               label-for="dropdown-form-email"
