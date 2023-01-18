@@ -2,7 +2,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Population Models Visualiser</a>
+      <a class="navbar-brand" href="#">Biological Models Visualiser</a>
       <div class="collapse navbar-collapse" id="navbarColor02">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
@@ -12,14 +12,16 @@
               class="nav-link dropdown-link"
               href="#"
               right
-              text="Single Species Models"
-              v-bind:variant="singleSpecHover"
-              @mouseover.native="singleSpecHover = 'light'"
-              @mouseleave.native="singleSpecHover = 'dark'"
+              text="Population Models"
+              v-bind:variant="popModelsHover"
+              @mouseover.native="popModelsHover = 'light'"
+              @mouseleave.native="popModelsHover = 'dark'"
             >
-              <b-dropdown-item>Malthusian Model</b-dropdown-item>
-              <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item>Logistic Model</b-dropdown-item>
+              <b-dropdown-group header="Multiple Species Models">
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item>Predator-Prey</b-dropdown-item>
+                <b-dropdown-item>Competing Species</b-dropdown-item>
+              </b-dropdown-group>
             </b-dropdown>
           </li>
           <li class="nav-item">
@@ -27,14 +29,13 @@
             <b-dropdown
               class="nav-link"
               right
-              text="Multiple Species Models"
-              :variant="multSpecHover"
-              @mouseover.native="multSpecHover = 'light'"
-              @mouseleave.native="multSpecHover = 'dark'"
+              text="Disease Spread Models"
+              :variant="disSpreadHover"
+              @mouseover.native="disSpreadHover = 'light'"
+              @mouseleave.native="disSpreadHover = 'dark'"
             >
-              <b-dropdown-item>Predator-Prey</b-dropdown-item>
-              <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item>Competing Species</b-dropdown-item>
+              <b-dropdown-item>SEIR Model</b-dropdown-item>
+              <b-dropdown-item>SEI$^{3}$D Model $($COVID$)$</b-dropdown-item>
             </b-dropdown>
           </li>
         </ul>
@@ -92,11 +93,15 @@
 export default {
   data() {
     return {
-      singleSpecHover: "dark",
-      multSpecHover: "dark",
+      popModelsHover: "dark",
+      disSpreadHover: "dark",
     };
   },
-  methods: {},
+  methods: {
+    onClick() {
+      console.log("Do Something");
+    },
+  },
 };
 </script>
 

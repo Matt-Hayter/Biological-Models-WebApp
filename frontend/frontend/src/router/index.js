@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import MalthusianPage from "@/views/MalthusianPage.vue";
+import PredatorPrey from "@/views/PredatorPrey.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/MalthusianPage",
-    name: "MalthusianPage",
-    component: MalthusianPage,
+    path: "/PredatorPrey",
+    name: "PredatorPrey",
+    component: PredatorPrey,
   },
 ];
 

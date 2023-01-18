@@ -1,4 +1,4 @@
-# Population Models Web Application
+# Biological Models Web Application
 
 ## App Composition:
 - Flask backend with Vue.js (v2) frontend

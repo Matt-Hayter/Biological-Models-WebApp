@@ -1,10 +1,11 @@
+<!--eslint-disable-->
 <template>
   <div
     class="tick-group d-flex justify-content-between"
-    style="padding: 0 0.3em"
+    style="padding: 0 0.5em"
   >
     <!--Assign correct number of ticks and values to slider, depending on implementation-->
-    <div v-for="label in tickLabels" :key="label">
+    <div v-for="label in createTickLabels" :key="label">
       <div class="tick">
         <span class="tick-line"></span>
         <span class="tick-content">{{ label }}</span>
@@ -14,6 +15,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   props: {
     sliderData: Object,
@@ -23,20 +25,19 @@ export default {
       tickLabels: [],
     };
   },
-  method: {
-    //Create array of tick labels, given max, min and step
+  computed: {
+    //Create array of tick labels, given max, min and step{
     createTickLabels() {
+      const tickArray = []
       for (
         let i = this.sliderData.min;
         i <= this.sliderData.max;
-        this.sliderData.step
+        i += this.sliderData.step
       ) {
-        this.tickLabels.push(i);
+        tickArray.push(i);
       }
+      return tickArray;
     },
-  },
-  created() {
-    this.createTickLabels();
   },
 };
 </script>

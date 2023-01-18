@@ -7,28 +7,25 @@
         <b-nav card-header tabs fill style="display: flex; flex-direction: column">
           <p class="mt-3" style="font-size: 1.5em">Model Parameters</p>
           <div tabs style="margin-top:-1em">
-            <b-nav-item style="float: left" :active="tabsData[0].isActive" @click="onTabOneClick()" >
+            <b-nav-item style="float: left" :active="tabOneActive" @click="onTabOneClick()" >
               {{ configTabTitles[0] }}
             </b-nav-item>
-            <b-nav-item style="float: left" :active="tabsData[1].isActive" @click="onTabTwoClick()">
+            <b-nav-item style="float: left" :active="tabTwoActive" @click="onTabTwoClick()">
               {{ configTabTitles[1] }}
             </b-nav-item>
           </div>
         </b-nav>
       </b-card-header>
       <b-card-body style="min-height: 68vh">
-        <!--Render all param sliders with correct labels, for each tab-->
-        <div v-for="tabData in tabsData" :key="tabData.data.label">
-          <!--Only show tab data if tab is selected (isActive=true). Rendered nonetheless.-->
-          <div v-show="tabData.isActive" v-for="sliderData in tabData.data" :key="sliderData.label">
-            <!--Passes events emitted from slider up the inheritance hierachy-->
-            <SliderContent 
-              :slider-data="sliderData"
-              v-on="$listeners"
-              >
-            </SliderContent>
-            <SliderTicks :slider-data="sliderData"/>
-          </div>
+        <!--Display all param sliders with correct labels, depending on page-->
+        <div v-for="sliderData in currentTabData" :key="sliderData.label">
+          <!--Passes events emitted from slider up the inheritance hierachy-->
+          <SliderContent 
+            :slider-data="sliderData"
+            v-on="$listeners"
+            >
+          </SliderContent>
+          <SliderTicks :slider-data="sliderData"/>
         </div>
       </b-card-body>
     </b-card>
@@ -42,7 +39,8 @@ import SliderTicks from "@/components/common/SliderTicks.vue";
 
 export default {
   props: {
-    tabsData: Array,
+    tabOneData: Array,
+    tabTwoData: Array,
     configTabTitles: Array
   },
   components: {
@@ -50,15 +48,23 @@ export default {
     SliderTicks,
   },
   data() {
-    return {};
+    return {
+      //Default confnig bar status
+      currentTabData: this.tabOneData,
+      tabOneActive: true,
+      tabTwoActive: false,
+    };
   },
   methods: {
-    //Update tabsData[i].isActive props if tab changes
     onTabOneClick() {
-      this.$emit("tabOneActive")
+      this.currentTabData = this.tabOneData;
+      this.tabOneActive = true;
+      this.tabTwoActive = false;
     },
     onTabTwoClick() {
-      this.$emit("tabTwoActive")
+      this.currentTabData = this.tabTwoData;
+      this.tabTwoActive = true;
+      this.tabOneActive = false;
     },
   }
 };
