@@ -39,6 +39,7 @@
       ref="signUpModal"
       id="sign-up"
       title="Create an Account"
+      hide-footer
       >
       <b-form @submit="onSubmitSignUp">
         <b-form-group
@@ -49,9 +50,16 @@
             id="form-username-input"
             type="text"
             v-model="signUp.username"
+            :state="usernameState"
             required
-            placeholder="Enter username">
+            placeholder="Enter username"
+            aria-describedby="feedback-invalid-username"
+          >
           </b-form-input>
+          <!--Feedback for if previous input is invalid (in the false state)-->
+          <b-form-invalid-feedback id="feedback-if-invalid">
+            Enter at least 4 characters
+          </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
           label="Email address:"
@@ -59,7 +67,7 @@
           >
           <b-form-input
             id="form-email-input"
-            type="text"
+            type="email"
             v-model="signUp.email"
             required
             placeholder="Enter email">
@@ -73,9 +81,15 @@
             id="form-password-input"
             type="password"
             v-model="signUp.password"
+            :state="passwdState"
             required
-            placeholder="Enter password">
+            placeholder="Enter password"
+            aria-describedby="feedback-invalid-passwd"
+          >
           </b-form-input>
+          <b-form-invalid-feedback id="feedback-invalid-passwd">
+            Enter at least 6 characters
+          </b-form-invalid-feedback>
         </b-form-group>
         <br>
         <b-button type="submit" variant="outline-info">Submit</b-button>
@@ -97,31 +111,39 @@ export default {
       signUp: {
         username: "",
         email: "",
-        passsword: "",
+        password: "",
       },
     };
   },
+  computed: {
+    //Update form input state for password (valid or not), depending on current input length
+    usernameState() {
+      return this.signUp.username.length >= 4 ? true : false;
+    },
+    passwdState() {
+      return this.signUp.password.length >= 6 ? true : false;
+    },
+  },
   methods: {
     async onSubmitSignUp(event) {
+      event.preventDefault();
+      this.$refs.signUpModal.hide(); //Hide modal following submission
+
+      //Handle server communication
+      const serverPayload = {
+        username: this.signUp.username,
+        email: this.signUp.email,
+        password: this.signUp.password,
+      };
+      const path = "http://localhost:5000/Account";
       try {
-        event.preventDefault();
-        this.$refs.signUpModal.hide(); //Hide modal following submission
-
-        //Handle server communication
-        const serverPayload = {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        };
-        const path = "http://localhost:5000/";
         await axios.post(path, serverPayload); //Send payload to server
-
         //Handle message update
         const message = "Account created!";
         this.$emit("messageUpdate", message); //Emit event to create page alert
         //In case of axios problems
       } catch (error) {
-        const message = "Error creating account, please try again";
+        const message = "Error creating account, please try again later";
         this.$emit("messageUpdate", message);
       }
     },
