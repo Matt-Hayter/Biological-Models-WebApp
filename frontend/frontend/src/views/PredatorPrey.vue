@@ -1,7 +1,9 @@
 <!--eslint-disable-->
 <template>
   <div class="predator-prey-page">
-    <TheNavBar />
+    <TheNavBar 
+      @messageUpdate="showSubmissionAlert"
+      />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
       :tabs-data="tabsData"
@@ -16,6 +18,21 @@
       @tabTwoActive="activateTabTwo"
     />
     <div class="rhs-page-component" style="margin-left: 25em">
+      <!--Upon sucessful sign up, sign in or preset save-->
+      <b-alert 
+        :show="alertCountDown"
+        dismissible
+        @dismissed="alertCountDown=0"
+        @dismiss-count-down="countDownChanged"
+      >
+        <p>{{ message }} </p>
+        <!--Progress alert timer-->
+        <b-progress
+          :max="alertSecs"
+          :value="alertCountDown"
+          height="3px"
+        ></b-progress>
+      </b-alert>
       <div class="top-section">
         <div class="title-and-formula">
           <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
@@ -122,6 +139,10 @@ export default {
         },
       ],
       configTabTitles: ["Prey", "Predator"],
+      //For sign up, login or saved preset alert
+      message: "",
+      alertCountDown: 0,
+      alertSecs: 4,
     };
   },
   methods: {
@@ -160,6 +181,14 @@ export default {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
       console.log("opened predator tab");
+    },
+    showSubmissionAlert(submissionMessage) {
+      this.message = submissionMessage;
+      this.alertCountDown = this.alertSecs; //Show alert and start timer
+      console.log("Showing alert");
+    },
+    countDownChanged(alertCountDown) {
+      this.alertCountDown = alertCountDown;
     },
   },
 };

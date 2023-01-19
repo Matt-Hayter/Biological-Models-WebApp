@@ -20,6 +20,7 @@
               <b-dropdown-group header="Multiple Species Models">
                 <b-dropdown-divider></b-dropdown-divider>
                 <b-dropdown-item @click="onPredPreyClick">Predator-Prey</b-dropdown-item>
+                <br>
                 <b-dropdown-item @click="onCompSpecClick">Competing Species</b-dropdown-item>
               </b-dropdown-group>
             </b-dropdown>
@@ -34,67 +35,48 @@
               @mouseover.native="disSpreadHover = 'light'"
               @mouseleave.native="disSpreadHover = 'dark'"
             >
-              <b-dropdown-item @click="onSEIRClick">SEIR Model</b-dropdown-item>
-              <b-dropdown-item class="tex2jax_ignore" @click="onSEI3DClick">
-                <template id="#text">
-                  SEI<sup>3</sup>RD Model (COVID)
-                </template>
-              </b-dropdown-item>
+              <b-dropdown-group header="Standard">
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item @click="onSEIRClick">SEIR Model</b-dropdown-item>
+              </b-dropdown-group>
+              <br>
+              <b-dropdown-group header="Extended">
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item class="tex2jax_ignore" @click="onSEI3RDClick">
+                  <template id="#text">
+                    SEI<sup>3</sup>RD Model (COVID)
+                  </template>
+                </b-dropdown-item>
+              </b-dropdown-group>
             </b-dropdown>
           </li>
         </ul>
-  
-        <b-dropdown
-          class="nav-link"
-          right
-          variant="dark"
-          text="Account"
-        >
-          <!--Use icon within dropdown button-->
-          <template #button-content>
-            Account
-            <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
-          </template>
-          <b-dropdown-form style="width: 17em">
-            <b-form-group
-              label="Email"
-              label-for="dropdown-form-email"
-              @submit.stop.prevent
-            >
-              <b-form-input
-                id="dropdown-form-email"
-                size="sm"
-                placeholder="email@example.com"
-              ></b-form-input>
-            </b-form-group>
-
-            <b-form-group label="Password" label-for="dropdown-form-password">
-              <b-form-input
-                id="dropdown-form-password"
-                type="password"
-                size="sm"
-                placeholder="Password"
-              ></b-form-input>
-            </b-form-group>
-
-            <b-form-checkbox class="mb-3">Remember me</b-form-checkbox>
-            <b-button variant="primary" size="sm" @click="onClick"
-              >Sign In
-            </b-button>
-          </b-dropdown-form>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item-button>
-            New around here? Sign up
-          </b-dropdown-item-button>
-          <b-dropdown-item-button>Forgot Password?</b-dropdown-item-button>
-        </b-dropdown>
+          <b-dropdown
+            class="nav-link"
+            right
+            variant="dark"
+            text="Account"
+          >
+            <!--Use icon within dropdown button-->
+            <template #button-content>
+              Account
+              <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
+            </template>
+            <!--Pass form submission events up the inheritance hierachy-->
+            <AccountDropdownForm v-on="$listeners"/>
+          </b-dropdown>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import AccountDropdownForm from "@/components/common/AccountDropdownForm.vue";
+
 export default {
+  components: {
+    AccountDropdownForm,
+  },
   data() {
     return {
       popModelsHover: "dark",
