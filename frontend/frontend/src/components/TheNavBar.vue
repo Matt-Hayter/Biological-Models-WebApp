@@ -6,8 +6,6 @@
       <div class="collapse navbar-collapse" id="navbarColor02">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <!--Bind single-species hover prop to variant attribute-->
-            <!--Listen to events @mousover and @mousleave directly from DOM using .native (Vue dropdown component doesn't emit these events)-->
             <b-dropdown
               class="nav-link dropdown-link"
               href="#"
@@ -52,6 +50,7 @@
           </li>
         </ul>
           <b-dropdown
+            ref = "signInForm"
             class="nav-link"
             right
             variant="dark"
@@ -63,7 +62,7 @@
               <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
             </template>
             <!--Pass form submission events up the inheritance hierachy-->
-            <AccountDropdownForm v-on="$listeners"/>
+            <AccountDropdownForm v-on="$listeners" @hideDropdown="hideDropdownForm" />
           </b-dropdown>
       </div>
     </div>
@@ -100,6 +99,10 @@ export default {
     },
     onSEI3RDClick() {
       this.$router.push("/SEI3RD");
+    },
+    //Emitted from account dropdown form component
+    hideDropdownForm() {
+      this.$refs.signInForm.hide(); //Hide sign in form following submission
     },
   },
 };
