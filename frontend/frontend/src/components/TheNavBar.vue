@@ -109,4 +109,8 @@ export default {
 .navbar-brand:hover {
   color: rgb(204, 204, 204);
 }
+
+.nav-text {
+  font-size: 2em;
+}
 </style>

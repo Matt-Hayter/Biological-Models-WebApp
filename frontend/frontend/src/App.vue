@@ -12,3 +12,18 @@
     <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      activeUsername: "", //Unique and stored on client-side, to identify current user within database
+    };
+  },
+  methods: {
+    activateUsername(username) {
+      this.activeUsername = username;
+    },
+  },
+};
+</script>

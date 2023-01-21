@@ -2,7 +2,7 @@
 <template>
   <div class="predator-prey-page">
     <TheNavBar 
-      @messageUpdate="showSubmissionAlert"
+      @showPageAlert="showSubmissionAlert"
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
@@ -19,20 +19,7 @@
     />
     <div class="rhs-page-component" style="margin-left: 25em">
       <!--Upon sucessful sign up, sign in or preset save-->
-      <b-alert 
-        :show="alertCountDown"
-        dismissible
-        @dismissed="alertCountDown=0"
-        @dismiss-count-down="countDownChanged"
-      >
-        <p>{{ message }} </p>
-        <!--Progress alert timer-->
-        <b-progress
-          :max="alertSecs"
-          :value="alertCountDown"
-          height="3px"
-        ></b-progress>
-      </b-alert>
+      <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
           <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
@@ -59,12 +46,14 @@
 import TheNavBar from "@/components/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
+import TempAlert from "@/components/common/TempAlert.vue";
 
 export default {
   components: {
     TheNavBar,
     ConfigBar,
     ModelInfo,
+    TempAlert,
   },
   data() {
     return {
@@ -139,9 +128,10 @@ export default {
         },
       ],
       configTabTitles: ["Prey", "Predator"],
-      //For sign up, login or saved preset alert
-      message: "",
-      alertCountDown: 0,
+      //For sign up, login or saved preset alert, to be inherited by TempAlert component
+      alertMessage: "",
+      alertVariant: "danger",
+      showAlert: false,
       alertSecs: 4,
     };
   },
@@ -171,7 +161,7 @@ export default {
       this.simData.d = newd;
       console.log(this.simData.d, "d-change");
     },
-    //React to emitted events and change active parameter tab
+    //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
@@ -182,13 +172,17 @@ export default {
       this.tabsData[0].isActive = false;
       console.log("opened predator tab");
     },
-    showSubmissionAlert(submissionMessage) {
-      this.message = submissionMessage;
-      this.alertCountDown = this.alertSecs; //Show alert and start timer
-      console.log("Showing alert");
+    //Recieve alert varient change
+    alertVariantChanged(incomingVariant) {
+      this.alertVariant = incomingVariant;
     },
-    countDownChanged(alertCountDown) {
-      this.alertCountDown = alertCountDown;
+    showSubmissionAlert(submissionObj) {
+      this.showAlert = true;
+      this.alertMessage = submissionObj.message;
+      this.alertVariant = submissionObj.variant;
+    },
+    resetSubmissionAlert() {
+      this.showAlert = false;
     },
   },
 };

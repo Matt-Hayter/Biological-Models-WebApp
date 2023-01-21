@@ -2,7 +2,7 @@
 <template>
   <div
     class="tick-group d-flex justify-content-between"
-    style="padding: 0 0.5em"
+    style="padding: 0 1.5em"
   >
     <!--Assign correct number of ticks and values to slider, depending on implementation-->
     <div v-for="label in createTickLabels" :key="label">

@@ -1,5 +1,5 @@
 <template>
-  <div class="slider-content" style="padding: 0 0.5em">
+  <div class="slider-content" style="padding: 0 1.5em">
     <label
       for="slider-range"
       class="form-label d-flex"
