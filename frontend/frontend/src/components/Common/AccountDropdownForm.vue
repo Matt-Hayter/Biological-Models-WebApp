@@ -6,7 +6,7 @@
       <b-form-group label="Email" label-for="signin-email-input">
         <b-form-input
           id="signin-email-input"
-          v-model="signIn.email"
+          v-model="signIn.formEmail"
           required
           size="sm"
           type="email"
@@ -27,7 +27,7 @@
         ></b-form-input>
         <!--Feedback for if input is invalid (in the false state)-->
         <b-form-invalid-feedback id="feedback-invalid-signin-passwd">
-            Enter at least 6 characters
+            Passwords are at least 6 characters
           </b-form-invalid-feedback>
       </b-form-group>
       <TempAlert 
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-/*eslint-disable*/
+/*eslin-disable*/
 import TempAlert from "@/components/common/TempAlert.vue";
 import axios from "axios"; //For making client-side http requests
 
@@ -158,7 +158,7 @@ export default {
         alertSecs: 4,
         alertVariant: "warning",
         showAlert: false,
-        alertMessage: "",
+        alertMessage: "Account not found, please check email and password",
       },
     };
   },
@@ -183,7 +183,7 @@ export default {
       return pswdLength >= 6 ? null : false;
     },
     signInPasswdState() {
-      const pswdLength = this.signIn.formPassword.length
+      const pswdLength = this.signIn.formPassword.length;
       //Don't show as invalid if not yet typed
       if (pswdLength == 0) {
         return null;
@@ -225,7 +225,7 @@ export default {
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
-      const path = "http://localhost:5000/Account";
+      const path = "http://localhost:5000/SignUp";
       try {
         const response = await axios.post(path, payload); //Send payload to server and async await response
         let input_valid = true;
@@ -256,7 +256,7 @@ export default {
       } catch (error) {
         this.$refs.signUpModal.hide(); //Hide modal following submission
         const alert_obj = {
-          message: "Error creating account, failed connecting to server",
+          message: "Error creating account, failed response from server",
           variant: "danger",
         };
         this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
@@ -265,14 +265,11 @@ export default {
     },
     //Add and validate user sign up data against database
     async signInUser(payload) {
-      const path = "http://localhost:5000/Account";
+      const path = "http://localhost:5000/SignIn";
       try {
-        const response = await axios.get(path, payload); //Send payload to server and async await response
+        const response = await axios.post(path, payload); //Send payload to server and async await response
         //If email/password comb not found, show alert on form
-        if (
-          response.data["username_error"] == true ||
-          response.data["email_error"] == true
-        ) {
+        if (response.data["username"] == null) {
           this.invalidSignInAlert.showAlert = true;
           console.log("No sign in, invalid sign in details");
           return;
@@ -280,17 +277,17 @@ export default {
         //Handle success message alert (emit for main page alert)
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
         const success_alert_obj = {
-          message: `Signed in as ${response.data.username}`,
+          message: `Signed in as ${response.data["username"]}`,
           variant: "success",
         };
         this.$emit("showPageAlert", success_alert_obj); //Emit event to create success alert on main page
-        this.$emit("activateUsername", response.data.username); //Emit event to set current user's unique username on client side
+        this.$emit("activateUsername", response.data["username"]); //Emit event to set current user's unique username on client side
         console.log("Signed in");
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
         const unsucc_alert_obj = {
-          message: "Error signing in, failed connecting to server",
+          message: "Error signing in, failed response from server",
           variant: "danger",
         };
         this.$emit("showPageAlert", unsucc_alert_obj); //Emit event to create failure alert on main page
