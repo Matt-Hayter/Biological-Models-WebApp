@@ -1,6 +1,6 @@
 <!--eslint-disable-->
 <template>
-  <div class="predator-prey-page">
+  <div class="predator-prey-view">
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
       />
@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import TheNavBar from "@/components/TheNavBar.vue";
-import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
+import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
+import ConfigBar from "@/components/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 
@@ -183,6 +183,12 @@ export default {
     },
     resetSubmissionAlert() {
       this.showAlert = false;
+    },
+    activateUsername(username) {
+      this.activeUsername = username;
+    },
+    activateEmail(email) {
+      this.activeEmail = email;
     },
   },
 };

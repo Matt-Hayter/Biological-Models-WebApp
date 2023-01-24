@@ -1,6 +1,7 @@
 <!--eslint-disable-->
 <template>
-  <div class="account-dropdown-form">
+  <!--Change dropdown contents depending on sign-in status-->
+  <div v-if="!$store.state.activeUser.isActive" class="signed-out-dropdown">
     <b-dropdown-form @submit="onSubmitSignIn" style="width: 20em">
       <b-form-group label="Sign in to save model presets!" />
       <b-form-group label="Email" label-for="signin-email-input">
@@ -27,7 +28,7 @@
         ></b-form-input>
         <!--Feedback for if input is invalid (in the false state)-->
         <b-form-invalid-feedback id="feedback-invalid-signin-passwd">
-            Passwords are at least 6 characters
+            Passwords are at least 8 characters
           </b-form-invalid-feedback>
       </b-form-group>
       <TempAlert 
@@ -73,7 +74,11 @@
             Enter at least 4 characters
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group label="Email address:" label-for="signup-email-input">
+        <b-form-group 
+          label="Email address:"
+          label-for="signup-email-input"
+          description="Once submitted, account email address cannot be changed"
+        >
           <b-form-input
             id="signup-email-input"
             type="email"
@@ -95,7 +100,7 @@
           >
           </b-form-input>
           <b-form-invalid-feedback id="feedback-invalid-passwd">
-            Enter at least 6 characters
+            Enter at least 8 characters
           </b-form-invalid-feedback>
         </b-form-group>
         <TempAlert
@@ -116,6 +121,29 @@
         <b-button type="submit" variant="outline-dark">Submit</b-button>
       </b-form>
     </b-modal>
+  </div>
+  <div v-else class="signed-in-dropdown">
+    <b-dropdown-form>
+      <b-form-group>
+        <b-form-text style="font-size: 1.1em; display: flex; flex-direction: column;">
+          <div class="first-row">
+            <div style="float: left; padding-top: 0.24em;">
+              User: 
+            </div>
+            <div class="username-text">
+              {{ $store.state.activeUser.username }}
+            </div>
+          </div>
+          <div class="second-row" style="padding-top: 0.24em;">
+            Email: {{ $store.state.activeUser.email }}
+          </div>
+        </b-form-text>
+      </b-form-group>
+      <b-dropdown-divider></b-dropdown-divider>
+      <b-dropdown-item-button @click="onClickSignOut">
+        <b>Sign out</b>
+      </b-dropdown-item-button>
+    </b-dropdown-form>
   </div>
 </template>
 
@@ -158,11 +186,16 @@ export default {
         alertSecs: 4,
         alertVariant: "warning",
         showAlert: false,
-        alertMessage: "Account not found, please check email and password",
+        alertMessage:
+          "Account not found, please check email and password or create an account",
       },
     };
   },
   computed: {
+    //Access Vuex store containing active user info
+    activeUser() {
+      return this.$store.state.activeUser;
+    },
     //Update form input state for password (valid or not), depending on current input length
     signUpUsernameState() {
       const usernameLength = this.signUp.formUsername.length;
@@ -179,8 +212,8 @@ export default {
       if (pswdLength == 0) {
         return null;
       }
-      //Needs to be longer than 5 characters
-      return pswdLength >= 6 ? null : false;
+      //Needs to be longer than 7 characters
+      return pswdLength >= 8 ? null : false;
     },
     signInPasswdState() {
       const pswdLength = this.signIn.formPassword.length;
@@ -188,8 +221,8 @@ export default {
       if (pswdLength == 0) {
         return null;
       }
-      //Needs to be longer than 5 characters
-      return pswdLength >= 6 ? null : false;
+      //Needs to be longer than 7 characters
+      return pswdLength >= 8 ? null : false;
     },
   },
   methods: {
@@ -223,6 +256,21 @@ export default {
       };
       this.signInUser(payload);
     },
+    onClickSignOut() {
+      //Clear client-side user data
+      const userStatePayload = {
+        username: "",
+        email: "",
+        isActive: false,
+      };
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
+      const alertPayload = {
+        message: "Signed out, see you soon!",
+        variant: "success",
+      };
+      this.$emit("showPageAlert", alertPayload); //Emit event to create success alert on main page
+      console.log("Signed out!");
+    },
     //Add and validate user sign up data against database
     async addUser(payload) {
       const path = "http://localhost:5000/SignUp";
@@ -245,12 +293,18 @@ export default {
         }
         //Handle success message alert
         this.$refs.signUpModal.hide(); //Hide modal following submission
-        const success_alert_obj = {
+        const successAlertPayload = {
           message: "Account created and signed in!",
           variant: "success",
         };
-        this.$emit("showPageAlert", success_alert_obj); //Emit event to create success alert on main page
-        this.$emit("activateUsername", payload.username); //Emit event to set current user's unique username on client side
+        this.$emit("showPageAlert", successAlertPayload); //Create successful sign in alert on main page
+        //Update Vuex store state with signed in user's data
+        const userStatePayload = {
+          username: response.data["username"],
+          email: response.data["email"],
+          isActive: true,
+        };
+        this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
         console.log("Account created");
         //In case of axios problems, give error alert
       } catch (error) {
@@ -277,12 +331,22 @@ export default {
         //Handle success message alert (emit for main page alert)
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
         const success_alert_obj = {
-          message: `Signed in as ${response.data["username"]}`,
+          message: `Welcome ${response.data["username"]}`,
           variant: "success",
         };
-        this.$emit("showPageAlert", success_alert_obj); //Emit event to create success alert on main page
-        this.$emit("activateUsername", response.data["username"]); //Emit event to set current user's unique username on client side
-        console.log("Signed in");
+        this.$emit("showPageAlert", success_alert_obj); //Create success alert on main page
+        //Update Vuex store state with signed in user's data
+        const userStatePayload = {
+          username: response.data["username"],
+          email: response.data["email"],
+          isActive: true,
+        };
+        this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
+        console.log(
+          "Signed in as ",
+          response.data["username"],
+          response.data["email"]
+        );
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
@@ -306,3 +370,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.username-text {
+  float: left;
+  padding: 0 0.3em;
+  color: rgb(49, 49, 49);
+  font-size: 1.3em;
+}
+</style>

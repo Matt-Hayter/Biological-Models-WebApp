@@ -30,6 +30,14 @@
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
+        <b-button-group style="padding: 1em 0.5em">
+          <b-button class="btn-success">
+            Save <b-icon icon="box-arrow-in-down" font-scale="1.5"></b-icon>
+          </b-button>
+          <b-button  class="btn-info">
+            My Presets
+          </b-button>
+        </b-button-group>
       </b-card-body>
     </b-card>
   </div>

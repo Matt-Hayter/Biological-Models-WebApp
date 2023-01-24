@@ -62,7 +62,7 @@
               <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
             </template>
             <!--Pass form submission events up the inheritance hierachy-->
-            <AccountDropdownForm v-on="$listeners" @hideDropdown="hideDropdownForm" />
+            <AccountDropdownContents v-on="$listeners" @hideDropdown="hideDropdownForm" />
           </b-dropdown>
       </div>
     </div>
@@ -70,11 +70,11 @@
 </template>
 
 <script>
-import AccountDropdownForm from "@/components/common/AccountDropdownForm.vue";
+import AccountDropdownContents from "@/components/TheNavBar/components/AccountDropdownContents.vue";
 
 export default {
   components: {
-    AccountDropdownForm,
+    AccountDropdownContents,
   },
   data() {
     return {

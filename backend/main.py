@@ -1,38 +1,50 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS #For connection between flask and Vue
 import mysql.connector #For connecting database
+import argon2 #For salted hashing
 
 app = Flask(__name__)
 
 CORS(app, resources={r'/*':{'origins':"*"}})
 #Connect to MySQL and create cursor to make queries
 db = mysql.connector.connect(host="localhost", user="root", database="biologicalmodelswebapp", password="030103")
+salted_hasher = argon2.PasswordHasher(
+                time_cost=3, # number of iterations
+                memory_cost=64 * 1024, # Units of KB -> 64MB
+                parallelism=1, # how many parallel threads to use
+                hash_len=32, # the size of the derived key
+                salt_len=16 # the size of the random generated salt in bytes
+            )
 
 @app.route("/SignUp", methods=["POST"])
 def SignUp():
     #Track server response, initially set no error codes
     response_object = {"server status": "success", "username": None}
     cursor = db.cursor()
-    post_data = request.get_json() #Retrieve payload from client
+    SignUp_data = request.get_json() #Retrieve payload from client
     if request.method == "POST": #Adding user
         #Check username and email are individually unique
         multi_query = \
             "SELECT EXISTS(SELECT * FROM users WHERE username = %s); \
             SELECT EXISTS(SELECT * FROM users WHERE email = %s);"
-        results = cursor.execute(multi_query, (post_data.get("username") , post_data.get("email")), multi = True)
+        results = cursor.execute(multi_query, (SignUp_data.get("username") , SignUp_data.get("email")), multi = True)
         query_results = [] #Store results of two query statements (bools)
         for result in results:
             query_results.append(result.fetchone()[0])
         if query_results[0] == False and query_results[1] == False: #If username/email don't already exist
             #Insert user details into database
-            username = post_data.get("username").lower() #Used twice so assign temp variable
+            username = SignUp_data.get("username").lower()
+            email = SignUp_data.get("email").lower()
             query = "INSERT INTO users (username, email, priv_info) VALUES (%s,%s,%s)"
-            cursor.execute(query, (username, post_data.get("email").lower(), post_data.get("password")))
+            #Salted hashing of password (one-way) for database storage, using the argonid algorithm
+            hash = salted_hasher.hash(SignUp_data.get("password")) #Apply salted hashing
+            cursor.execute(query, (username, SignUp_data.get("email").lower(), hash))
             db.commit()
             cursor.close()
             response_object["message"] = "User added"
             #Return username once added to log in
             response_object["username"] = username
+            response_object["email"] = email
         else: #Username or email already exist
             cursor.close()
             response_object["message"] = "User not added, not unique"
@@ -47,16 +59,25 @@ def SignIn():
     if request.method == "POST":
         response_object = {"server status": "success", "username": None}
         SignIn_data = request.get_json() #Retrieve payload from client
-        query = "SELECT * FROM users WHERE email = %s AND priv_info= %s"
+        #Check email is present in db. If so, extract hashed password
+        query = "SELECT username, email, priv_info FROM users WHERE email = %s" #Emails are unique
         cursor = db.cursor()
-        cursor.execute(query, (SignIn_data.get("email").lower() , SignIn_data.get("password")))
-        if cursor.fetchone() != None: #If email, password combination exists
-            query = "SELECT username FROM users WHERE email = %s AND priv_info = %s"
-            cursor.execute(query, (SignIn_data.get("email") , SignIn_data.get("password")))
-            response_object["username"] = cursor.fetchone()[0]
-            cursor.close()
-            response_object["message"] = "User account found"
-        else: #If email password combination not found, username key remains as None  
+        cursor.execute(query, (SignIn_data.get("email").lower(),))
+        query_result = cursor.fetchone()
+        cursor.close()
+        try: 
+            if query_result == None: #If inputted email doesn't exist
+                raise ValueError
+            db_username = query_result[0]
+            db_email = query_result[1]
+            db_hashed_passwd = query_result[2]
+            #One-way hash inputted password to see if it matches db records. If no match, raises exception
+            verify_result = salted_hasher.verify(db_hashed_passwd, SignIn_data.get("password"))
+            #If passed without exceptions:
+            response_object["username"] = db_username
+            response_object["email"] = db_email
+            response_object["message"] = "User account found and logged in"
+        except:
             cursor.close()  
             response_object["message"] = "User account not found"
     return jsonify(response_object)
