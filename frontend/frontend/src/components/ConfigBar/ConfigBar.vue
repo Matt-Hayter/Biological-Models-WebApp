@@ -30,32 +30,28 @@
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
-        <b-button-group style="padding: 1em 0.5em">
-          <b-button class="btn-success">
-            Save <b-icon icon="box-arrow-in-down" font-scale="1.5"></b-icon>
-          </b-button>
-          <b-button  class="btn-info">
-            My Presets
-          </b-button>
-        </b-button-group>
-      </b-card-body>
+        <PresetButtons :param-suggestions="paramSuggestions"/>
+        </b-card-body>
     </b-card>
   </div>
 </template>
 
 <script>
 /*eslint-disable*/
-import SliderContent from "@/components/common/SliderContent.vue";
-import SliderTicks from "@/components/common/SliderTicks.vue";
+import SliderContent from "@/components/ConfigBar/components/SliderContent.vue";
+import SliderTicks from "@/components/ConfigBar/components/SliderTicks.vue";
+import PresetButtons from "@/components/ConfigBar/components/PresetButtons.vue";
 
 export default {
   props: {
     tabsData: Array,
-    configTabTitles: Array
+    configTabTitles: Array,
+    paramSuggestions: Array,
   },
   components: {
     SliderContent,
     SliderTicks,
+    PresetButtons,
   },
   data() {
     return {};

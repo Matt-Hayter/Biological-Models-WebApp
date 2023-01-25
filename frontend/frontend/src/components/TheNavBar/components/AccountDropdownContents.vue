@@ -294,7 +294,7 @@ export default {
         //Handle success message alert
         this.$refs.signUpModal.hide(); //Hide modal following submission
         const successAlertPayload = {
-          message: "Account created and signed in!",
+          message: `Account created, welcome ${response.data["username"]}`,
           variant: "success",
         };
         this.$emit("showPageAlert", successAlertPayload); //Create successful sign in alert on main page

@@ -54,7 +54,6 @@
             class="nav-link"
             right
             variant="dark"
-            text="Account"
           >
             <!--Use icon within dropdown button-->
             <template #button-content>

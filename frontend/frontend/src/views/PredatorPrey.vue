@@ -8,6 +8,7 @@
     <ConfigBar
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
+      :param-suggestions="paramSuggestions"
       @changeN0="updateN0"
       @changea="updatea"
       @changeb="updateb"
@@ -44,7 +45,7 @@
 
 <script>
 import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
-import ConfigBar from "@/components/ConfigBar.vue";
+import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 
@@ -128,6 +129,10 @@ export default {
         },
       ],
       configTabTitles: ["Prey", "Predator"],
+      paramSuggestions: [
+        "This is the first suggestions. This willl caryry on here",
+        "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+      ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
       alertMessage: "",
       alertVariant: "danger",
