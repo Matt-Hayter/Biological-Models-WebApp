@@ -28,10 +28,10 @@
         ></b-form-input>
         <!--Feedback for if input is invalid (in the false state)-->
         <b-form-invalid-feedback id="feedback-invalid-signin-passwd">
-            Passwords are at least 8 characters
-          </b-form-invalid-feedback>
+          Passwords are at least 8 characters
+        </b-form-invalid-feedback>
       </b-form-group>
-      <TempAlert 
+      <TempAlert
         :alert-message="invalidSignInAlert.alertMessage"
         :alert-variant="invalidSignInAlert.alertVariant"
         :show-alert="invalidSignInAlert.showAlert"
@@ -39,7 +39,9 @@
         @resetAlert="resetInvalidSignInAlert"
       />
       <br />
-      <b-button type="submit" variant="outline-success" size="sm">Sign In</b-button>
+      <b-button type="submit" variant="outline-success" size="sm"
+        >Sign In</b-button
+      >
     </b-dropdown-form>
     <b-dropdown-divider></b-dropdown-divider>
     <!--Mount sign up modal to button-->
@@ -74,7 +76,7 @@
             Enter at least 4 characters
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group 
+        <b-form-group
           label="Email address:"
           label-for="signup-email-input"
           description="Once submitted, account email address cannot be changed"
@@ -125,20 +127,18 @@
   <div v-else class="signed-in-dropdown">
     <b-dropdown-form>
       <b-form-group>
-        <b-form-text style="font-size: 1.1em; display: flex; flex-direction: column;">
+        <b-form-text
+          style="font-size: 1.1em; display: flex; flex-direction: column"
+        >
           <div class="first-row">
-            <div style="padding-top: 0.24em; float: left;">
-              User:
-            </div>
+            <div style="padding-top: 0.24em; float: left">User:</div>
             <div class="username-text">
               {{ $store.state.activeUser.username }}
             </div>
           </div>
-          <div class="second-row" style="padding-top: 0.24em;">
-            <div style="float: left">
-              Email: 
-            </div>
-            <div style="padding-left: 0.4em; float: left;">
+          <div class="second-row" style="padding-top: 0.24em">
+            <div style="float: left">Email:</div>
+            <div style="padding-left: 0.4em; float: left">
               {{ $store.state.activeUser.email }}
             </div>
           </div>
