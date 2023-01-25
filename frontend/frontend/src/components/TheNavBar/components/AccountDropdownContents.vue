@@ -39,7 +39,7 @@
         @resetAlert="resetInvalidSignInAlert"
       />
       <br />
-      <b-button type="submit" variant="outline-dark" size="sm">Sign In</b-button>
+      <b-button type="submit" variant="outline-success" size="sm">Sign In</b-button>
     </b-dropdown-form>
     <b-dropdown-divider></b-dropdown-divider>
     <!--Mount sign up modal to button-->
@@ -118,7 +118,7 @@
           @resetAlert="resetInvalidEmailAlert"
         />
         <br />
-        <b-button type="submit" variant="outline-dark">Submit</b-button>
+        <b-button type="submit" variant="outline-success">Submit</b-button>
       </b-form>
     </b-modal>
   </div>

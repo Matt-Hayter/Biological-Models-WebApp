@@ -9,6 +9,7 @@
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
+      @presetNameInput="handlePresetName"
       @changeN0="updateN0"
       @changea="updatea"
       @changeb="updateb"
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import axios from "axios"; //For making client-side http requests
 import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
@@ -130,8 +132,15 @@ export default {
       ],
       configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
-        "This is the first suggestions. This willl caryry on here",
-        "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+        {
+          id: 1,
+          content: "This is the first suggestions. This willl caryry on here",
+        },
+        {
+          id: 2,
+          content:
+            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+        },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
       alertMessage: "",
@@ -194,6 +203,33 @@ export default {
     },
     activateEmail(email) {
       this.activeEmail = email;
+    },
+    //Triggered upon a preset save
+    handlePresetName(presetName) {
+      const presetPayload = {
+        name: presetName,
+        data: this.simData,
+      };
+      this.addPreset(presetPayload);
+    },
+    async addPreset(payload) {
+      try {
+        const path = "http://localhost:5000/AddPreset";
+        const response = await axios.post(path, payload);
+        const successAlertPayload = {
+          message: `Added ${response.data["username"]} to Predator-Prey presets`,
+          variant: "success",
+        };
+        this.showSubmissionAlert(successAlertPayload);
+        console.log("Preset added");
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to save preset, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Preset not added, server problem");
+      }
     },
   },
 };
