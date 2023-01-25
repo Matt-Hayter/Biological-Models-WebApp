@@ -85,6 +85,7 @@ export default {
       event.preventDefault();
       this.$emit("presetNameInput", this.presetName); //Trigger event to main route
       this.$refs.presetModal.hide(); //Hide modal following submission
+      this.presetName = ""; //Reset name (whether succcessful http req. or not)
     },
   },
 };

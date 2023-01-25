@@ -306,6 +306,7 @@ export default {
         };
         this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
         console.log("Account created");
+        this.initSignUpForm(); //Reset form
         //In case of axios problems, give error alert
       } catch (error) {
         this.$refs.signUpModal.hide(); //Hide modal following submission
@@ -341,12 +342,13 @@ export default {
           email: response.data["email"],
           isActive: true,
         };
-        this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
+        this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
         console.log(
           "Signed in as ",
           response.data["username"],
           response.data["email"]
         );
+        this.initSignInForm(); //Reset form
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
@@ -366,6 +368,15 @@ export default {
     },
     resetInvalidSignInAlert() {
       this.invalidSignInAlert.showAlert = false;
+    },
+    initSignInForm() {
+      this.signIn.formEmail = "";
+      this.signIn.formPassword = "";
+    },
+    initSignUpForm() {
+      this.signUp.formUsername = "";
+      this.signUp.formEmail = "";
+      this.signUp.formPassword = "";
     },
   },
 };
