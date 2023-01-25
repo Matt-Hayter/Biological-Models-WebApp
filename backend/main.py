@@ -82,5 +82,26 @@ def SignIn():
             response_object["message"] = "User account not found"
     return jsonify(response_object)
 
+@app.route("/PredPrey/presets", methods=["GET", "POST"])
+def add_PredPrey_preset():
+    response_object = {"server status": "success"}
+    preset_data = request.get_json() #Retrieve payload from client
+    if request.method == "POST": #Adding a preset
+        #First get id of user with active email
+        query = "SELECT id from users WHERE email = %s"
+        cursor = db.cursor()
+        cursor.execute(query, (preset_data.get("userEmail"),))
+        activeid = cursor.fetchone()[0]
+        presetData = preset_data.get("presetData")
+        #Now insert preset into presets table, with the correct Foreign key
+        query = "INSERT INTO pred_prey_presets (owner_id, preset_name, N0, a, b, P0, c, d, date) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,now())"
+        cursor.execute(query, (activeid, preset_data.get("presetName"), presetData["N0"], presetData["a"],
+            presetData["b"], presetData["P0"], presetData["c"], presetData["d"]))
+        cursor.close()
+        db.commit()
+        response_object["message"] = "Added PredPrey preset"
+    return jsonify(response_object)
+
 if __name__ == "__main__":
     app.run(debug = True)

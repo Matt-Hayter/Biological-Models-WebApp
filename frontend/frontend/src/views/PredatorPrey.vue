@@ -63,13 +63,13 @@ export default {
       //Data used for running simulations
       simData: {
         //Prey
-        N0: 0,
-        a: 0,
-        b: 0,
+        N0: 10,
+        a: 10,
+        b: 1,
         //Predator
-        P0: 0,
-        c: 0,
-        d: 0,
+        P0: 10,
+        c: 10,
+        d: 1,
       },
       //Contains data for each paramater tab
       tabsData: [
@@ -149,6 +149,12 @@ export default {
       alertSecs: 4,
     };
   },
+  computed: {
+    //Access Vuex store containing active user info
+    activeUser() {
+      return this.$store.state.activeUser;
+    },
+  },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
@@ -207,17 +213,19 @@ export default {
     //Triggered upon a preset save
     handlePresetName(presetName) {
       const presetPayload = {
-        name: presetName,
-        data: this.simData,
+        //Active user's email for database identification
+        userEmail: this.$store.state.activeUser.email,
+        presetName: presetName,
+        presetData: this.simData,
       };
       this.addPreset(presetPayload);
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/AddPreset";
-        const response = await axios.post(path, payload);
+        const path = "http://localhost:5000/PredPrey/presets";
+        await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${response.data["username"]} to Predator-Prey presets`,
+          message: `Added ${payload.presetName} to Predator-Prey presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
@@ -231,7 +239,22 @@ export default {
         console.log("Preset not added, server problem");
       }
     },
+    // async getPredPreyPresets() {
+    //   try {
+    //     const path = "http://localhost:5000/PredPrey/presets";
+    //     const response = await axios.get(path);
+    //     const presetPayload = {
+
+    //     };
+    //     this.$store.commit("getPreyPreyPresets", userStatePayload); //call userUpdate state mutation
+    //   } catch (error) {
+
+    //   }
+    // },
   },
+  // created() {
+  //   this.getPredPreyPresets()
+  // },
 };
 </script>
 

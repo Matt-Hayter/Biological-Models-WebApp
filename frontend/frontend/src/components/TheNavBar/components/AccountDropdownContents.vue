@@ -127,15 +127,20 @@
       <b-form-group>
         <b-form-text style="font-size: 1.1em; display: flex; flex-direction: column;">
           <div class="first-row">
-            <div style="float: left; padding-top: 0.24em;">
-              User: 
+            <div style="padding-top: 0.24em; float: left;">
+              User:
             </div>
             <div class="username-text">
               {{ $store.state.activeUser.username }}
             </div>
           </div>
           <div class="second-row" style="padding-top: 0.24em;">
-            Email: {{ $store.state.activeUser.email }}
+            <div style="float: left">
+              Email: 
+            </div>
+            <div style="padding-left: 0.4em; float: left;">
+              {{ $store.state.activeUser.email }}
+            </div>
           </div>
         </b-form-text>
       </b-form-group>
@@ -385,7 +390,7 @@ export default {
 <style scoped>
 .username-text {
   float: left;
-  padding: 0 0.3em;
+  padding-left: 0.4em;
   color: rgb(49, 49, 49);
   font-size: 1.3em;
 }

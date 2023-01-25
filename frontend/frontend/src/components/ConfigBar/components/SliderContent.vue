@@ -20,6 +20,7 @@
       class="form-range"
       id="slider-range"
       :min="sliderData.min"
+      :value="sliderData.min"
       :max="sliderData.max"
       :step="sliderData.step"
       @input="$emit(sliderData.emitEventName, $event.target.value)"
