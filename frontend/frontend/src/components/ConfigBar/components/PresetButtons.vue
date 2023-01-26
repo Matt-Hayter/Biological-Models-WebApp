@@ -14,13 +14,12 @@
             <b-dropdown-text>Sign in, and saved presets for this model will appear here</b-dropdown-text>
           </span>
           <span v-else-if="emptyPresetsSignedIn">
-            <b-dropdown-text>No presets to show! </b-dropdown-text>
-            <b-dropdown-text>Saved presets for this model will appear here</b-dropdown-text>
+            <b-dropdown-text>No saved presets - try saving one! </b-dropdown-text>
           </span>
-          <div v-for="preset in userPresetsUpdate" :key="preset[1]">
-            <b-dropdown-item>
-              {{ `${preset[0]}, ${preset[1]}` }}
-            </b-dropdown-item>
+          <div v-for="(preset, index) in userPresetsUpdate" :key="preset[1]">
+            <b-dropdown-item-button @click="onPresetClick(index)">
+              <b style="font-size: 1.3em">{{ preset[0] }}</b>, {{ preset[1] }}
+            </b-dropdown-item-button>
           </div>
         </b-dropdown>
       </b-button-group>
@@ -103,6 +102,9 @@ export default {
     }
   },
   methods: {
+    onPresetClick(index) {
+      this.$emit("selectedPreset", index)
+    },
     onClickDropdown() {
       this.showSuggestions = false;
       this.bulbOn = false;

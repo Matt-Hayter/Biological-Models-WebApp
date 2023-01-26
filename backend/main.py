@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS #For connection between flask and Vue
 import mysql.connector #For connecting database
 import argon2 #For salted hashing
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -95,7 +96,7 @@ def add_PredPrey_preset():
         presetData = preset.get("presetData")
         #Now insert preset into presets table, with the correct Foreign key
         query = "INSERT INTO pred_prey_presets (owner_id, preset_name, N0, a, b, P0, c, d, date) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,now())"
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,NOW())"
         cursor.execute(query, (activeid, preset.get("presetName"), presetData[0], presetData[1],
             presetData[2], presetData[3], presetData[4], presetData[5]))
         cursor.close()
@@ -118,7 +119,26 @@ def all_PredPrey_presets():
         cursor.execute(query, (activeid,))
         response["presets"] = cursor.fetchall()
         cursor.close()
-        response["message"] = "Grabbed user's pred-prey presets"
+        response["message"] = "Grabbed all of user's pred-prey presets"
+    return jsonify(response)
+
+@app.route("/PredPrey/PresetParams", methods=["POST"])
+def get_PredPrey_preset():
+    response = {"server status": "success"}
+    post_data = request.get_json()
+    if request.method == "POST":
+        #First get user id, given email
+        query = "SELECT id FROM users WHERE email = %s"
+        cursor = db.cursor()
+        cursor.execute(query, (post_data.get("userEmail"),))
+        activeid = cursor.fetchone()[0]
+        #Now grab data for requested preset
+        query = "SELECT N0, a, b, P0, c, d FROM pred_prey_presets WHERE owner_id = %s AND preset_name = %s"
+        cursor.execute(query, (activeid, post_data.get("presetName")))
+        response["preset_params"] = cursor.fetchone()
+        print(response["preset_params"])
+        cursor.close()
+        response["message"] = "Grabbed data for selected pred prey preset"
     return jsonify(response)
 
 if __name__ == "__main__":

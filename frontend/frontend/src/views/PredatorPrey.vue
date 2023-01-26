@@ -14,10 +14,11 @@
       :user-presets="userPresets"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
+      @selectedPreset="onClickPreset"
       @changeN0="updateN0"
       @changea="updatea"
       @changeb="updateb"
-      @changeP0="updateN0"
+      @changeP0="updateP0"
       @changec="updatec"
       @changed="updated"
       @tabOneActive="activateTabOne"
@@ -64,7 +65,7 @@ export default {
   },
   data() {
     return {
-      //Data used for running simulations
+      //Params initially at slider's min values
       simParamData: [
         //Prey
         10, //N0
@@ -267,10 +268,10 @@ export default {
       }
     },
     //User has selected a preset from dropdown
-    onClickPreset() {
+    onClickPreset(presetIndex) {
       const payload = { //Unique data required to extract preset data
-        userEmail: this.$store.state.userEmail, //Identify user
-        presetDateTime: this.presetDateTime //Identify preset
+        userEmail: this.$store.state.activeUser.email, //Identify user
+        presetName: this.userPresets[presetIndex][0] //Identify preset
       }
       this.getPresetParams(payload)
     },
@@ -280,16 +281,17 @@ export default {
         const path = "http://localhost:5000/PredPrey/PresetParams";
         const response = await axios.post(path, payload);
         //Set sim data (and slider values) to preset data
-        this.simParamData[0] = response.data["params"]["N0"];
-        this.simParamData[1] = response.data["params"]["a"];
-        this.simParamData[2] = response.data["params"]["b"];
-        this.simParamData[3] = response.data["params"]["P0"];
-        this.simParamData[4] = response.data["params"]["c"];
-        this.simParamData[5] = response.data["params"]["d"];
+        this.simParamData[0] = Number(response.data["preset_params"][0]); //N0
+        this.simParamData[1] = Number(response.data["preset_params"][1]); //a
+        this.simParamData[2] = Number(response.data["preset_params"][2]); //b
+        this.simParamData[3] = Number(response.data["preset_params"][3]); //P0
+        this.simParamData[4] = Number(response.data["preset_params"][4]); //c
+        this.simParamData[5] = Number(response.data["preset_params"][5]); //d
         const successAlertPayload = {
-          message: `Loaded ${payload.presetName} to Predator-Prey presets`,
+          message: `Loaded ${payload.presetName} preset`,
           variant: "success",
         };
+        console.log(this.simParamData)
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
