@@ -1,4 +1,3 @@
-<!--eslint-disable-->
 <template>
   <div class="config-bar">
     <!--Enclose config within card-->
@@ -37,7 +36,6 @@
 </template>
 
 <script>
-/*eslint-disable*/
 import SliderContent from "@/components/ConfigBar/components/SliderContent.vue";
 import SliderTicks from "@/components/ConfigBar/components/SliderTicks.vue";
 import PresetButtons from "@/components/ConfigBar/components/PresetButtons.vue";

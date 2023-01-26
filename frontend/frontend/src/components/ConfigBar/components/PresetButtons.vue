@@ -1,4 +1,3 @@
-<!--eslint-disable-->
 <template>
   <div class="preset-buttons" style="display: flex; flex-direction: column">
     <div class="preset-save-list">
@@ -58,7 +57,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 export default {
   props: {
     paramSuggestions: Array,

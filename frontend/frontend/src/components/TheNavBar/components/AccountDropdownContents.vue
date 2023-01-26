@@ -1,4 +1,3 @@
-<!--eslint-disable-->
 <template>
   <!--Change dropdown contents depending on sign-in status-->
   <div v-if="!$store.state.activeUser.isActive" class="signed-out-dropdown">
@@ -153,7 +152,6 @@
 </template>
 
 <script>
-/*eslin-disable*/
 import TempAlert from "@/components/common/TempAlert.vue";
 import axios from "axios"; //For making client-side http requests
 

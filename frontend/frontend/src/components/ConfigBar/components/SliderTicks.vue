@@ -1,4 +1,3 @@
-<!--eslint-disable-->
 <template>
   <div
     class="tick-group d-flex justify-content-between"
@@ -15,7 +14,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 export default {
   props: {
     sliderData: Object,
