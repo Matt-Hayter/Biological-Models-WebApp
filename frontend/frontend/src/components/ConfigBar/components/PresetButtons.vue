@@ -60,6 +60,7 @@
 export default {
   props: {
     paramSuggestions: Array,
+    userPresets: Array
   },
   data() {
     return {

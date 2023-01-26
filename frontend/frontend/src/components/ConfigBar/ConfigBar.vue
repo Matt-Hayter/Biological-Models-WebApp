@@ -30,7 +30,7 @@
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
-        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions"/>
+        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions" :presets="userPresets"/>
         </b-card-body>
     </b-card>
   </div>
@@ -47,6 +47,7 @@ export default {
     tabsData: Array,
     configTabTitles: Array,
     paramSuggestions: Array,
+    userPresets: Array,
   },
   components: {
     SliderContent,

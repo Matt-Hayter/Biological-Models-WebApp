@@ -9,6 +9,8 @@
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
+      :sim-param-data="simParamData"
+      :user-presets="userPresets"
       @presetNameInput="handlePresetName"
       @changeN0="updateN0"
       @changea="updatea"
@@ -61,16 +63,18 @@ export default {
   data() {
     return {
       //Data used for running simulations
-      simData: {
+      simParamData: [
         //Prey
-        N0: 10,
-        a: 10,
-        b: 1,
+        10, //N0
+        10, //a
+        1, //b
         //Predator
-        P0: 10,
-        c: 10,
-        d: 1,
-      },
+        10, //P0
+        10, //c
+        1, //d
+      ],
+      //Contains user's presets
+      userPresets: [],
       //Contains data for each paramater tab
       tabsData: [
         //Tab one
@@ -78,7 +82,7 @@ export default {
           data: [
             {
               label: "$N_{0}$",
-              //Name of event emitted to page component to update simData upon input
+              //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
               min: 10,
               max: 50,
@@ -106,7 +110,7 @@ export default {
           data: [
             {
               label: "$P_{0}$",
-              //Name of event emitted to page component to update simData upon input
+              //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
               min: 10,
               max: 50,
@@ -158,28 +162,28 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      this.simData.N0 = newN0;
-      console.log(this.simData.N0, "N0-change");
+      this.simParamData[0] = newN0;
+      console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      this.simData.a = newa;
-      console.log(this.simData.a, "a-change");
+      this.simParamData[1] = newa;
+      console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      this.simData.b = newb;
-      console.log(this.simData.b, "b-change");
+      this.simParamData[2] = newb;
+      console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      this.simData.P0 = newP0;
-      console.log(this.simData.P0, "P0-change");
+      this.simParamData[3] = newP0;
+      console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      this.simData.c = newc;
-      console.log(this.simData.c, "c-change");
+      this.simParamData[4] = newc;
+      console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      this.simData.d = newd;
-      console.log(this.simData.d, "d-change");
+      this.simParamData[5] = newd;
+      console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
@@ -216,13 +220,13 @@ export default {
         //Active user's email for database identification
         userEmail: this.$store.state.activeUser.email,
         presetName: presetName,
-        presetData: this.simData,
+        presetData: this.simParamData,
       };
       this.addPreset(presetPayload);
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/PredPrey/presets";
+        const path = "http://localhost:5000/PredPrey/AddPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
           message: `Added ${payload.presetName} to Predator-Prey presets`,
@@ -239,22 +243,67 @@ export default {
         console.log("Preset not added, server problem");
       }
     },
-    // async getPredPreyPresets() {
-    //   try {
-    //     const path = "http://localhost:5000/PredPrey/presets";
-    //     const response = await axios.get(path);
-    //     const presetPayload = {
-
-    //     };
-    //     this.$store.commit("getPreyPreyPresets", userStatePayload); //call userUpdate state mutation
-    //   } catch (error) {
-
-    //   }
-    // },
+    //Bring user's presets to client-side
+    async getAllPresets() {
+      try {
+        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const payload = {
+          userEmail: this.$store.state.activeUser.email
+        };
+        const response = await axios.post(path, payload) //Identify user with email
+        for (const preset of response.data["presets"]) {
+          this.userPresets.push(preset) //Includes name and datetime
+        }
+        
+        console.log("Loaded user's Pred-Prey presets: ")
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to fetch presets, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Presets not loaded, server problem");
+      }
+    },
+    //User has selected a preset from dropdown
+    onClickPreset() {
+      const payload = { //Unique data required to extract preset data
+        userEmail: this.$store.state.userEmail, //Identify user
+        presetDateTime: this.presetDateTime //Identify preset
+      }
+      this.getPresetParams(payload)
+    },
+    //Upon selecting a preset, get params from server
+    async getPresetParams(payload) {
+      try {
+        const path = "http://localhost:5000/PredPrey/PresetParams";
+        const response = await axios.post(path, payload);
+        //Set sim data (and slider values) to preset data
+        this.simParamData[0] = response.data["params"]["N0"];
+        this.simParamData[1] = response.data["params"]["a"];
+        this.simParamData[2] = response.data["params"]["b"];
+        this.simParamData[3] = response.data["params"]["P0"];
+        this.simParamData[4] = response.data["params"]["c"];
+        this.simParamData[5] = response.data["params"]["d"];
+        const successAlertPayload = {
+          message: `Loaded ${payload.presetName} to Predator-Prey presets`,
+          variant: "success",
+        };
+        this.showSubmissionAlert(successAlertPayload);
+        console.log("Preset added");
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to load preset, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Preset not loaded, server problem");
+      }
+    },
   },
-  // created() {
-  //   this.getPredPreyPresets()
-  // },
+  mounted() {
+    this.getAllPresets()
+  },
 };
 </script>
 

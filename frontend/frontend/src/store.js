@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
       username: "",
       email: "",
     },
+    
   },
   mutations: {
     //Updating user credentials upon sign in/out

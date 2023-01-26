@@ -19,7 +19,7 @@ salted_hasher = argon2.PasswordHasher(
 @app.route("/SignUp", methods=["POST"])
 def SignUp():
     #Track server response, initially set no error codes
-    response_object = {"server status": "success", "username": None}
+    response = {"server status": "success", "username": None}
     cursor = db.cursor()
     SignUp_data = request.get_json() #Retrieve payload from client
     if request.method == "POST": #Adding user
@@ -41,23 +41,23 @@ def SignUp():
             cursor.execute(query, (username, SignUp_data.get("email").lower(), hash))
             db.commit()
             cursor.close()
-            response_object["message"] = "User added"
+            response["message"] = "User added"
             #Return username once added to log in
-            response_object["username"] = username
-            response_object["email"] = email
+            response["username"] = username
+            response["email"] = email
         else: #Username or email already exist
             cursor.close()
-            response_object["message"] = "User not added, not unique"
+            response["message"] = "User not added, not unique"
             if query_results[0] == True: #username already in use
-                response_object["username_error"] = True
+                response["username_error"] = True
             if query_results[1] == True: #email already in use
-                response_object["email_error"] = True
-    return jsonify(response_object)
+                response["email_error"] = True
+    return jsonify(response)
 
 @app.route("/SignIn", methods=["POST"])
 def SignIn():
     if request.method == "POST":
-        response_object = {"server status": "success", "username": None}
+        response = {"server status": "success", "username": None}
         SignIn_data = request.get_json() #Retrieve payload from client
         #Check email is present in db. If so, extract hashed password
         query = "SELECT username, email, priv_info FROM users WHERE email = %s" #Emails are unique
@@ -74,21 +74,21 @@ def SignIn():
             #One-way hash inputted password to see if it matches db records. If no match, raises exception
             verify_result = salted_hasher.verify(db_hashed_passwd, SignIn_data.get("password"))
             #If passed without exceptions:
-            response_object["username"] = db_username
-            response_object["email"] = db_email
-            response_object["message"] = "User account found and logged in"
+            response["username"] = db_username
+            response["email"] = db_email
+            response["message"] = "User account found and logged in"
         except:
             cursor.close()  
-            response_object["message"] = "User account not found"
-    return jsonify(response_object)
+            response["message"] = "User account not found"
+    return jsonify(response)
 
-@app.route("/PredPrey/presets", methods=["GET", "POST"])
+@app.route("/PredPrey/AddPresets", methods=["POST"])
 def add_PredPrey_preset():
-    response_object = {"server status": "success"}
+    response = {"server status": "success"}
     preset_data = request.get_json() #Retrieve payload from client
     if request.method == "POST": #Adding a preset
         #First get id of user with active email
-        query = "SELECT id from users WHERE email = %s"
+        query = "SELECT id FROM users WHERE email = %s"
         cursor = db.cursor()
         cursor.execute(query, (preset_data.get("userEmail"),))
         activeid = cursor.fetchone()[0]
@@ -100,8 +100,26 @@ def add_PredPrey_preset():
             presetData["b"], presetData["P0"], presetData["c"], presetData["d"]))
         cursor.close()
         db.commit()
-        response_object["message"] = "Added PredPrey preset"
-    return jsonify(response_object)
+        response["message"] = "Added PredPrey preset"
+    return jsonify(response)
+
+@app.route("/PredPrey/AllPresets", methods=["POST"])
+def all_PredPrey_presets():
+    response = {"server status": "success"}
+    post_data = request.get_json()
+    if request.method == "POST": #Grab user's presets
+        #First get user id, given email
+        query = "SELECT id FROM users WHERE email = %s"
+        cursor = db.cursor()
+        cursor.execute(query, (post_data.get("userEmail"),))
+        activeid = cursor.fetchone()[0]
+        #Now grab all pred prey presets for that user
+        query = "SELECT preset_name, N0, a, b, P0, c, d, date FROM pred_prey_presets WHERE owner_id = %s"
+        cursor.execute(query, (activeid,))
+        response["presets"] = cursor.fetchall()
+        cursor.close()
+        response["message"] = "Grabbed user's pred-prey presets"
+    return jsonify(response)
 
 if __name__ == "__main__":
     app.run(debug = True)
