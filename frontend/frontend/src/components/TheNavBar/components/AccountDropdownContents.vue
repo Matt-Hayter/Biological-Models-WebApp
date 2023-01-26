@@ -27,7 +27,7 @@
         ></b-form-input>
         <!--Feedback for if input is invalid (in the false state)-->
         <b-form-invalid-feedback id="feedback-invalid-signin-passwd">
-          Passwords are at least 8 characters
+          Please enter a password with at least 8 characters
         </b-form-invalid-feedback>
       </b-form-group>
       <TempAlert
