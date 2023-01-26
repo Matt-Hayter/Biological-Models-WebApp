@@ -311,6 +311,7 @@ export default {
         };
         this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
         console.log("Account created");
+        this.$emit("loadPresets") //Load all user's presets
         this.initSignUpForm(); //Reset form
         //In case of axios problems, give error alert
       } catch (error) {
@@ -354,6 +355,7 @@ export default {
           response.data["email"]
         );
         this.initSignInForm(); //Reset form
+        this.$emit("loadPresets") //Load all user's presets
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
