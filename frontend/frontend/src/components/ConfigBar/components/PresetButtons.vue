@@ -11,7 +11,7 @@
           </template>
           <div v-for="preset in userPresetsUpdate" :key="preset[1]">
             <b-dropdown-item>
-              {{ preset[0] }}, {{ preset[1] }}
+              {{ `${preset[0]}, ${preset[1]}` }}
             </b-dropdown-item>
           </div>
         </b-dropdown>
