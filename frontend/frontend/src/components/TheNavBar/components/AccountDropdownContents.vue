@@ -27,7 +27,7 @@
         ></b-form-input>
         <!--Feedback for if input is invalid (in the false state)-->
         <b-form-invalid-feedback id="feedback-invalid-signin-passwd">
-          Passwords are at least 8 characters
+          Please enter a password with at least 8 characters
         </b-form-invalid-feedback>
       </b-form-group>
       <TempAlert
@@ -163,13 +163,13 @@ export default {
     return {
       //Default sign up values
       signUp: {
-        formUsername: "",
-        formEmail: "",
-        formPassword: "",
+        formUsername: null,
+        formEmail: null,
+        formPassword: null,
       },
       signIn: {
-        formEmail: "",
-        formPassword: "",
+        formEmail: null,
+        formPassword: null,
       },
       //If alert is displayed within current component (if unsuccessful)
       invalidSignUpAlert: {

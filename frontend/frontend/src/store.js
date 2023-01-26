@@ -17,10 +17,10 @@ export const store = new Vuex.Store({
   state: {
     activeUser: {
       isActive: false,
-      username: "",
-      email: "",
+      username: null,
+      email: null,
     },
-    
+
   },
   mutations: {
     //Updating user credentials upon sign in/out

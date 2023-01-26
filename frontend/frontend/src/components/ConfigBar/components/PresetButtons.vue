@@ -64,7 +64,7 @@ export default {
   },
   data() {
     return {
-      presetName: "",
+      presetName: null,
       showPresetModal: true,
       showSuggestions: false,
       bulbOn: false,

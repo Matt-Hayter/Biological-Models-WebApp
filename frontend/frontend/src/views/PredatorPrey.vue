@@ -148,7 +148,7 @@ export default {
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
-      alertMessage: "",
+      alertMessage: null,
       alertVariant: "danger",
       showAlert: false,
       alertSecs: 4,
