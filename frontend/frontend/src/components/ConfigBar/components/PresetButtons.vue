@@ -10,8 +10,10 @@
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
           </template>
-          <div>
-            
+          <div v-for="preset in userPresetsUpdate" :key="preset[1]">
+            <b-dropdown-item>
+              {{ preset[0] }}, {{ preset[1] }}
+            </b-dropdown-item>
           </div>
         </b-dropdown>
       </b-button-group>
@@ -70,6 +72,11 @@ export default {
       bulbOn: false,
       bulbIcon: "lightbulb-fill",
     };
+  },
+  computed: {
+    userPresetsUpdate() {
+      return this.userPresets
+    }
   },
   methods: {
     onClickDropdown() {

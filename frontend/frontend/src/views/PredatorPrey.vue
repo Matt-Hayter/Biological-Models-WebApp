@@ -4,6 +4,7 @@
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
+      @initPresets="initPresets"
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
@@ -224,6 +225,7 @@ export default {
         presetData: this.simParamData,
       };
       this.addPreset(presetPayload);
+      this.getAllPresets(); //Update presets list
     },
     async addPreset(payload) {
       try {
@@ -252,16 +254,10 @@ export default {
           userEmail: this.$store.state.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
-        for (const preset of response.data["presets"]) {
-          this.userPresets.push(preset) //Includes name and datetime
-        }
-        const successAlertPayload = {
-          message: `Added ${payload.presetName} to Predator-Prey presets`,
-          variant: "success",
-        };
-        this.showSubmissionAlert(successAlertPayload);
-        console.log("Loaded user's Pred-Prey presets: ")
+        this.userPresets = response.data["presets"] //Update frontend presets with those in database
+        console.log("Loaded user's Pred-Prey presets")
       } catch (error) {
+        //Only show alert upon failure
         const failureAlertPayload = {
           message: "Unable to fetch presets, failed repsonse from server",
           variant: "danger",
@@ -305,9 +301,14 @@ export default {
         console.log("Preset not loaded, server problem");
       }
     },
+    initPresets() { //Clear presets
+      this.userPresets = []
+    }
   },
   mounted() {
-    this.getAllPresets()
+    if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
+      this.getAllPresets()
+    }
   },
 };
 </script>

@@ -85,19 +85,19 @@ def SignIn():
 @app.route("/PredPrey/AddPresets", methods=["POST"])
 def add_PredPrey_preset():
     response = {"server status": "success"}
-    preset_data = request.get_json() #Retrieve payload from client
+    preset = request.get_json() #Retrieve payload from client
     if request.method == "POST": #Adding a preset
         #First get id of user with active email
         query = "SELECT id FROM users WHERE email = %s"
         cursor = db.cursor()
-        cursor.execute(query, (preset_data.get("userEmail"),))
+        cursor.execute(query, (preset.get("userEmail"),))
         activeid = cursor.fetchone()[0]
-        presetData = preset_data.get("presetData")
+        presetData = preset.get("presetData")
         #Now insert preset into presets table, with the correct Foreign key
         query = "INSERT INTO pred_prey_presets (owner_id, preset_name, N0, a, b, P0, c, d, date) \
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,now())"
-        cursor.execute(query, (activeid, preset_data.get("presetName"), presetData["N0"], presetData["a"],
-            presetData["b"], presetData["P0"], presetData["c"], presetData["d"]))
+        cursor.execute(query, (activeid, preset.get("presetName"), presetData[0], presetData[1],
+            presetData[2], presetData[3], presetData[4], presetData[5]))
         cursor.close()
         db.commit()
         response["message"] = "Added PredPrey preset"
@@ -114,7 +114,7 @@ def all_PredPrey_presets():
         cursor.execute(query, (post_data.get("userEmail"),))
         activeid = cursor.fetchone()[0]
         #Now grab all pred prey presets for that user
-        query = "SELECT preset_name, N0, a, b, P0, c, d, date FROM pred_prey_presets WHERE owner_id = %s"
+        query = "SELECT preset_name, date FROM pred_prey_presets WHERE owner_id = %s"
         cursor.execute(query, (activeid,))
         response["presets"] = cursor.fetchall()
         cursor.close()
