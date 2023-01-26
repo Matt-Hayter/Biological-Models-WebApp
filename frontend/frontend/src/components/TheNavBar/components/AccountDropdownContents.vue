@@ -72,7 +72,7 @@
           </b-form-input>
           <!--Feedback for if input is invalid (in the false state)-->
           <b-form-invalid-feedback id="feedback-invalid-username">
-            Enter at least 4 characters
+            Please enter at least 4 characters
           </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
@@ -101,7 +101,7 @@
           >
           </b-form-input>
           <b-form-invalid-feedback id="feedback-invalid-passwd">
-            Enter at least 8 characters
+            Please enter at least 8 characters
           </b-form-invalid-feedback>
         </b-form-group>
         <TempAlert
@@ -163,13 +163,13 @@ export default {
     return {
       //Default sign up values
       signUp: {
-        formUsername: null,
-        formEmail: null,
-        formPassword: null,
+        formUsername: "",
+        formEmail: "",
+        formPassword: "",
       },
       signIn: {
-        formEmail: null,
-        formPassword: null,
+        formEmail: "",
+        formPassword: "",
       },
       //If alert is displayed within current component (if unsuccessful)
       invalidSignUpAlert: {
@@ -365,13 +365,13 @@ export default {
       this.invalidSignInAlert.showAlert = false;
     },
     initSignInForm() {
-      this.signIn.formEmail = "";
-      this.signIn.formPassword = "";
+      this.signIn.formEmail = null;
+      this.signIn.formPassword = null;
     },
     initSignUpForm() {
-      this.signUp.formUsername = "";
-      this.signUp.formEmail = "";
-      this.signUp.formPassword = "";
+      this.signUp.formUsername = null;
+      this.signUp.formEmail = null;
+      this.signUp.formPassword = null;
     },
     //Update Vuex store state with signed in user's data
     activateUserState(response) {

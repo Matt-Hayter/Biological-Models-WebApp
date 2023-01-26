@@ -12,6 +12,7 @@
       :param-suggestions="paramSuggestions"
       :sim-param-data="simParamData"
       :user-presets="userPresets"
+      @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @changeN0="updateN0"
       @changea="updatea"
