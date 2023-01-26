@@ -303,13 +303,7 @@ export default {
           variant: "success",
         };
         this.$emit("showPageAlert", successAlertPayload); //Create successful sign in alert on main page
-        //Update Vuex store state with signed in user's data
-        const userStatePayload = {
-          username: response.data["username"],
-          email: response.data["email"],
-          isActive: true,
-        };
-        this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
+        this.activateUserState() //Update Vuex state with user's data
         console.log("Account created");
         this.$emit("loadPresets") //Load all user's presets
         this.initSignUpForm(); //Reset form
@@ -342,13 +336,7 @@ export default {
           variant: "success",
         };
         this.$emit("showPageAlert", success_alert_obj); //Create success alert on main page
-        //Update Vuex store state with signed in user's data
-        const userStatePayload = {
-          username: response.data["username"],
-          email: response.data["email"],
-          isActive: true,
-        };
-        this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
+        this.activateUserState() //Update Vuex state with user's data
         console.log(
           "Signed in as ",
           response.data["username"],
@@ -385,6 +373,15 @@ export default {
       this.signUp.formEmail = "";
       this.signUp.formPassword = "";
     },
+    //Update Vuex store state with signed in user's data
+    activateUserState() {
+      const userStatePayload = {
+        username: response.data["username"],
+        email: response.data["email"],
+        isActive: true,
+      };
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
+    }
   },
 };
 </script>
