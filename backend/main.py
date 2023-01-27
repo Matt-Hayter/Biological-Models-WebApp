@@ -83,7 +83,7 @@ def SignIn():
             response["message"] = "User account not found"
     return jsonify(response)
 
-@app.route("/PredPrey/AddPresets", methods=["POST"])
+@app.route("/PredPrey/AlterPresets", methods=["POST"])
 def add_PredPrey_preset():
     response = {"server status": "success"}
     preset = request.get_json() #Retrieve payload from client
@@ -104,6 +104,18 @@ def add_PredPrey_preset():
         response["message"] = "Added PredPrey preset"
     return jsonify(response)
 
+@app.route("/PredPrey/AlterPresets/<preset_id>", methods=["DELETE"])
+def delete_PredPrey_preset(preset_id):
+    response = {"server status": "success"}
+    if request.method == "DELETE":
+        query = "DELETE FROM pred_prey_presets WHERE id = %s"
+        cursor = db.cursor()
+        cursor.execute(query, (int(preset_id),))
+        cursor.close()
+        db.commit()
+        response["message"] = "Deleted PredPrey preset"
+    return jsonify(response)
+
 @app.route("/PredPrey/AllPresets", methods=["POST"])
 def all_PredPrey_presets():
     response = {"server status": "success"}
@@ -115,7 +127,7 @@ def all_PredPrey_presets():
         cursor.execute(query, (post_data.get("userEmail"),))
         activeid = cursor.fetchone()[0]
         #Now grab all pred prey presets for that user
-        query = "SELECT preset_name, date FROM pred_prey_presets WHERE owner_id = %s"
+        query = "SELECT id, preset_name, date FROM pred_prey_presets WHERE owner_id = %s"
         cursor.execute(query, (activeid,))
         response["presets"] = cursor.fetchall()
         cursor.close()

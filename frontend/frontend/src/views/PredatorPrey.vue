@@ -15,6 +15,7 @@
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @selectedPreset="onClickPreset"
+      @deletePreset="deletePreset"
       @changeN0="updateN0"
       @changea="updatea"
       @changeb="updateb"
@@ -218,19 +219,19 @@ export default {
       this.activeEmail = email;
     },
     //Triggered upon a preset save
-    handlePresetName(presetName) {
+    async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
         userEmail: this.$store.state.activeUser.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
-      this.addPreset(presetPayload);
+      await this.addPreset(presetPayload);
       this.getAllPresets(); //Update presets list
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/PredPrey/AddPresets";
+        const path = "http://localhost:5000/PredPrey/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
           message: `Added ${payload.presetName} to Predator-Prey presets`,
@@ -271,7 +272,7 @@ export default {
     onClickPreset(presetIndex) {
       const payload = { //Unique data required to extract preset data
         userEmail: this.$store.state.activeUser.email, //Identify user
-        presetName: this.userPresets[presetIndex][0] //Identify preset
+        presetid: this.userPresets[presetIndex][0] //Identify preset
       }
       this.getPresetParams(payload)
     },
@@ -291,7 +292,6 @@ export default {
           message: `Loaded ${payload.presetName} preset`,
           variant: "success",
         };
-        console.log(this.simParamData)
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
@@ -305,7 +305,28 @@ export default {
     },
     initPresets() { //Clear presets
       this.userPresets = []
-    }
+    },
+    async deletePreset(presetIndex) {
+      try {
+        const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
+        const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
+        await axios.delete(path);
+        const deletedAlertPayload = {
+          message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
+          variant: "dark",
+        };
+        this.getAllPresets();
+        this.showSubmissionAlert(deletedAlertPayload);
+        console.log("Preset deleted");
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to delete preset, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Preset not loaded, server problem");
+      }
+    },
   },
   mounted() {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in

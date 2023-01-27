@@ -53,6 +53,7 @@
       id="sign-up"
       title="Create an Account"
       hide-footer
+      centered
     >
       <b-form @submit="onSubmitSignUp">
         <b-form-group

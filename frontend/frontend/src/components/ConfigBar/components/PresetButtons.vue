@@ -2,9 +2,11 @@
   <div class="preset-buttons" style="display: flex; flex-direction: column">
     <div class="preset-save-list">
       <b-button-group class="preset-button-bar">
+        <!--Save button-->
         <b-button id="save-button" class="btn-success" @click="onClickSave">
           Save <b-icon icon="box-arrow-in-down" font-scale="1.4" shift-v="1.5"></b-icon>
         </b-button>
+        <!--Presets dropdown-->
         <b-dropdown dropright variant="info" no-caret @show="onClickDropdown">
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
@@ -16,10 +18,16 @@
           <span v-else-if="emptyPresetsSignedIn">
             <b-dropdown-text>No saved presets - try saving one! </b-dropdown-text>
           </span>
-          <div v-for="(preset, index) in userPresetsUpdate" :key="preset[1]">
-            <b-dropdown-item-button @click="onPresetClick(index)">
-              <b style="font-size: 1.3em">{{ preset[0] }}</b>, {{ preset[1] }}
-            </b-dropdown-item-button>
+          <!--If signed in, and have saved presets-->
+          <div v-for="(preset, index) in userPresetsUpdate" :key="preset[0]">
+            <b-button-toolbar style="width: max-content;">
+              <b-dropdown-item-button @click="onPresetClick(index)">
+                <b style="font-size: 1.3em;">{{ preset[1] }}</b>, {{ preset[2] }}
+              </b-dropdown-item-button>
+              <b-dropdown-item-button @click="onClickDeletePreset(index)" style="margin-top: 0.25em">
+                <b-icon icon="x"></b-icon>
+              </b-dropdown-item-button>
+            </b-button-toolbar>
           </div>
         </b-dropdown>
       </b-button-group>
@@ -29,6 +37,7 @@
         id="preset-name-modal"
         title="Save Preset"
         hide-footer
+        centered
       >
         <b-form @submit="onSubmitPresetName">
           <b-form-group
@@ -53,7 +62,7 @@
       <b-button id="suggestions-button" style="float: right; padding-top: 2.3em" @click="onClickSuggestions">
         Parameter Suggestions <b-icon :class="bulbClass" icon="lightbulb-fill" shift-v="1.5"></b-icon>
       </b-button>
-      <b-popover target="suggestions-button" placement="right" :show.sync="showSuggestions">
+      <b-popover target="suggestions-button" placement="right" :show.sync="showSuggestions" :no-fade="true">
         <!--Render all suggestions, depending on model-->
         <div class="popover-list">
           <ul v-for="suggestion in paramSuggestions" :key="suggestion.id">
@@ -105,6 +114,9 @@ export default {
     onPresetClick(index) {
       this.$emit("selectedPreset", index)
     },
+    onClickDeletePreset(index) {
+      this.$emit("deletePreset", index)
+    },
     onClickDropdown() {
       this.showSuggestions = false;
       this.bulbOn = false;
@@ -127,6 +139,7 @@ export default {
     onClickSave() {
       //So button only toggles preset naming modal when signed in
       if (this.$store.state.activeUser.isActive == true) {
+        this.showSuggestions = false //Close suggestions popover
         this.$refs["presetModal"].toggle("#save-button")
       } else { //If not signed in, create alert on main page
         const alertPayload = {
@@ -135,7 +148,7 @@ export default {
         }
         this.$emit("showPageAlert", alertPayload)
       }
-    }
+    },
   },
 };
 </script>
