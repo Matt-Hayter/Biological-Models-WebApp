@@ -12,7 +12,9 @@ db = mysql.connector.connect(host="localhost", user="root", database="biological
 #Import Blueprints here to avoid circular imports
 from biological_models_app.user.routes import user
 from biological_models_app.pred_prey.routes import pred_prey
+from biological_models_app.competing_species.routes import competing_species
 
 app.register_blueprint(user)
 app.register_blueprint(pred_prey)
+app.register_blueprint(competing_species)
     

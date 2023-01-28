@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     currentSliderIndex(i1, i2) {
-      return i1*3+i2
+      return i1*this.simParamData.length/2+i2
     },
     //Update tabsData[i].isActive props if tab changes
     onTabOneClick() {
