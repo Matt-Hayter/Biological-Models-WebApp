@@ -14,7 +14,7 @@
       :user-presets="userPresets"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
-      @selectedPreset="onClickPreset"
+      @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
       @changeN0="updateN0"
       @changea="updatea"
@@ -268,19 +268,12 @@ export default {
         console.log("Presets not loaded, server problem");
       }
     },
-    //User has selected a preset from dropdown
-    onClickPreset(presetIndex) {
-      const payload = { //Unique data required to extract preset data
-        userEmail: this.$store.state.activeUser.email, //Identify user
-        presetid: this.userPresets[presetIndex][0] //Identify preset
-      }
-      this.getPresetParams(payload)
-    },
     //Upon selecting a preset, get params from server
-    async getPresetParams(payload) {
+    async getPresetParams(presetIndex) {
       try {
-        const path = "http://localhost:5000/PredPrey/PresetParams";
-        const response = await axios.post(path, payload);
+        const presetid = this.userPresets[presetIndex][0] //Identify preset
+        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         this.simParamData[0] = Number(response.data["preset_params"][0]); //N0
         this.simParamData[1] = Number(response.data["preset_params"][1]); //a
@@ -289,7 +282,7 @@ export default {
         this.simParamData[4] = Number(response.data["preset_params"][4]); //c
         this.simParamData[5] = Number(response.data["preset_params"][5]); //d
         const successAlertPayload = {
-          message: `Loaded ${payload.presetName} preset`,
+          message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
