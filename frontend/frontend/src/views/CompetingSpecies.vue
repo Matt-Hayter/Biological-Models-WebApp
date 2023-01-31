@@ -34,9 +34,10 @@
         <div class="title-and-formula">
           <h4 class="tex2jax_ignore" style="float: left">Two Competing Species Model</h4>
           <div class="formula">
-            <vue-mathjax formula="$$\Large\frac{dN_{1}}{dt}=r_{1}N_{1}(1-\frac{N_{1}+a_{1}N_{2}}{K_{1}})$$"></vue-mathjax>
+            <katex-element expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})" />
             <br>
-            <vue-mathjax formula="$$\Large\frac{dN_{2}}{dt}=r_{2}N_{2}(1-\frac{N_{2}+a_{2}N_{1}}{K_{2}})$$"></vue-mathjax>
+            <br>
+            <katex-element expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})" />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
@@ -89,7 +90,7 @@ export default {
         {
           data: [
             {
-              label: "$N_{1,0}$",
+              label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
               min: 10,
@@ -97,21 +98,21 @@ export default {
               step: 5,
             },
             {
-              label: "$r_{1}$",
+              label: "r_{1}",
               emitEventName: "changer1",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "$K_{1}$",
+              label: "K_{1}",
               emitEventName: "changeK1",
               min: 1,
               max: 10,
               step: 1,
             },
             {
-              label: "$a_{1}$",
+              label: "a_{1}",
               emitEventName: "changea1",
               min: 1,
               max: 10,
@@ -124,7 +125,7 @@ export default {
         {
           data: [
           {
-              label: "$N_{2,0}$",
+              label: "N_{2,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
               min: 10,
@@ -132,21 +133,21 @@ export default {
               step: 5,
             },
             {
-              label: "$r_{2}$",
+              label: "r_{2}",
               emitEventName: "changer2",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "$K_{2}$",
+              label: "K_{2}",
               emitEventName: "changeK2",
               min: 1,
               max: 10,
               step: 1,
             },
             {
-              label: "$a_{2}$",
+              label: "a_{2}",
               emitEventName: "changea2",
               min: 1,
               max: 10,

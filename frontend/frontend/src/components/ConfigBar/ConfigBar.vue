@@ -4,7 +4,7 @@
     <b-card class="rounded-0" style="min-width: 25em; position: fixed" no-body>
       <b-card-header header-tag="nav">
         <b-nav card-header tabs fill style="display: flex; flex-direction: column">
-          <p class="mt-3" style="font-size: 1.5em">Model Parameters</p>
+          <p style="font-size: 1.5em;">Model Parameters</p>
           <div tabs style="margin-top:-1em">
             <b-nav-item style="float: left" :active="tabsData[0].isActive" @click="onTabOneClick()" >
               {{ configTabTitles[0] }}
@@ -15,9 +15,9 @@
           </div>
         </b-nav>
       </b-card-header>
-      <b-card-body style="min-height: 68vh">
+      <b-card-body style="min-height: 72vh">
         <!--Render all param sliders with correct labels, for each tab-->
-        <div v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
+        <div class="param-sliders" v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
           <!--Only show tab data if tab is selected (isActive=true). Rendered nonetheless.-->
           <div v-show="tabData.isActive" v-for="(sliderData, index2) in tabData.data" :key="sliderData.label">
             <!--Pass each slider's data individually to slider component-->
@@ -71,3 +71,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.param-sliders {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+</style>

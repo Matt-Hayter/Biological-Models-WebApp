@@ -1,5 +1,5 @@
 <template>
-  <div class="preset-buttons" style="display: flex; flex-direction: column">
+  <div class="preset-buttons">
     <div class="preset-save-list">
       <b-button-group class="preset-button-bar">
         <!--Save button-->
@@ -154,11 +154,15 @@ export default {
 </script>
 
 <style scoped>
+.preset-buttons {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 1em;
+}
 .preset-button-bar {
   padding-left: 0.5em;
   padding-right: 0.5em;
-  padding-top: 2.7em;
-  padding-bottom: 1em;
 }
 .popover-list {
   margin-bottom: -1em;

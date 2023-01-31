@@ -32,9 +32,10 @@
         <div class="title-and-formula">
           <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
           <div class="formula">
-            <vue-mathjax formula="$$\Large\frac{dN}{dt}=N(a-bP)$$"></vue-mathjax>
+            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
             <br>
-            <vue-mathjax formula="$$\Large\frac{dP}{dt}=P(cN-d)$$"></vue-mathjax>
+            <br>
+            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)"/>
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
@@ -85,7 +86,7 @@ export default {
         {
           data: [
             {
-              label: "$N_{0}$",
+              label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
               min: 10,
@@ -93,14 +94,14 @@ export default {
               step: 5,
             },
             {
-              label: "$a$",
+              label: "a",
               emitEventName: "changea",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "$b$",
+              label: "b",
               emitEventName: "changeb",
               min: 1,
               max: 10,
@@ -113,7 +114,7 @@ export default {
         {
           data: [
             {
-              label: "$P_{0}$",
+              label: "P_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
               min: 10,
@@ -121,14 +122,14 @@ export default {
               step: 5,
             },
             {
-              label: "$c$",
+              label: "c",
               emitEventName: "changec",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "$d$",
+              label: "d",
               emitEventName: "changed",
               min: 1,
               max: 10,
