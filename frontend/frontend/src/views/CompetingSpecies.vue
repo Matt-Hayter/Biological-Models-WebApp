@@ -358,7 +358,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .top-section {
   display: flex;
   flex-direction: column;

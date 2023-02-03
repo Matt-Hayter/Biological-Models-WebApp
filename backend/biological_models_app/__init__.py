@@ -13,8 +13,12 @@ db = mysql.connector.connect(host="localhost", user="root", database="biological
 from biological_models_app.user.routes import user
 from biological_models_app.pred_prey.routes import pred_prey
 from biological_models_app.competing_species.routes import competing_species
+from biological_models_app.SIR.routes import SIR
+from biological_models_app.SEIDR.routes import SEIDR
 
 app.register_blueprint(user)
 app.register_blueprint(pred_prey)
 app.register_blueprint(competing_species)
+app.register_blueprint(SIR)
+app.register_blueprint(SEIDR)
     

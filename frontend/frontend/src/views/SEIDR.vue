@@ -16,12 +16,12 @@
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
-      @changeN0="updateN0"
-      @changea="updatea"
-      @changeb="updateb"
-      @changeP0="updateP0"
-      @changec="updatec"
-      @changed="updated"
+      @changeAlpha="updateAlpha"
+      @changeBeta="updateBeta"
+      @changeRecipGamma="updateRecipGamma"
+      @changeRecipEpsilon="updateRecipEpsilon"
+      @changeE0="updateE0"
+      @changeI0="updateI0"
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
@@ -30,12 +30,21 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
+          <h4 class="tex2jax_ignore" style="float: left">SEIDR Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
+            <katex-element expression="\Large\dfrac{dS}{dt}=\Lambda-\mu S - \beta \dfrac{SI}{N}"/>
             <br>
             <br>
-            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)"/>
+            <katex-element expression="\Large\dfrac{dE}{dt}=\beta \dfrac{SI}{N} - (\mu + \epsilon)E"/>
+            <br>
+            <br>
+            <katex-element expression="\Large\dfrac{dI}{dt}=\epsilon E - (\gamma + \mu + \alpha)I"/>
+            <br>
+            <br>
+            <katex-element expression="\Large\dfrac{dD}{dt}=\alpha I"/>
+            <br>
+            <br>
+            <katex-element expression="\Large\dfrac{dR}{dt}=\gamma I - \mu R"/>
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
@@ -69,14 +78,14 @@ export default {
     return {
       //Params initially at slider's min values
       simParamData: [
-        //Prey
-        10, //N0
-        10, //a
-        1, //b
-        //Predator
-        10, //P0
-        10, //c
-        1, //d
+        //Rates
+        10, //alpha
+        10, //beta
+        1, //1/gamma
+        10, //1/epsilon
+        //Initial conditions
+        10, //E0
+        1, //I0
       ],
       //Contains user's presets
       userPresets: [],
@@ -86,26 +95,34 @@ export default {
         {
           data: [
             {
-              label: "N_{0}",
+              label: "\\alpha",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeN0",
+              emitEventName: "changeAlpha",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "a",
-              emitEventName: "changea",
+              label: "\\beta",
+              emitEventName: "changeBeta",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "b",
-              emitEventName: "changeb",
+              label: "1/ \\gamma",
+              emitEventName: "changeRecipGamma",
               min: 1,
               max: 10,
               step: 1,
+            },
+            {
+              label: "1/ \\epsilon",
+              //Name of event emitted to page component to update simParamData upon input
+              emitEventName: "changeRecipEpsilon",
+              min: 10,
+              max: 50,
+              step: 5,
             },
           ],
           isActive: true,
@@ -114,23 +131,15 @@ export default {
         {
           data: [
             {
-              label: "P_{0}",
-              //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeP0",
+              label: "E_{0}",
+              emitEventName: "changeE0",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "c",
-              emitEventName: "changec",
-              min: 10,
-              max: 50,
-              step: 5,
-            },
-            {
-              label: "d",
-              emitEventName: "changed",
+              label: "I_{0}",
+              emitEventName: "changeI0",
               min: 1,
               max: 10,
               step: 1,
@@ -139,7 +148,7 @@ export default {
           isActive: false,
         },
       ],
-      configTabTitles: ["Prey", "Predator"],
+      configTabTitles: ["Rates", "Initial Conditions"],
       paramSuggestions: [
         {
           id: 1,
@@ -166,40 +175,40 @@ export default {
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
-    updateN0(newN0) {
-      this.simParamData[0] = newN0;
-      console.log(this.simParamData[0], "N0-change");
+    updateAlpha(newAlpha) {
+      this.simParamData[0] = newAlpha;
+      console.log(this.simParamData[0], "alpha-change");
     },
-    updatea(newa) {
-      this.simParamData[1] = newa;
-      console.log(this.simParamData[1], "a-change");
+    updateBeta(newBeta) {
+      this.simParamData[1] = newBeta;
+      console.log(this.simParamData[1], "beta-change");
     },
-    updateb(newb) {
-      this.simParamData[2] = newb;
-      console.log(this.simParamData[2], "b-change");
+    updateRecipGamma(newRecipGamma) {
+      this.simParamData[2] = newRecipGamma;
+      console.log(this.simParamData[2], "1/gamma-change");
     },
-    updateP0(newP0) {
-      this.simParamData[3] = newP0;
-      console.log(this.simParamData[3], "P0-change");
+    updateRecipEpsilon(newRecipEpsilon) {
+      this.simParamData[3] = newRecipEpsilon;
+      console.log(this.simParamData[3], "1/epsilon-change");
     },
-    updatec(newc) {
-      this.simParamData[4] = newc;
-      console.log(this.simParamData[4], "c-change");
+    updateE0(newE0) {
+      this.simParamData[4] = newE0;
+      console.log(this.simParamData[4], "E0-change");
     },
-    updated(newd) {
-      this.simParamData[5] = newd;
-      console.log(this.simParamData[5], "d-change");
+    updateI0(newI0) {
+      this.simParamData[5] = newI0;
+      console.log(this.simParamData[5], "I0-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
-      console.log("opened prey tab");
+      console.log("opened params tab");
     },
     activateTabTwo() {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
-      console.log("opened predator tab");
+      console.log("opened initial conditions tab");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -232,10 +241,11 @@ export default {
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/PredPrey/AlterPresets";
+        console.log(payload.presetData)
+        const path = "http://localhost:5000/SEIDR/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${payload.presetName} to Predator-Prey presets`,
+          message: `Added ${payload.presetName} to SEIDR presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
@@ -252,13 +262,13 @@ export default {
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const path = "http://localhost:5000/SEIDR/AllPresets";
         const payload = {
           userEmail: this.$store.state.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's Pred-Prey presets")
+        console.log("Loaded user's SEIDR presets")
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {
@@ -273,15 +283,15 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/SEIDR/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        this.simParamData[0] = Number(response.data["preset_params"][0]); //N0
-        this.simParamData[1] = Number(response.data["preset_params"][1]); //a
-        this.simParamData[2] = Number(response.data["preset_params"][2]); //b
-        this.simParamData[3] = Number(response.data["preset_params"][3]); //P0
-        this.simParamData[4] = Number(response.data["preset_params"][4]); //c
-        this.simParamData[5] = Number(response.data["preset_params"][5]); //d
+        this.simParamData[0] = Number(response.data["preset_params"][0]); //alpha
+        this.simParamData[1] = Number(response.data["preset_params"][1]); //beta
+        this.simParamData[2] = Number(response.data["preset_params"][2]); //1/gamma
+        this.simParamData[3] = Number(response.data["preset_params"][3]); //1/epsilon
+        this.simParamData[4] = Number(response.data["preset_params"][4]); //E0
+        this.simParamData[5] = Number(response.data["preset_params"][5]); //I0
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -303,7 +313,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
-        const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
+        const path = `http://localhost:5000/SEIDR/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
@@ -341,6 +351,7 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 9em;
+  padding-left: 20em;
 }
 </style>
+

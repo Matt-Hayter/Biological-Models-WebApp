@@ -8,7 +8,7 @@
       <katex-element :expression="sliderData.label"/>
       <b-icon
         icon="info-circle"
-        scale="0.65"
+        scale="0.75"
         shift-v="-5em"
         variant="info"
         style="margin-left: 0.5em"
@@ -23,7 +23,7 @@
       :value="currentSimParamData"
       :max="sliderData.max"
       :step="sliderData.step"
-      @input="$emit(sliderData.emitEventName, $Number(event.target.value))"
+      @input="$emit(sliderData.emitEventName, Number($event.target.value))"
     />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   props: {
     //Slider's contents are inherited
     sliderData: Object,
-    currentSimParamData:  Number
+    currentSimParamData: Number
   },
   data() {
     return {};
