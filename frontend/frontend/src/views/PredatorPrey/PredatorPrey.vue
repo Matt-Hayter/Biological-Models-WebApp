@@ -49,9 +49,12 @@
       </div>
       <div class="sim-visualisation-section">
         <!--Use configuration file for bar chart-->
-        <RacerBarChart :chartConfig="predPreyChartConfig" />
+        <RacerBarChart :chartConfig="predPreyChartConfig" :initialConditions="initialConditions" />
       </div>
     </div>
+    <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
+      {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
+    </b-button>
   </div>
 </template>
 
@@ -85,6 +88,8 @@ export default {
         10, //c
         1, //d
       ],
+      N0: 10, //For use in reactive bar chart. Equivalent values to above array
+      P0: 10,
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -165,6 +170,11 @@ export default {
       alertSecs: 4,
       //For data visualisation
       predPreyChartConfig,
+      //Default run simulation button config
+      simRunning: false,
+      runIcon: "play",
+      runVariant: "success",
+      runText: "Run Simulation",
     };
   },
   computed: {
@@ -172,11 +182,15 @@ export default {
     activeUser() {
       return this.$store.state.activeUser;
     },
+    initialConditions() { //Array inherited by bar chart for reactive display
+      return [this.N0, this.P0]
+    }
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
       this.simParamData[0] = newN0;
+      this.N0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
@@ -189,6 +203,7 @@ export default {
     },
     updateP0(newP0) {
       this.simParamData[3] = newP0;
+      this.P0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
@@ -328,6 +343,19 @@ export default {
         console.log("Preset not loaded, server problem");
       }
     },
+    onClickRun() { //Run/stop simulation button pressed
+      if (this.simRunning == false) {
+        this.simRunning = true
+        this.runIcon = "stop"
+        this.runVariant = "danger"
+        this.runText = "Stop"
+      } else {
+        this.simRunning = false
+        this.runIcon = "play"
+        this.runVariant = "success"
+        this.runText = "Run Simulation"
+      }
+    }
   },
   mounted() {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
@@ -349,5 +377,12 @@ export default {
 .title-and-formula .formula {
   float: left;
   padding-left: 9em;
+}
+.run-button {
+  position: fixed;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  bottom: 0;
+  right: 0;
 }
 </style>

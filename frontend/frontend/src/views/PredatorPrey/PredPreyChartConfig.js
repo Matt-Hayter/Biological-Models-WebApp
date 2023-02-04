@@ -1,5 +1,5 @@
 //Contains configuration for racer bar chart
-const chartData = {
+let chartData = {
   labels: ['Prey', 'Predator'],
   datasets: [{
     label: 'Weekly Sales',
@@ -13,7 +13,7 @@ const chartData = {
       'rgba(54, 162, 235, 1)',
     ],
     borderWidth: 1,
-    barThickness: 100
+    barThickness: 40,
   }]
 };
 //Insert data into config 
@@ -24,8 +24,15 @@ export default {
     indexAxis: "y",
     scales: {
       x: {
-        beginAtZero: true
+        beginAtZero: true,
+        max: 200
       },
-    }
+      y: {
+        grid: {
+            color: "rgba(0, 0, 0, 0)",
+        }
+      }
+    },
+    aspectRatio: 6
   }
 };
