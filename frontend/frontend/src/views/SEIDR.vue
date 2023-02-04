@@ -286,12 +286,10 @@ export default {
         const path = `http://localhost:5000/SEIDR/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        this.simParamData[0] = Number(response.data["preset_params"][0]); //alpha
-        this.simParamData[1] = Number(response.data["preset_params"][1]); //beta
-        this.simParamData[2] = Number(response.data["preset_params"][2]); //1/gamma
-        this.simParamData[3] = Number(response.data["preset_params"][3]); //1/epsilon
-        this.simParamData[4] = Number(response.data["preset_params"][4]); //E0
-        this.simParamData[5] = Number(response.data["preset_params"][5]); //I0
+        const presetParamsCount = 5;
+        for(let i = 0; i <= presetParamsCount; i++) {
+            this.simParamData[i] = Number(response.data["preset_params"][i])
+        }
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",

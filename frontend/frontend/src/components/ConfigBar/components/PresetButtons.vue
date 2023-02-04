@@ -96,18 +96,10 @@ export default {
       return this.userPresets
     },
     emptyPresetsSignedIn() {
-      if (this.userPresets.length == 0 && this.$store.state.activeUser.isActive) {
-        return true
-      } else {
-        return false
-      }
+      return this.userPresets.length == 0 && this.$store.state.activeUser.isActive
     },
     emptyPresetsSignedOut() {
-      if (this.userPresets.length == 0 && !this.$store.state.activeUser.isActive) {
-        return true
-      } else {
-        return false
-      }
+      return this.userPresets.length == 0 && !this.$store.state.activeUser.isActive
     }
   },
   methods: {
