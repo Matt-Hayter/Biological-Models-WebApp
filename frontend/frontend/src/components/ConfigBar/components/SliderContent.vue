@@ -20,9 +20,10 @@
       class="form-range"
       id="slider-range"
       :min="sliderData.min"
+      :value="currentSimParamData"
       :max="sliderData.max"
       :step="sliderData.step"
-      @input="$emit(sliderData.emitEventName, $event.target.value)"
+      @input="$emit(sliderData.emitEventName, Number($event.target.value))"
     />
   </div>
 </template>
@@ -32,6 +33,7 @@ export default {
   props: {
     //Slider's contents are inherited
     sliderData: Object,
+    currentSimParamData: Number
   },
   data() {
     return {};

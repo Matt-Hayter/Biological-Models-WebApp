@@ -1,4 +1,3 @@
-<!--eslint-disable-->
 <template>
   <div class="config-bar">
     <!--Enclose config within card-->
@@ -18,26 +17,26 @@
       </b-card-header>
       <b-card-body style="min-height: 68vh">
         <!--Render all param sliders with correct labels, for each tab-->
-        <div v-for="tabData in tabsData" :key="tabData.data.label">
+        <div v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
           <!--Only show tab data if tab is selected (isActive=true). Rendered nonetheless.-->
-          <div v-show="tabData.isActive" v-for="sliderData in tabData.data" :key="sliderData.label">
-            <!--Passes events emitted from slider up the inheritance hierachy-->
+          <div v-show="tabData.isActive" v-for="(sliderData, index2) in tabData.data" :key="sliderData.label">
+            <!--Pass each slider's data individually to slider component-->
             <SliderContent 
               :slider-data="sliderData"
+              :current-sim-param-data="simParamData[currentSliderIndex(index1,index2)]"
               v-on="$listeners"
               >
             </SliderContent>
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
-        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions"/>
+        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions" :user-presets="userPresets"/>
         </b-card-body>
     </b-card>
   </div>
 </template>
 
 <script>
-/*eslint-disable*/
 import SliderContent from "@/components/ConfigBar/components/SliderContent.vue";
 import SliderTicks from "@/components/ConfigBar/components/SliderTicks.vue";
 import PresetButtons from "@/components/ConfigBar/components/PresetButtons.vue";
@@ -47,6 +46,8 @@ export default {
     tabsData: Array,
     configTabTitles: Array,
     paramSuggestions: Array,
+    userPresets: Array,
+    simParamData: Array
   },
   components: {
     SliderContent,
@@ -57,6 +58,9 @@ export default {
     return {};
   },
   methods: {
+    currentSliderIndex(i1, i2) {
+      return i1*3+i2
+    },
     //Update tabsData[i].isActive props if tab changes
     onTabOneClick() {
       this.$emit("tabOneActive")

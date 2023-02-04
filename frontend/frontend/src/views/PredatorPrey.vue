@@ -1,19 +1,25 @@
-<!--eslint-disable-->
 <template>
   <div class="predator-prey-view">
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
+      @loadPresets="getAllPresets"
+      @initPresets="initPresets"
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
+      :sim-param-data="simParamData"
+      :user-presets="userPresets"
+      @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
+      @selectedPreset="onClickPreset"
+      @deletePreset="deletePreset"
       @changeN0="updateN0"
       @changea="updatea"
       @changeb="updateb"
-      @changeP0="updateN0"
+      @changeP0="updateP0"
       @changec="updatec"
       @changed="updated"
       @tabOneActive="activateTabOne"
@@ -60,17 +66,19 @@ export default {
   },
   data() {
     return {
-      //Data used for running simulations
-      simData: {
+      //Params initially at slider's min values
+      simParamData: [
         //Prey
-        N0: 0,
-        a: 0,
-        b: 0,
+        10, //N0
+        10, //a
+        1, //b
         //Predator
-        P0: 0,
-        c: 0,
-        d: 0,
-      },
+        10, //P0
+        10, //c
+        1, //d
+      ],
+      //Contains user's presets
+      userPresets: [],
       //Contains data for each paramater tab
       tabsData: [
         //Tab one
@@ -78,7 +86,7 @@ export default {
           data: [
             {
               label: "$N_{0}$",
-              //Name of event emitted to page component to update simData upon input
+              //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
               min: 10,
               max: 50,
@@ -106,7 +114,7 @@ export default {
           data: [
             {
               label: "$P_{0}$",
-              //Name of event emitted to page component to update simData upon input
+              //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
               min: 10,
               max: 50,
@@ -143,37 +151,43 @@ export default {
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
-      alertMessage: "",
+      alertMessage: null,
       alertVariant: "danger",
       showAlert: false,
       alertSecs: 4,
     };
   },
+  computed: {
+    //Access Vuex store containing active user info
+    activeUser() {
+      return this.$store.state.activeUser;
+    },
+  },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      this.simData.N0 = newN0;
-      console.log(this.simData.N0, "N0-change");
+      this.simParamData[0] = newN0;
+      console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      this.simData.a = newa;
-      console.log(this.simData.a, "a-change");
+      this.simParamData[1] = newa;
+      console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      this.simData.b = newb;
-      console.log(this.simData.b, "b-change");
+      this.simParamData[2] = newb;
+      console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      this.simData.P0 = newP0;
-      console.log(this.simData.P0, "P0-change");
+      this.simParamData[3] = newP0;
+      console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      this.simData.c = newc;
-      console.log(this.simData.c, "c-change");
+      this.simParamData[4] = newc;
+      console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      this.simData.d = newd;
-      console.log(this.simData.d, "d-change");
+      this.simParamData[5] = newd;
+      console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
@@ -205,19 +219,22 @@ export default {
       this.activeEmail = email;
     },
     //Triggered upon a preset save
-    handlePresetName(presetName) {
+    async handlePresetName(presetName) {
       const presetPayload = {
-        name: presetName,
-        data: this.simData,
+        //Active user's email for database identification
+        userEmail: this.$store.state.activeUser.email,
+        presetName: presetName,
+        presetData: this.simParamData,
       };
-      this.addPreset(presetPayload);
+      await this.addPreset(presetPayload);
+      this.getAllPresets(); //Update presets list
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/AddPreset";
-        const response = await axios.post(path, payload);
+        const path = "http://localhost:5000/PredPrey/AlterPresets";
+        await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${response.data["username"]} to Predator-Prey presets`,
+          message: `Added ${payload.presetName} to Predator-Prey presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
@@ -231,6 +248,90 @@ export default {
         console.log("Preset not added, server problem");
       }
     },
+    //Bring user's presets to client-side
+    async getAllPresets() {
+      try {
+        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const payload = {
+          userEmail: this.$store.state.activeUser.email
+        };
+        const response = await axios.post(path, payload) //Identify user with email
+        this.userPresets = response.data["presets"] //Update frontend presets with those in database
+        console.log("Loaded user's Pred-Prey presets")
+      } catch (error) {
+        //Only show alert upon failure
+        const failureAlertPayload = {
+          message: "Unable to fetch presets, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Presets not loaded, server problem");
+      }
+    },
+    //User has selected a preset from dropdown
+    onClickPreset(presetIndex) {
+      const payload = { //Unique data required to extract preset data
+        userEmail: this.$store.state.activeUser.email, //Identify user
+        presetid: this.userPresets[presetIndex][0] //Identify preset
+      }
+      this.getPresetParams(payload)
+    },
+    //Upon selecting a preset, get params from server
+    async getPresetParams(payload) {
+      try {
+        const path = "http://localhost:5000/PredPrey/PresetParams";
+        const response = await axios.post(path, payload);
+        //Set sim data (and slider values) to preset data
+        this.simParamData[0] = Number(response.data["preset_params"][0]); //N0
+        this.simParamData[1] = Number(response.data["preset_params"][1]); //a
+        this.simParamData[2] = Number(response.data["preset_params"][2]); //b
+        this.simParamData[3] = Number(response.data["preset_params"][3]); //P0
+        this.simParamData[4] = Number(response.data["preset_params"][4]); //c
+        this.simParamData[5] = Number(response.data["preset_params"][5]); //d
+        const successAlertPayload = {
+          message: `Loaded ${payload.presetName} preset`,
+          variant: "success",
+        };
+        this.showSubmissionAlert(successAlertPayload);
+        console.log("Preset added");
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to load preset, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Preset not loaded, server problem");
+      }
+    },
+    initPresets() { //Clear presets
+      this.userPresets = []
+    },
+    async deletePreset(presetIndex) {
+      try {
+        const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
+        const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
+        await axios.delete(path);
+        const deletedAlertPayload = {
+          message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
+          variant: "dark",
+        };
+        this.getAllPresets();
+        this.showSubmissionAlert(deletedAlertPayload);
+        console.log("Preset deleted");
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to delete preset, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Preset not loaded, server problem");
+      }
+    },
+  },
+  mounted() {
+    if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
+      this.getAllPresets()
+    }
   },
 };
 </script>
