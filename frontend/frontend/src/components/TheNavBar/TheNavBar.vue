@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Biological Models Visualiser</a>
       <div class="collapse navbar-collapse" id="navbarColor02">
@@ -34,14 +34,14 @@
             >
               <b-dropdown-group header="Standard">
                 <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item @click="onSEIRClick">SEIR Model</b-dropdown-item>
+                <b-dropdown-item @click="onSIRClick">SIR Model</b-dropdown-item>
               </b-dropdown-group>
               <br>
               <b-dropdown-group header="Extended">
                 <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item class="tex2jax_ignore" @click="onSEI3RDClick">
+                <b-dropdown-item class="tex2jax_ignore" @click="onSEIDRClick">
                   <template id="#text">
-                    SEI<sup>3</sup>RD Model (COVID)
+                    SEIDR Model (COVID)
                   </template>
                 </b-dropdown-item>
               </b-dropdown-group>
@@ -86,17 +86,15 @@ export default {
     },
     onPredPreyClick() {
       this.$router.push("/PredatorPrey");
-      this.VueMathjax.typeset();
     },
     onCompSpecClick() {
       this.$router.push("/CompetingSpecies");
-      this.VueMathjax.typeset();
     },
-    onSEIRClick() {
-      this.$router.push("/SEIR");
+    onSIRClick() {
+      this.$router.push("/SIR");
     },
-    onSEI3RDClick() {
-      this.$router.push("/SEI3RD");
+    onSEIDRClick() {
+      this.$router.push("/SEIDR");
     },
     //Emitted from account dropdown form component
     hideDropdownForm() {

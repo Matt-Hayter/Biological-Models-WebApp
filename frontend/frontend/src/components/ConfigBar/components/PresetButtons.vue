@@ -1,5 +1,5 @@
 <template>
-  <div class="preset-buttons" style="display: flex; flex-direction: column">
+  <div class="preset-buttons">
     <div class="preset-save-list">
       <b-button-group class="preset-button-bar">
         <!--Save button-->
@@ -7,7 +7,7 @@
           Save <b-icon icon="box-arrow-in-down" font-scale="1.4" shift-v="1.5"></b-icon>
         </b-button>
         <!--Presets dropdown-->
-        <b-dropdown dropright variant="info" no-caret @show="onClickDropdown">
+        <b-dropdown dropup variant="info" no-caret @show="onClickDropdown">
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
           </template>
@@ -154,11 +154,15 @@ export default {
 </script>
 
 <style scoped>
+.preset-buttons {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 1em;
+}
 .preset-button-bar {
   padding-left: 0.5em;
   padding-right: 0.5em;
-  padding-top: 2.7em;
-  padding-bottom: 1em;
 }
 .popover-list {
   margin-bottom: -1em;

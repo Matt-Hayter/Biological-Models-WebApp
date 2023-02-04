@@ -53,7 +53,7 @@ export default {
 .tick-line {
   width: 0.8px;
   background-color: rgb(127, 127, 127);
-  height: 7px;
+  height: 5px;
   margin: auto;
 }
 </style>

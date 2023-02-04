@@ -2,8 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import PredatorPrey from "@/views/PredatorPrey.vue";
 import CompetingSpecies from "@/views/CompetingSpecies.vue";
-import SEIR from "@/views/SEIR.vue";
-import SEI3RD from "@/views/SEI3RD.vue";
+import SIR from "@/views/SIR.vue";
+import SEIDR from "@/views/SEIDR.vue";
 
 Vue.use(VueRouter);
 
@@ -19,14 +19,14 @@ const routes = [
     component: CompetingSpecies,
   },
   {
-    path: "/SEIR",
-    name: "SEIR",
-    component: SEIR,
+    path: "/SIR",
+    name: "SIR",
+    component: SIR,
   },
   {
-    path: "/SEI3RD",
-    name: "SEI3RD",
-    component: SEI3RD,
+    path: "/SEIDR",
+    name: "SEIDR",
+    component: SEIDR,
   },
 ];
 

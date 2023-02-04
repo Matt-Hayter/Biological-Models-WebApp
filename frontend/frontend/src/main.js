@@ -5,7 +5,9 @@ import router from "./router";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
-import VueMathjax from "vue-mathjax";
+//Katex module and stylesheet for equations
+import VueKatex from "vue-katex";
+import "katex/dist/katex.min.css";
 
 import { store } from "./store";
 
@@ -13,7 +15,7 @@ Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.use(VueMathjax);
+Vue.use(VueKatex)
 
 new Vue({
   store,

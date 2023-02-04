@@ -3,13 +3,13 @@
     <label
       for="slider-range"
       class="form-label d-flex"
-      style="font-size: 1.5em; float: left; margin-bottom: 0"
+      style="font-size: 1.4em; float: left; margin-bottom: 0"
     >
-      <vue-mathjax :formula="sliderData.label"></vue-mathjax>
+      <katex-element :expression="sliderData.label"/>
       <b-icon
         icon="info-circle"
-        scale="0.7"
-        shift-v="-4em"
+        scale="0.75"
+        shift-v="-5em"
         variant="info"
         style="margin-left: 0.5em"
       />
@@ -17,7 +17,7 @@
     <!--Bind inherited slider data to required range attributes-->
     <input
       type="range"
-      class="form-range"
+      class="form-range h-70"
       id="slider-range"
       :min="sliderData.min"
       :value="currentSimParamData"
