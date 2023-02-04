@@ -1,4 +1,5 @@
 from biological_models_app import db
+from biological_models_app.pred_prey.simulation import runPredPreySim
 from flask import jsonify, request, Blueprint
 
 pred_prey = Blueprint("pred_prey", __name__, url_prefix="/PredPrey")
@@ -61,4 +62,13 @@ def PredPrey_preset_params(preset_id):
     response["preset_params"] = cursor.fetchone()
     cursor.close()
     response["message"] = "Grabbed data for selected pred prey preset"
+    return jsonify(response)
+
+@pred_prey.route("/RunSim", methods=["POST"])
+def run_PredPrey_sim():
+    response = {"server status": "success"}
+    sim_params = request.get_json().get("simParams")
+    #Run simulation and return data
+    response["sim_data"], response["sim_max_val"] = runPredPreySim(sim_params)
+    response["message"] = "Ran simulation successfully"
     return jsonify(response)

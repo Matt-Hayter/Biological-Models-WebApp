@@ -90,6 +90,8 @@ export default {
       ],
       N0: 10, //For use in reactive bar chart. Equivalent values to above array
       P0: 10,
+      simData: null, //Array of arrays, containing all sim data when obtained
+      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -349,11 +351,32 @@ export default {
         this.runIcon = "stop"
         this.runVariant = "danger"
         this.runText = "Stop"
+        this.runSim()
       } else {
         this.simRunning = false
         this.runIcon = "play"
         this.runVariant = "success"
         this.runText = "Run Simulation"
+      }
+    },
+    async runSim() {
+      try {
+        const path = "http://localhost:5000/PredPrey/RunSim"
+        const payload = {
+          simParams: this.simParamData
+        }
+        const response = await axios.post(path, payload)
+        this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
+        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        console.log(this.simData)
+        console.log(this.simMaxVal)
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to run simulation, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Simulation error, server problem");
       }
     }
   },
