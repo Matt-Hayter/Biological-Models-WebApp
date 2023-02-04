@@ -49,7 +49,13 @@
       </div>
       <div class="sim-visualisation-section">
         <!--Use configuration file for bar chart-->
-        <RacerBarChart :chartConfig="predPreyChartConfig" :initialConditions="initialConditions" />
+        <RacerBarChart
+          :chartConfig="predPreyChartConfig"
+          :initialConditions="initialConditions"
+          :simRunning="simRunning"
+          :simData="simData"
+          :simMaxVal="simMaxVal"
+        />
       </div>
     </div>
     <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
@@ -80,16 +86,17 @@ export default {
       //Params initially at slider's min values
       simParamData: [
         //Prey
-        10, //N0
+        1, //N0
         10, //a
         1, //b
         //Predator
-        10, //P0
+        1, //P0
         10, //c
         1, //d
       ],
-      N0: 10, //For use in reactive bar chart. Equivalent values to above array
-      P0: 10,
+      N0: 1, //For use in reactive bar chart. Equivalent values to above array
+      P0: 1,
+      simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
       //Contains user's presets
@@ -103,9 +110,9 @@ export default {
               label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
-              min: 10,
-              max: 50,
-              step: 5,
+              min: 1,
+              max: 10,
+              step: 1,
             },
             {
               label: "a",
@@ -131,9 +138,9 @@ export default {
               label: "P_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
-              min: 10,
-              max: 50,
-              step: 5,
+              min: 1,
+              max: 10,
+              step: 1,
             },
             {
               label: "c",
@@ -173,7 +180,6 @@ export default {
       //For data visualisation
       predPreyChartConfig,
       //Default run simulation button config
-      simRunning: false,
       runIcon: "play",
       runVariant: "success",
       runText: "Run Simulation",
@@ -347,7 +353,6 @@ export default {
     },
     onClickRun() { //Run/stop simulation button pressed
       if (this.simRunning == false) {
-        this.simRunning = true
         this.runIcon = "stop"
         this.runVariant = "danger"
         this.runText = "Stop"
@@ -367,9 +372,9 @@ export default {
         }
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
-        console.log(this.simData)
-        console.log(this.simMaxVal)
+        this.simMaxVal = Number(response.data["sim_max_val"]) //Max value, for upper bound of visualisation's axis
+        this.simRunning = true //Signals to start visualising simulation
+        console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",

@@ -13,7 +13,10 @@ ChartJS.register(BarController, BarElement, CategoryScale, LinearScale)
 export default {
   props: {
     chartConfig: Object,
-    initialConditions: Array, //Given in the order displayed in chart
+    initialConditions: Array, //Listed in the order displayed sequentially in chart
+    simRunning: Boolean,
+    simData: Array,
+    simMaxVal: Number
   },
   data() {
     return {
@@ -27,12 +30,21 @@ export default {
       }
       this.racerChart.update();
     },
-    // displaySimulation() {
-    //   // setInterval(() => {
-    //   //   //this.chartConfig.data.datasets[0].data[0] += 0.01
-    //   //   racerChart.update();
-    //   // }, 100)
-    // }
+    simRunning: function(value) {
+      console.log(this.simData)
+      this.chartConfig.options.scales.x.max = this.simMaxVal //Resize bar plot to fit sim
+      this.racerChart.update();
+      //Visualise simulation if simRunning turns to true
+      if (value) {
+        let step = 0 //For all simulation time steps
+        setInterval(() => {
+          //Set each chart data element to it's corresponding simulation data index, on each iteration
+          for (let i = 0; i < this.simData.length; i++)
+          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          this.racerChart.update();
+        }, 10)
+      }
+    }
   },
   mounted() {
     //Created chart.js bar plot, using inherited configuration
