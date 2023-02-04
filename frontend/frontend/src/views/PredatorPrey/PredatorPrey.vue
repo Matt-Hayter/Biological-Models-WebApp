@@ -47,6 +47,10 @@
           </b-card-text>
         </ModelInfo>
       </div>
+      <div class="sim-visualisation-section">
+        <!--Use configuration file for bar chart-->
+        <RacerBarChart :chartConfig="predPreyChartConfig" />
+      </div>
     </div>
   </div>
 </template>
@@ -57,6 +61,8 @@ import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
+import RacerBarChart from "@/components/common/RacerBarChart.vue";
+import predPreyChartConfig from "./PredPreyChartConfig.js";
 
 export default {
   components: {
@@ -64,6 +70,7 @@ export default {
     ConfigBar,
     ModelInfo,
     TempAlert,
+    RacerBarChart,
   },
   data() {
     return {
@@ -156,6 +163,8 @@ export default {
       alertVariant: "danger",
       showAlert: false,
       alertSecs: 4,
+      //For data visualisation
+      predPreyChartConfig,
     };
   },
   computed: {
