@@ -29,7 +29,7 @@ export default {
 .chart-container {
   width: 100%;
   height: 100%;
-  aspect-ratio: 1.9;
+  aspect-ratio: 2;
   padding: 20px;
   background: white;
 }

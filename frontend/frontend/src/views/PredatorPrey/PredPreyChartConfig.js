@@ -1,28 +1,19 @@
 //Contains configuration for racer bar chart
 const chartData = {
-  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  labels: ['Prey', 'Predator'],
   datasets: [{
     label: 'Weekly Sales',
-    data: [18, 12, 6, 9, 12, 3, 9],
+    data: [18, 12],
     backgroundColor: [
       'rgba(255, 26, 104, 0.2)',
       'rgba(54, 162, 235, 0.2)',
-      'rgba(255, 206, 86, 0.2)',
-      'rgba(75, 192, 192, 0.2)',
-      'rgba(153, 102, 255, 0.2)',
-      'rgba(255, 159, 64, 0.2)',
-      'rgba(0, 0, 0, 0.2)'
     ],
     borderColor: [
       'rgba(255, 26, 104, 1)',
       'rgba(54, 162, 235, 1)',
-      'rgba(255, 206, 86, 1)',
-      'rgba(75, 192, 192, 1)',
-      'rgba(153, 102, 255, 1)',
-      'rgba(255, 159, 64, 1)',
-      'rgba(0, 0, 0, 1)'
     ],
-    borderWidth: 2
+    borderWidth: 1,
+    barThickness: 100
   }]
 };
 //Insert data into config 
@@ -30,10 +21,11 @@ export default {
   type: 'bar',
   data: chartData,
   options: {
+    indexAxis: "y",
     scales: {
-      y: {
+      x: {
         beginAtZero: true
-      }
+      },
     }
   }
 };
