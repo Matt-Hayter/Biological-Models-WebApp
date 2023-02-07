@@ -13,7 +13,7 @@ let chartData = {
       'rgba(54, 162, 235, 1)',
     ],
     borderWidth: 1,
-    barThickness: 40,
+    barPercentage: 0.9,
   }]
 };
 //Insert data into config 

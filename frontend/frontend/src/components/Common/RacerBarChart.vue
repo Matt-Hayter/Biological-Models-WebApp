@@ -31,7 +31,6 @@ export default {
       this.racerChart.update();
     },
     simRunning: function(value) {
-      console.log(this.simData)
       this.chartConfig.options.scales.x.max = this.simMaxVal //Resize bar plot to fit sim
       this.racerChart.update();
       //Visualise simulation if simRunning turns to true
@@ -59,6 +58,6 @@ export default {
   background: white;
   position: relative;
   height: 50vh;
-  width: 67vw;
+  width: 100%;
 }
 </style>

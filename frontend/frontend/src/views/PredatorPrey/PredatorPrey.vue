@@ -394,6 +394,9 @@ export default {
 </script>
 
 <style scoped>
+.predator-prey-view {
+  min-width: 1050px;
+}
 .top-section {
   display: flex;
   flex-direction: column;
