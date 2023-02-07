@@ -153,8 +153,8 @@ export default {
 .preset-buttons {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: 1em;
+  position: relative;
+  padding-top: 2.2em;
 }
 .preset-button-bar {
   padding-left: 0.5em;

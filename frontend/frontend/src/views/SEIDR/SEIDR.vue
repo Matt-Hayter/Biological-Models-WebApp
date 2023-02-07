@@ -1,5 +1,5 @@
 <template>
-  <div class="predator-prey-view">
+  <div class="SEIDR-view">
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
@@ -339,6 +339,9 @@ export default {
 </script>
 
 <style scoped>
+.SEIDR-view {
+  min-width: 1050px;
+}
 .top-section {
   display: flex;
   flex-direction: column;

@@ -395,7 +395,7 @@ export default {
 
 <style scoped>
 .predator-prey-view {
-  min-width: 1050px;
+  min-width: 1024px;
 }
 .top-section {
   display: flex;

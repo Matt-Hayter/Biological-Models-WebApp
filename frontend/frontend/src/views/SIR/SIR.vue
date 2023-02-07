@@ -271,6 +271,9 @@ export default {
 </script>
 
 <style scoped>
+.SIR-view {
+  min-width: 1024px;
+}
 .top-section {
   display: flex;
   flex-direction: column;
