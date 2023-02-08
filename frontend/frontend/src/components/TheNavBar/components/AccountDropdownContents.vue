@@ -366,13 +366,40 @@ export default {
       this.invalidSignInAlert.showAlert = false;
     },
     initSignInForm() {
-      this.signIn.formEmail = "";
-      this.signIn.formPassword = "";
+      this.signIn.formEmail = null;
+      this.signIn.formPassword = null;
     },
     initSignUpForm() {
-      this.signUp.formUsername = "";
-      this.signUp.formEmail = "";
-      this.signUp.formPassword = "";
+      this.signUp.formUsername = null;
+      this.signUp.formEmail = null;
+      this.signUp.formPassword = null;
+    },
+    //Update Vuex store state with signed in user's data
+    activateUserState(response) {
+      const userStatePayload = {
+        username: response.data["username"],
+        email: response.data["email"],
+        isActive: true,
+      }
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
+    },
+    //Update Vuex store state with signed in user's data
+    activateUserState(response) {
+      const userStatePayload = {
+        username: response.data["username"],
+        email: response.data["email"],
+        isActive: true,
+      }
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
+    },
+    //Update Vuex store state with signed in user's data
+    activateUserState(response) {
+      const userStatePayload = {
+        username: response.data["username"],
+        email: response.data["email"],
+        isActive: true,
+      }
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
     },
     //Update Vuex store state with signed in user's data
     activateUserState(response) {

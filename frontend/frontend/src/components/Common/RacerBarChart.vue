@@ -24,22 +24,24 @@ export default {
     };
   },
   watch: {
-    initialConditions: function(value) { //Update initial bar lengths upon user param change
-      for(let i = 0; i < value.length; i++) {
+    initialConditions: function(newInitialConditions) { //Update initial bar lengths upon user param change
+      for(let i = 0; i < newInitialConditions.length; i++) {
         this.chartConfig.data.datasets[0].data[i] = this.initialConditions[i]
       }
       this.racerChart.update();
     },
-    simRunning: function(value) {
+    simRunning: function(isSimRunning) {
+      console.log(this.simData)
       this.chartConfig.options.scales.x.max = this.simMaxVal //Resize bar plot to fit sim
       this.racerChart.update();
       //Visualise simulation if simRunning turns to true
-      if (value) {
+      if (isSimRunning) {
         let step = 0 //For all simulation time steps
         setInterval(() => {
           //Set each chart data element to it's corresponding simulation data index, on each iteration
-          for (let i = 0; i < this.simData.length; i++)
-          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          for (let i = 0; i < this.simData.length; i++) {
+              this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          }
           this.racerChart.update();
         }, 10)
       }

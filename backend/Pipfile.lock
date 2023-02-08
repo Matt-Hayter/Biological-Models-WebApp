@@ -51,6 +51,10 @@
             "markers": "python_version >= '3.6'",
             "version": "==21.2.0"
         },
+        "biological-models-app": {
+            "editable": true,
+            "path": "."
+        },
         "cffi": {
             "hashes": [
                 "sha256:00a9ed42e88df81ffae7a8ab6d9356b371399b91dbdf0c3cb1e84c03a13aceb5",
@@ -135,6 +139,14 @@
             ],
             "markers": "platform_system == 'Windows'",
             "version": "==0.4.6"
+        },
+        "datetime": {
+            "hashes": [
+                "sha256:20e4e0ff01e07d2e8de863e7e2b63b1bde6ec049098e244ab89a2c4bc4342ac1",
+                "sha256:22d3622eec9cfe73b16e5c5ff5f05d8c1154e32f01e56560f3d20b834ceea2d7"
+            ],
+            "index": "pypi",
+            "version": "==5.0"
         },
         "flask": {
             "hashes": [
