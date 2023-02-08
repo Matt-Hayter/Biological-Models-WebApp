@@ -340,6 +340,7 @@ export default {
 
 <style scoped>
 .SEIDR-view {
+  /*Slightly larger to encompass longer equations*/
   min-width: 1050px;
 }
 .top-section {
