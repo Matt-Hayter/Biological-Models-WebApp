@@ -51,10 +51,6 @@
             "markers": "python_version >= '3.6'",
             "version": "==21.2.0"
         },
-        "biological-models-app": {
-            "editable": true,
-            "path": "."
-        },
         "cffi": {
             "hashes": [
                 "sha256:00a9ed42e88df81ffae7a8ab6d9356b371399b91dbdf0c3cb1e84c03a13aceb5",
