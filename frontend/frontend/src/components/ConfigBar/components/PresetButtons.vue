@@ -103,7 +103,7 @@ export default {
       return !this.userPresets.length && this.$store.state.activeUser.isActive
     },
     emptyPresetsSignedOut() {
-      return this.userPresets.length == 0 && !this.$store.state.activeUser.isActive
+      return !this.userPresets.length && !this.$store.state.activeUser.isActive
     }
   },
   methods: {
