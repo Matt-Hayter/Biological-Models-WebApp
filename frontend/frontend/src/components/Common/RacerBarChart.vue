@@ -39,8 +39,9 @@ export default {
         let step = 0 //For all simulation time steps
         setInterval(() => {
           //Set each chart data element to it's corresponding simulation data index, on each iteration
-          for (let i = 0; i < this.simData.length; i++)
-          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          for (let i = 0; i < this.simData.length; i++) {
+              this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          }
           this.racerChart.update();
         }, 10)
       }
