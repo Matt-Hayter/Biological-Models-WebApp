@@ -1,4 +1,3 @@
-<!-- eslint-disable-->
 <template>
   <div class="model-info-button">
     <!--Mount collapse bar to button-->

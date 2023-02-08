@@ -392,6 +392,15 @@ export default {
       }
       this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
     },
+    //Update Vuex store state with signed in user's data
+    activateUserState(response) {
+      const userStatePayload = {
+        username: response.data["username"],
+        email: response.data["email"],
+        isActive: true,
+      }
+      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
+    },
   },
 };
 </script>

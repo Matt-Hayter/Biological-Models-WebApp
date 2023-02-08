@@ -16,12 +16,12 @@
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
-      @changeAlpha="updateAlpha"
-      @changeBeta="updateBeta"
-      @changeRecipGamma="updateRecipGamma"
-      @changeRecipEpsilon="updateRecipEpsilon"
-      @changeE0="updateE0"
-      @changeI0="updateI0"
+      @changeN0="updateN0"
+      @changea="updatea"
+      @changeb="updateb"
+      @changeP0="updateP0"
+      @changec="updatec"
+      @changed="updated"
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
@@ -30,21 +30,12 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">SEIDR Model</h4>
+          <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dS}{dt}=\Lambda-\mu S - \beta \dfrac{SI}{N}"/>
+            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
             <br>
             <br>
-            <katex-element expression="\Large\dfrac{dE}{dt}=\beta \dfrac{SI}{N} - (\mu + \epsilon)E"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dI}{dt}=\epsilon E - (\gamma + \mu + \alpha)I"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dD}{dt}=\alpha I"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dR}{dt}=\gamma I - \mu R"/>
+            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)"/>
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
@@ -56,7 +47,20 @@
           </b-card-text>
         </ModelInfo>
       </div>
+      <div class="sim-visualisation-section">
+        <!--Use configuration file for bar chart-->
+        <RacerBarChart
+          :chartConfig="predPreyChartConfig"
+          :initialConditions="initialConditions"
+          :simRunning="simRunning"
+          :simData="simData"
+          :simMaxVal="simMaxVal"
+        />
+      </div>
     </div>
+    <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
+      {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
+    </b-button>
   </div>
 </template>
 
@@ -66,6 +70,8 @@ import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
+import RacerBarChart from "@/components/common/RacerBarChart.vue";
+import predPreyChartConfig from "./PredPreyChartConfig.js";
 
 export default {
   components: {
@@ -73,20 +79,26 @@ export default {
     ConfigBar,
     ModelInfo,
     TempAlert,
+    RacerBarChart,
   },
   data() {
     return {
       //Params initially at slider's min values
       simParamData: [
-        //Rates
-        10, //alpha
-        10, //beta
-        1, //1/gamma
-        10, //1/epsilon
-        //Initial conditions
-        10, //E0
-        1, //I0
+        //Prey
+        1, //N0
+        10, //a
+        1, //b
+        //Predator
+        1, //P0
+        10, //c
+        1, //d
       ],
+      N0: 1, //For use in reactive bar chart. Equivalent values to above array
+      P0: 1,
+      simRunning: false,
+      simData: null, //Array of arrays, containing all sim data when obtained
+      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -95,34 +107,26 @@ export default {
         {
           data: [
             {
-              label: "\\alpha",
+              label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeAlpha",
-              min: 10,
-              max: 50,
-              step: 5,
-            },
-            {
-              label: "\\beta",
-              emitEventName: "changeBeta",
-              min: 10,
-              max: 50,
-              step: 5,
-            },
-            {
-              label: "1/ \\gamma",
-              emitEventName: "changeRecipGamma",
+              emitEventName: "changeN0",
               min: 1,
               max: 10,
               step: 1,
             },
             {
-              label: "1/ \\epsilon",
-              //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeRecipEpsilon",
+              label: "a",
+              emitEventName: "changea",
               min: 10,
               max: 50,
               step: 5,
+            },
+            {
+              label: "b",
+              emitEventName: "changeb",
+              min: 1,
+              max: 10,
+              step: 1,
             },
           ],
           isActive: true,
@@ -131,15 +135,23 @@ export default {
         {
           data: [
             {
-              label: "E_{0}",
-              emitEventName: "changeE0",
+              label: "P_{0}",
+              //Name of event emitted to page component to update simParamData upon input
+              emitEventName: "changeP0",
+              min: 1,
+              max: 10,
+              step: 1,
+            },
+            {
+              label: "c",
+              emitEventName: "changec",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "I_{0}",
-              emitEventName: "changeI0",
+              label: "d",
+              emitEventName: "changed",
               min: 1,
               max: 10,
               step: 1,
@@ -148,7 +160,7 @@ export default {
           isActive: false,
         },
       ],
-      configTabTitles: ["Rates", "Initial Conditions"],
+      configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
         {
           id: 1,
@@ -165,6 +177,12 @@ export default {
       alertVariant: "danger",
       showAlert: false,
       alertSecs: 4,
+      //For data visualisation
+      predPreyChartConfig,
+      //Default run simulation button config
+      runIcon: "play",
+      runVariant: "success",
+      runText: "Run Simulation",
     };
   },
   computed: {
@@ -172,43 +190,48 @@ export default {
     activeUser() {
       return this.$store.state.activeUser;
     },
+    initialConditions() { //Array inherited by bar chart for reactive display
+      return [this.N0, this.P0]
+    }
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
-    updateAlpha(newAlpha) {
-      this.simParamData[0] = newAlpha;
-      console.log(this.simParamData[0], "alpha-change");
+    updateN0(newN0) {
+      this.simParamData[0] = newN0;
+      this.N0 = newN0;
+      console.log(this.simParamData[0], "N0-change");
     },
-    updateBeta(newBeta) {
-      this.simParamData[1] = newBeta;
-      console.log(this.simParamData[1], "beta-change");
+    updatea(newa) {
+      this.simParamData[1] = newa;
+      console.log(this.simParamData[1], "a-change");
     },
-    updateRecipGamma(newRecipGamma) {
-      this.simParamData[2] = newRecipGamma;
-      console.log(this.simParamData[2], "1/gamma-change");
+    updateb(newb) {
+      this.simParamData[2] = newb;
+      console.log(this.simParamData[2], "b-change");
     },
-    updateRecipEpsilon(newRecipEpsilon) {
-      this.simParamData[3] = newRecipEpsilon;
-      console.log(this.simParamData[3], "1/epsilon-change");
+    updateP0(newP0) {
+      this.simParamData[3] = newP0;
+      this.P0 = newP0;
+      console.log(this.simParamData[3], "P0-change");
     },
-    updateE0(newE0) {
-      this.simParamData[4] = newE0;
-      console.log(this.simParamData[4], "E0-change");
+    updatec(newc) {
+      this.simParamData[4] = newc;
+      console.log(this.simParamData[4], "c-change");
     },
-    updateI0(newI0) {
-      this.simParamData[5] = newI0;
-      console.log(this.simParamData[5], "I0-change");
+    updated(newd) {
+      this.simParamData[5] = newd;
+      console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
-      console.log("opened params tab");
+      console.log("opened prey tab");
     },
     activateTabTwo() {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
-      console.log("opened initial conditions tab");
+      console.log("opened predator tab");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -241,11 +264,10 @@ export default {
     },
     async addPreset(payload) {
       try {
-        console.log(payload.presetData)
-        const path = "http://localhost:5000/SEIDR/AlterPresets";
+        const path = "http://localhost:5000/PredPrey/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${payload.presetName} to SEIDR presets`,
+          message: `Added ${payload.presetName} to Predator-Prey presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
@@ -262,13 +284,13 @@ export default {
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/SEIDR/AllPresets";
+        const path = "http://localhost:5000/PredPrey/AllPresets";
         const payload = {
           userEmail: this.$store.state.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's SEIDR presets")
+        console.log("Loaded user's Pred-Prey presets")
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {
@@ -283,15 +305,13 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/SEIDR/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        this.simParamData[0] = Number(response.data["preset_params"][0]); //alpha
-        this.simParamData[1] = Number(response.data["preset_params"][1]); //beta
-        this.simParamData[2] = Number(response.data["preset_params"][2]); //1/gamma
-        this.simParamData[3] = Number(response.data["preset_params"][3]); //1/epsilon
-        this.simParamData[4] = Number(response.data["preset_params"][4]); //E0
-        this.simParamData[5] = Number(response.data["preset_params"][5]); //I0
+        const presetParamsCount = 5;
+        for(let i = 0; i <= presetParamsCount; i++) {
+            this.simParamData[i] = Number(response.data["preset_params"][i])
+        }
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -313,7 +333,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
-        const path = `http://localhost:5000/SEIDR/AlterPresets/${presetid}`;
+        const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
@@ -331,6 +351,39 @@ export default {
         console.log("Preset not loaded, server problem");
       }
     },
+    onClickRun() { //Run/stop simulation button pressed
+      if (this.simRunning == false) {
+        this.runIcon = "stop"
+        this.runVariant = "danger"
+        this.runText = "Stop"
+        this.runSim()
+      } else {
+        this.simRunning = false
+        this.runIcon = "play"
+        this.runVariant = "success"
+        this.runText = "Run Simulation"
+      }
+    },
+    async runSim() {
+      try {
+        const path = "http://localhost:5000/PredPrey/RunSim"
+        const payload = {
+          simParams: this.simParamData
+        }
+        const response = await axios.post(path, payload)
+        this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
+        this.simMaxVal = Number(response.data["sim_max_val"]) //Max value, for upper bound of visualisation's axis
+        this.simRunning = true //Signals to start visualising simulation
+        console.log("Pred Prey simulation successfully run at server")
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to run simulation, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Simulation error, server problem");
+      }
+    }
   },
   mounted() {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
@@ -351,7 +404,13 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 20em;
+  padding-left: 9em;
+}
+.run-button {
+  position: fixed;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  bottom: 0;
+  right: 0;
 }
 </style>
-

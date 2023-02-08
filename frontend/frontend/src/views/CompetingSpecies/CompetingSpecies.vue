@@ -1,5 +1,5 @@
 <template>
-  <div class="predator-prey-view">
+  <div class="competing-species-view">
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
@@ -16,12 +16,14 @@
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
-      @changeN0="updateN0"
-      @changea="updatea"
-      @changeb="updateb"
-      @changeP0="updateP0"
-      @changec="updatec"
-      @changed="updated"
+      @changeN1_0="updateN1_0"
+      @changer1="updater1"
+      @changeK1="updateK1"
+      @changea1="updatea1"
+      @changeN2_0="updateN2_0"
+      @changer2="updater2"
+      @changeK2="updateK2"
+      @changea2="updatea2"
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
@@ -30,12 +32,12 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
+          <h4 class="tex2jax_ignore" style="float: left">Two Competing Species Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
+            <katex-element expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})" />
             <br>
             <br>
-            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)"/>
+            <katex-element expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})" />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
@@ -69,14 +71,16 @@ export default {
     return {
       //Params initially at slider's min values
       simParamData: [
-        //Prey
-        10, //N0
-        10, //a
-        1, //b
-        //Predator
-        10, //P0
-        10, //c
-        1, //d
+        //Species 1
+        10, //N1_0
+        10, //r1
+        1, //K1
+        1, //a1
+        //Species 2
+        10, //N2_0
+        10, //r2
+        1, //K2
+        1, //a2
       ],
       //Contains user's presets
       userPresets: [],
@@ -86,23 +90,30 @@ export default {
         {
           data: [
             {
-              label: "N_{0}",
+              label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeN0",
+              emitEventName: "changeN1_0",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "a",
-              emitEventName: "changea",
+              label: "r_{1}",
+              emitEventName: "changer1",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "b",
-              emitEventName: "changeb",
+              label: "K_{1}",
+              emitEventName: "changeK1",
+              min: 1,
+              max: 10,
+              step: 1,
+            },
+            {
+              label: "a_{1}",
+              emitEventName: "changea1",
               min: 1,
               max: 10,
               step: 1,
@@ -113,24 +124,31 @@ export default {
         //Tab two
         {
           data: [
-            {
-              label: "P_{0}",
+          {
+              label: "N_{2,0}",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeP0",
+              emitEventName: "changeN2_0",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "c",
-              emitEventName: "changec",
+              label: "r_{2}",
+              emitEventName: "changer2",
               min: 10,
               max: 50,
               step: 5,
             },
             {
-              label: "d",
-              emitEventName: "changed",
+              label: "K_{2}",
+              emitEventName: "changeK2",
+              min: 1,
+              max: 10,
+              step: 1,
+            },
+            {
+              label: "a_{2}",
+              emitEventName: "changea2",
               min: 1,
               max: 10,
               step: 1,
@@ -139,7 +157,7 @@ export default {
           isActive: false,
         },
       ],
-      configTabTitles: ["Prey", "Predator"],
+      configTabTitles: ["Species 1", "Species 2"],
       paramSuggestions: [
         {
           id: 1,
@@ -166,40 +184,48 @@ export default {
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
-    updateN0(newN0) {
-      this.simParamData[0] = newN0;
-      console.log(this.simParamData[0], "N0-change");
+    updateN1_0(newN1_0) {
+      this.simParamData[0] = newN1_0;
+      console.log(this.simParamData[0], "N1_0-change");
     },
-    updatea(newa) {
-      this.simParamData[1] = newa;
-      console.log(this.simParamData[1], "a-change");
+    updater1(newr1) {
+      this.simParamData[1] = newr1;
+      console.log(this.simParamData[1], "r1-change");
     },
-    updateb(newb) {
-      this.simParamData[2] = newb;
-      console.log(this.simParamData[2], "b-change");
+    updateK1(newK1) {
+      this.simParamData[2] = newK1;
+      console.log(this.simParamData[2], "K1-change");
     },
-    updateP0(newP0) {
-      this.simParamData[3] = newP0;
-      console.log(this.simParamData[3], "P0-change");
+    updatea1(newa1) {
+      this.simParamData[3] = newa1;
+      console.log(this.simParamData[3], "a1-change");
     },
-    updatec(newc) {
-      this.simParamData[4] = newc;
-      console.log(this.simParamData[4], "c-change");
+    updateN2_0(newN2_0) {
+      this.simParamData[4] = newN2_0;
+      console.log(this.simParamData[4], "N2_0-change");
     },
-    updated(newd) {
-      this.simParamData[5] = newd;
-      console.log(this.simParamData[5], "d-change");
+    updater2(newr2) {
+      this.simParamData[5] = newr2;
+      console.log(this.simParamData[5], "r2-change");
+    },
+    updateK2(newK2) {
+      this.simParamData[6] = newK2;
+      console.log(this.simParamData[6], "K2-change");
+    },
+    updatea2(newa2) {
+      this.simParamData[7] = newa2;
+      console.log(this.simParamData[7], "a2-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
-      console.log("opened prey tab");
+      console.log("opened species 1 tab");
     },
     activateTabTwo() {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
-      console.log("opened predator tab");
+      console.log("opened species 2 tab");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -232,27 +258,27 @@ export default {
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/PredPrey/AlterPresets";
+        const path = "http://localhost:5000/CompetingSpecies/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${payload.presetName} to Predator-Prey presets`,
+          message: `Saved ${payload.presetName} to Competing Species presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
-        console.log("Preset added");
+        console.log("Preset saved");
       } catch (error) {
         const failureAlertPayload = {
           message: "Unable to save preset, failed repsonse from server",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        console.log("Preset not saved, server problem");
       }
     },
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const path = "http://localhost:5000/CompetingSpecies/AllPresets";
         const payload = {
           userEmail: this.$store.state.activeUser.email
         };
@@ -273,15 +299,13 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/CompetingSpecies/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        this.simParamData[0] = Number(response.data["preset_params"][0]); //N0
-        this.simParamData[1] = Number(response.data["preset_params"][1]); //a
-        this.simParamData[2] = Number(response.data["preset_params"][2]); //b
-        this.simParamData[3] = Number(response.data["preset_params"][3]); //P0
-        this.simParamData[4] = Number(response.data["preset_params"][4]); //c
-        this.simParamData[5] = Number(response.data["preset_params"][5]); //d
+        const presetParamsCount = 7;
+        for(let i = 0; i <= presetParamsCount; i++) {
+            this.simParamData[i] = Number(response.data["preset_params"][i])
+        }
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -303,7 +327,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
-        const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
+        const path = `http://localhost:5000/CompetingSpecies/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,

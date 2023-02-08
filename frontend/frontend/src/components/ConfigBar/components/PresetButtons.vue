@@ -59,8 +59,12 @@
       </b-modal>
     </div>
     <div class="suggestions">
-      <b-button id="suggestions-button" style="float: right; padding-top: 2.3em" @click="onClickSuggestions">
-        Parameter Suggestions <b-icon :class="bulbClass" icon="lightbulb-fill" shift-v="1.5"></b-icon>
+      <b-button id="suggestions-button" pill variant="outline-info" @click="onClickSuggestions">
+        Parameter Suggestions
+        <b-iconstack>
+          <b-icon :class="bulbClass" icon="lightbulb-fill" shift-v="3.5" scale="0.9"></b-icon>
+          <b-icon icon="lightbulb" shift-v="3.5" style="color: black" scale="0.9"></b-icon>
+        </b-iconstack>
       </b-button>
       <b-popover target="suggestions-button" placement="right" :show.sync="showSuggestions" :no-fade="true">
         <!--Render all suggestions, depending on model-->
@@ -96,18 +100,10 @@ export default {
       return this.userPresets
     },
     emptyPresetsSignedIn() {
-      if (this.userPresets.length == 0 && this.$store.state.activeUser.isActive) {
-        return true
-      } else {
-        return false
-      }
+      return !this.userPresets.length && this.$store.state.activeUser.isActive
     },
     emptyPresetsSignedOut() {
-      if (this.userPresets.length == 0 && !this.$store.state.activeUser.isActive) {
-        return true
-      } else {
-        return false
-      }
+      return !this.userPresets.length && !this.$store.state.activeUser.isActive
     }
   },
   methods: {
@@ -169,5 +165,13 @@ export default {
 }
 .bulb-on {
   color: rgb(255, 174, 0);
+}
+.bulb-off {
+  color: rgb(255, 255, 255);
+}
+#suggestions-button {
+  float: right;
+  margin-top: 2.3em;
+  margin-right: 0.5em
 }
 </style>
