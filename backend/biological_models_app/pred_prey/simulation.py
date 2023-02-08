@@ -68,13 +68,11 @@ class PredatorPreySimulation:
             
         #Continue iterations now first trough is found
         trough_counter = 1
-        while True:
+        while trough_counter < self.max_troughs: #End simulation when desired through is found
             t += self.dt
             self.Euler_method()
             if self.dNdt[-2] < 0 and self.dNdt[-1] >= 0: #Count troughs as they are passed
                 trough_counter += 1
-            if trough_counter == self.max_troughs: #End simulation when desired through is found
-                return
         
 def runPredPreySim(sim_params):
     #Pass parameters configured by user
