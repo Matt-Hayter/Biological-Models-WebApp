@@ -355,6 +355,9 @@ export default {
 </script>
 
 <style scoped>
+.competing-species-view {
+  min-width: 1024px;
+}
 .top-section {
   display: flex;
   flex-direction: column;

@@ -1,7 +1,7 @@
 <template>
   <div class="config-bar">
     <!--Enclose config within card-->
-    <b-card class="rounded-0" style="min-width: 25em; position: fixed" no-body>
+    <b-card class="rounded-0" style="width:25em; position: relative; float: left;" no-body>
       <!--If tabs are required-->
       <div v-if="configTabTitles.length == 2">
         <b-card-header header-tag="nav">

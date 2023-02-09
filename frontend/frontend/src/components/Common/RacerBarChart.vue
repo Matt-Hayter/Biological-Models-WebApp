@@ -60,6 +60,6 @@ export default {
   background: white;
   position: relative;
   height: 50vh;
-  width: 67vw;
+  width: 100%;
 }
 </style>
