@@ -33,8 +33,8 @@ class PredatorPreySimulation:
         self.c = sim_params[4] #Predator reproduction rate after consuming prey
         self.d = sim_params[5] #Predator natural death rate
         #Simulation params
-        self.dt = 0.001 #Integration step size [yr]
-        self.output_dt = 0.01 #Output stel size [yr]
+        self.dt = 0.0005 #Integration step size [yr]
+        self.output_dt = 0.01 #Output step size [yr]
         self.max_troughs = 6 #Length of simulations if oscillating
         self.t_max_stop = 600 #max length of time before sim auto stops [years]
         

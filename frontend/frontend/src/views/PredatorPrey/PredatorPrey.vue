@@ -50,6 +50,7 @@
       <div class="sim-visualisation-section">
         <!--Use configuration file for bar chart-->
         <RacerBarChart
+          @endSim="endSim"
           :chartConfig="predPreyChartConfig"
           :initialConditions="initialConditions"
           :simRunning="simRunning"
@@ -358,10 +359,7 @@ export default {
         this.runText = "Stop"
         this.runSim()
       } else {
-        this.simRunning = false
-        this.runIcon = "play"
-        this.runVariant = "success"
-        this.runText = "Run Simulation"
+        this.endSim()
       }
     },
     async runSim() {
@@ -383,6 +381,12 @@ export default {
         this.showSubmissionAlert(failureAlertPayload);
         console.log("Simulation error, server problem");
       }
+    },
+    endSim() {
+      this.simRunning = false
+      this.runIcon = "play"
+      this.runVariant = "success"
+      this.runText = "Run Simulation"
     }
   },
   mounted() {
