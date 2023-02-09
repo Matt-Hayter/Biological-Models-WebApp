@@ -31,10 +31,9 @@ export default {
       //Visualise simulation if simRunning turns to true
       if (isSimRunning) {
         this.chartConfig.options.scales.x.max = this.simMaxVal //Resize bar plot to fit sim
-        this.setInitialConditions(this.initialConitions) //Update chart with initial conditions
-        this.racerChart.update();
+        this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
         //Give chart time to update with inital values before displaying sim
-        setTimeout(this.visualiseChartSim(), 1000)
+        setTimeout(this.visualiseChartSim, 1000)
       }
     }
   },
@@ -53,12 +52,12 @@ export default {
         for (let i = 0; i < this.simData.length; i++) {
             this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
         }
-        this.racerChart.update(); //Update chart with current iteration's simulation data
+        this.racerChart.update("none"); //Update chart with current iteration's simulation data
         step ++ //Progress to next step
-        if (!this.simRunning) {
+        if (!this.simRunning) { //Check to see if visualisation should still be running
           clearInterval(visualisationInterval)
         }
-      }, 100)
+      }, 10)
     }
   },
   mounted() {

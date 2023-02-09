@@ -35,8 +35,8 @@ class PredatorPreySimulation:
         #Simulation params
         self.dt = 0.001 #Integration step size [yr]
         self.output_dt = 0.01 #Output stel size [yr]
-        self.max_troughs = 4 #Length of simulations if oscillating
-        self.t_max_stop = 1000 #max length of time before sim auto stops [years]
+        self.max_troughs = 6 #Length of simulations if oscillating
+        self.t_max_stop = 600 #max length of time before sim auto stops [years]
         
     def Euler_method(self, step, output_step):
         """
