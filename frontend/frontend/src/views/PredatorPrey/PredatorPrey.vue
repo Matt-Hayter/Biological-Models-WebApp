@@ -94,8 +94,8 @@ export default {
         10, //c
         1, //d
       ],
-      N0: 1, //For use in reactive bar chart. Equivalent values to above array
-      P0: 1,
+      N0: null, //For use in reactive bar chart.
+      P0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
@@ -389,6 +389,9 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
+    //Set initial values, calling initialConditions computed property to be inherited by charts
+    this.N0 = this.simParamData[0]
+    this.P0 = this.simParamData[3]
   },
 };
 </script>
