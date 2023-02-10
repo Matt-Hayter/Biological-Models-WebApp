@@ -428,6 +428,5 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
-  color: rgba(red, rgb(255, 0, 0), blue);
 }
 </style>
