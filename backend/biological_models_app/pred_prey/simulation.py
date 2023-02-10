@@ -3,6 +3,7 @@ Predator-Prey (Lotka-Voltera) Simulation
 """
 import numpy as np
 from collections import deque
+import math
 
 class PredatorPreySimulation:
         
@@ -74,8 +75,6 @@ class PredatorPreySimulation:
             #If peak hasn't been found before t_max_stop, end sim
             if step >= max_step:
                 return
-
-        self.t_axis = np.linspace(0, len(self.N_out)*self.output_dt, len(self.N_out))
             
         #Continue iterations now first trough is found
         trough_counter = 1
@@ -85,12 +84,15 @@ class PredatorPreySimulation:
             if self.dNdt[-2] < 0 and self.dNdt[-1] >= 0: #Count troughs as they are passed
                 trough_counter += 1
         
+        self.t_axis = list(np.linspace(0, len(self.N_out)*self.output_dt, len(self.N_out)))
+        
 def runPredPreySim(sim_params):
     #Pass parameters configured by user
     model = PredatorPreySimulation(sim_params)
     model.run_sim()
     return_arrays = [list(model.N_out), list(model.P_out)] #Return simulations data
     largest_val = max([max(return_arrays[0]), max(return_arrays[1])]) #Max value obtained throughout sim's output
-    print(model.t_axis)
-    return return_arrays, largest_val
+    upper_bound = math.ceil(largest_val/10)*10 #Round up to nearest 10
+    print(len(return_arrays[0]), len(model.t_axis))
+    return return_arrays, model.t_axis, upper_bound
     

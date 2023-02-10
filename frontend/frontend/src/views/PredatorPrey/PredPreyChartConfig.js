@@ -2,15 +2,15 @@
 let chartData = {
   labels: ['Prey', 'Predator'],
   datasets: [{
-    label: 'Weekly Sales',
-    data: [18, 12],
+    label: 'Predator-Prey',
+    data: [0, 0],
     backgroundColor: [
+      'rgba(54, 162, 255, 0.2)',
       'rgba(255, 26, 104, 0.2)',
-      'rgba(54, 162, 235, 0.2)',
     ],
     borderColor: [
+      'rgba(54, 162, 255, 1)',
       'rgba(255, 26, 104, 1)',
-      'rgba(54, 162, 235, 1)',
     ],
     borderWidth: 1,
     barPercentage: 0.9,
