@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     setUpChart(simMaxVal1) {
-      console.log(simMaxVal1)
       this.chartConfig.options.scales.x.max = simMaxVal1 //Resize bar plot to fit sim
       this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
     },
@@ -39,6 +38,7 @@ export default {
       this.racerChart.update();
     },
     chartSimStep(step) {
+      console.log("here")
       //Set each chart data index to it's corresponding simulation data index, on each iteration
       for (let i = 0; i < this.simData.length; i++) {
           this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]

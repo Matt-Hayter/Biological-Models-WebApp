@@ -380,6 +380,7 @@ export default {
         this.simRunning = true //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
+        this.endSim() //Reset button
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
           variant: "danger",
