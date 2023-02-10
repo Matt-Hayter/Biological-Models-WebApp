@@ -69,6 +69,6 @@ def run_PredPrey_sim():
     response = {"server status": "success"}
     sim_params = request.get_json().get("simParams")
     #Run simulation and return data
-    response["sim_data"], response["sim_max_val"] = runPredPreySim(sim_params)
+    response["sim_data"], response["time_data"], response["sim_max_val"] = runPredPreySim(sim_params)
     response["message"] = "Ran simulation successfully"
     return jsonify(response)

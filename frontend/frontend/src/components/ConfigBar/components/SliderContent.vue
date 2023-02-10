@@ -24,6 +24,7 @@
       :max="sliderData.max"
       :step="sliderData.step"
       @input="$emit(sliderData.emitEventName, Number($event.target.value))"
+      :disabled="simRunning"
     />
   </div>
 </template>
@@ -33,10 +34,13 @@ export default {
   props: {
     //Slider's contents are inherited
     sliderData: Object,
-    currentSimParamData: Number
+    currentSimParamData: Number,
+    simRunning: Boolean,
   },
   data() {
-    return {};
+    return {
+      isRunning: true
+    };
   },
 };
 </script>

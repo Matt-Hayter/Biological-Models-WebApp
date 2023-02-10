@@ -12,6 +12,7 @@
       :param-suggestions="paramSuggestions"
       :sim-param-data="simParamData"
       :user-presets="userPresets"
+      :simRunning="simRunning"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
@@ -30,7 +31,7 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
+          <h4 style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
           <div class="formula">
             <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
             <br>
@@ -49,12 +50,15 @@
       </div>
       <div class="sim-visualisation-section">
         <!--Use configuration file for bar chart-->
-        <RacerBarChart
-          :chartConfig="predPreyChartConfig"
-          :initialConditions="initialConditions"
-          :simRunning="simRunning"
-          :simData="simData"
-          :simMaxVal="simMaxVal"
+        <SimVisualiser
+          @endSim="endSim"
+          :chart-config="predPreyChartConfig"
+          :initial-conditions="initialConditions"
+          :sim-running="simRunning"
+          :sim-data="simData"
+          :sim-time-data="simTimeData"
+          :sim-max-val="simMaxVal"
+          :time-units="timeUnits"
         />
       </div>
     </div>
@@ -70,7 +74,7 @@ import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
-import RacerBarChart from "@/components/common/RacerBarChart.vue";
+import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
 import predPreyChartConfig from "./PredPreyChartConfig.js";
 
 export default {
@@ -79,7 +83,7 @@ export default {
     ConfigBar,
     ModelInfo,
     TempAlert,
-    RacerBarChart,
+    SimVisualiser,
   },
   data() {
     return {
@@ -94,11 +98,13 @@ export default {
         10, //c
         1, //d
       ],
-      N0: 1, //For use in reactive bar chart. Equivalent values to above array
-      P0: 1,
+      N0: null, //For use in reactive bar chart.
+      P0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
+      simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      timeUnits: "years",
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -358,10 +364,7 @@ export default {
         this.runText = "Stop"
         this.runSim()
       } else {
-        this.simRunning = false
-        this.runIcon = "play"
-        this.runVariant = "success"
-        this.runText = "Run Simulation"
+        this.endSim()
       }
     },
     async runSim() {
@@ -372,7 +375,8 @@ export default {
         }
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simMaxVal = Number(response.data["sim_max_val"]) //Max value, for upper bound of visualisation's axis
+        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
+        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
         this.simRunning = true //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
@@ -383,12 +387,21 @@ export default {
         this.showSubmissionAlert(failureAlertPayload);
         console.log("Simulation error, server problem");
       }
+    },
+    endSim() {
+      this.simRunning = false
+      this.runIcon = "play"
+      this.runVariant = "success"
+      this.runText = "Run Simulation"
     }
   },
   mounted() {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
+    //Set initial values, calling initialConditions computed property to be inherited by charts
+    this.N0 = this.simParamData[0]
+    this.P0 = this.simParamData[3]
   },
 };
 </script>

@@ -33,6 +33,7 @@
             <SliderContent 
               :slider-data="sliderData"
               :current-sim-param-data="simParamData[currentSliderIndex(index1,index2)]"
+              :sim-running="simRunning"
               v-on="$listeners"
               >
             </SliderContent>
@@ -56,7 +57,8 @@ export default {
     configTabTitles: Array,
     paramSuggestions: Array,
     userPresets: Array,
-    simParamData: Array
+    simParamData: Array,
+    simRunning: Boolean,
   },
   components: {
     SliderContent,
