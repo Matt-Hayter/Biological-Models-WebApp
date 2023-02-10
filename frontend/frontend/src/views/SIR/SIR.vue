@@ -50,7 +50,7 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="predPreyChartConfig"
+          :chart-config="SIRChartConfig"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -96,7 +96,7 @@ export default {
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
-      timeUnits: "years",
+      timeUnits: "days",
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -318,7 +318,7 @@ export default {
         this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
         this.simRunning = true //Signals to start visualising simulation
-        console.log("Pred Prey simulation successfully run at server")
+        console.log("SIR simulation successfully run at server")
       } catch (error) {
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
@@ -360,5 +360,12 @@ export default {
 .title-and-formula .formula {
   float: left;
   padding-left: 25em;
+}
+.run-button {
+  position: fixed;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  bottom: 0;
+  right: 0;
 }
 </style>

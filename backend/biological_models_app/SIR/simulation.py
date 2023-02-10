@@ -2,7 +2,8 @@
 SIR, Disease Spread Simulation
 """
 import numpy as np
-from collections import deque 
+from collections import deque
+import math
 
 class SIRSimulation:
         
@@ -29,9 +30,7 @@ class SIRSimulation:
         self.t_max_stop = 2000 #If this time is reached with no infection peak found, end simulation
         
     def Euler_method(self, step, output_step):
-        """
-        Calculate ODE's rate and then apply Euler method
-        """
+        #ODEs
         dSdt = -self.beta*self.S[-1]*self.I[-1]/self.N_0
         self.dIdt.append(self.beta*self.S[-1]*self.I[-1]/self.N_0 - self.gamma*self.I[-1])
         dRdt = self.gamma*self.I[-1]
@@ -67,7 +66,7 @@ class SIRSimulation:
             if self.dIdt[-2] > 0 and self.dIdt[-1] <= 0:
                 break
             #If peak hasn't been found before t_max_stop, end sim
-            if t >= self.t_max_stop:
+            if step >= max_step:
                 return
         #After peak is found, perform Euler until infections are low
         while self.I[-1] > 100:

@@ -54,7 +54,7 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="predPreyChartConfig"
+          :chart-config="compSpecChartConfig"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -404,7 +404,7 @@ export default {
         this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
         this.simRunning = true //Signals to start visualising simulation
-        console.log("Pred Prey simulation successfully run at server")
+        console.log("Competing Species simulation successfully run at server")
       } catch (error) {
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
