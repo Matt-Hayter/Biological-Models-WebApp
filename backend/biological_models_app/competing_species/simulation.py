@@ -6,7 +6,7 @@ from collections import deque
 import math
 
 class CompetingSpeciesSimulation:
-        
+
     def __init__(self, sim_params):
         self.N1 = deque([]) #Holds population 1 values
         self.N1_out = deque([]) #Population 1 values to be outputted
@@ -30,9 +30,6 @@ class CompetingSpeciesSimulation:
         self.max_t = 30 #[yr]
         
     def Euler_method(self, step, output_step):
-        """
-        Calculate ODE's rate and then apply Euler method
-        """
         #ODEs
         dN1dt = self.r1*self.N1[-1]*(1-(self.N1[-1] + self.a1*self.N2[-1])/self.k1)
         dN2dt = self.r2*self.N2[-1]*(1-(self.N2[-1] + self.a2*self.N1[-1])/self.k2)
@@ -44,9 +41,7 @@ class CompetingSpeciesSimulation:
             self.N2_out.append(self.N2[-1])
 
     def run_sim(self):
-        """
-        Run Euler iterations for each time step until max_t
-        """
+        #Set initial values
         self.N1.append(self.N1_0)
         self.N1_out.append(self.N1_0)
         self.N2.append(self.N2_0)
@@ -59,7 +54,7 @@ class CompetingSpeciesSimulation:
         for step in range(1, max_step, 1):
             self.Euler_method(step, output_step)
 
-def main(sim_params):
+def runCompetingSpeciesSim(sim_params):
     #Pass params configured by user
     model = CompetingSpeciesSimulation(sim_params)
     model.run_sim()
@@ -67,5 +62,3 @@ def main(sim_params):
     largest_val = max([max(return_arrays[0]), max(return_arrays[1])]) #Max value obtained throughout sim's output
     upper_bound = math.ceil(largest_val/10)*10 #Round up to nearest 10
     return return_arrays, model.t_axis, upper_bound
-    
-main()

@@ -1,5 +1,6 @@
 from biological_models_app import db
 from flask import jsonify, request, Blueprint
+from biological_models_app.SIR.simulation import runSIRSim
 
 SIR = Blueprint("SIR", __name__, url_prefix="/SIR")
 
@@ -61,4 +62,13 @@ def SIR_preset_params(preset_id):
     response["preset_params"] = cursor.fetchone()
     cursor.close()
     response["message"] = "Grabbed data for selected SIR preset"
+    return jsonify(response)
+
+@SIR.route("/RunSim", methods=["POST"])
+def run_SIR_sim():
+    response = {"server status": "success"}
+    sim_params = request.get_json().get("simParams")
+    #Run simulation and return data
+    response["sim_data"], response["time_data"], response["sim_max_val"] = runSIRSim(sim_params)
+    response["message"] = "Ran simulation successfully"
     return jsonify(response)

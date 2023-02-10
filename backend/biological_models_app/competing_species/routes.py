@@ -1,5 +1,6 @@
 from biological_models_app import db
 from flask import jsonify, request, Blueprint
+from biological_models_app.competing_species.simulation import runCompetingSpeciesSim
 
 competing_species = Blueprint("competing_species", __name__, url_prefix="/CompetingSpecies")
 
@@ -68,6 +69,6 @@ def run_CompetingSpecies_sim():
     response = {"server status": "success"}
     sim_params = request.get_json().get("simParams")
     #Run simulation and return data
-    response["sim_data"], response["time_data"], response["sim_max_val"] = runPredPreySim(sim_params)
+    response["sim_data"], response["time_data"], response["sim_max_val"] = runCompetingSpeciesSim(sim_params)
     response["message"] = "Ran simulation successfully"
     return jsonify(response)
