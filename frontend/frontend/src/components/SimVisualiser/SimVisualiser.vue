@@ -9,7 +9,7 @@
     <div>
       <div class="time-display">
         <span class="sim-time">
-          Time ({{ timeUnits }}): 
+          Time elapsed ({{ timeUnits }}):
         </span>
         <div class="sim-time-box">
           {{ currentSimTime }}
@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      currentSimTime: null,
+      currentSimTime: "0",
     };
   },
   watch: {
