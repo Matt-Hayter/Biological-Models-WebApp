@@ -401,8 +401,10 @@ export default {
       this.getAllPresets()
     }
     //Set initial values, calling initialConditions computed property to be inherited by charts
-    this.N0 = this.simParamData[0]
-    this.P0 = this.simParamData[3]
+    const defaultN0 = this.simParamData[0]
+    const defaultP0 = this.simParamData[3]
+    this.N0 = defaultN0
+    this.P0 = defaultP0
   },
 };
 </script>

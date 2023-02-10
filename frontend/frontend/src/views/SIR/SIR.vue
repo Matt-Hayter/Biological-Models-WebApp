@@ -91,7 +91,7 @@ export default {
         10, //beta
         1, //1/gamma
       ],
-      I_0: null,
+      I0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -161,14 +161,14 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.I_0]
+      return [this.I0]
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateI0(newI0) {
       this.simParamData[0] = newI0;
-      this.I_0 = newI0
+      this.I0 = newI0
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
@@ -341,7 +341,8 @@ export default {
       this.getAllPresets()
     }
     //Set initial values, calling initialConditions computed property to be inherited by charts
-    this.I_0 = this.simParamData[0]
+    const defaultI0 = this.simParamData[0]
+    this.I0 = defaultI0
   },
 };
 </script>
