@@ -12,6 +12,7 @@
       :param-suggestions="paramSuggestions"
       :sim-param-data="simParamData"
       :user-presets="userPresets"
+      :simRunning="simRunning"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
@@ -56,7 +57,23 @@
           </b-card-text>
         </ModelInfo>
       </div>
+      <div class="sim-visualisation-section">
+        <!--Use configuration file for bar chart-->
+        <SimVisualiser
+          @endSim="endSim"
+          :chart-config="SEIDRChartConfig"
+          :initial-conditions="initialConditions"
+          :sim-running="simRunning"
+          :sim-data="simData"
+          :sim-time-data="simTimeData"
+          :sim-max-val="simMaxVal"
+          :time-units="timeUnits"
+        />
+      </div>
     </div>
+    <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
+      {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
+    </b-button>
   </div>
 </template>
 
@@ -66,6 +83,8 @@ import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
 import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
+import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
+import SEIDRChartConfig from "./SEIDRChartConfig.js";
 
 export default {
   components: {
@@ -73,6 +92,7 @@ export default {
     ConfigBar,
     ModelInfo,
     TempAlert,
+    SimVisualiser,
   },
   data() {
     return {
@@ -87,6 +107,13 @@ export default {
         10, //E0
         1, //I0
       ],
+      E0: null,
+      I0: null,
+      simRunning: false,
+      simData: null, //Array of arrays, containing all sim data when obtained
+      simTimeData: null, //Array containing times corresponding to simData
+      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      timeUnits: "days",
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -165,12 +192,21 @@ export default {
       alertVariant: "danger",
       showAlert: false,
       alertSecs: 4,
+      //For data visualisation
+      SEIDRChartConfig,
+      //Default run simulation button config
+      runIcon: "play",
+      runVariant: "success",
+      runText: "Run Simulation",
     };
   },
   computed: {
     //Access Vuex store containing active user info
     activeUser() {
       return this.$store.state.activeUser;
+    },
+    initialConditions() { //Array inherited by bar chart for reactive display
+      return [this.E0, this.I0]
     },
   },
   methods: {
@@ -193,10 +229,12 @@ export default {
     },
     updateE0(newE0) {
       this.simParamData[4] = newE0;
+      this.E0 = newE0
       console.log(this.simParamData[4], "E0-change");
     },
     updateI0(newI0) {
       this.simParamData[5] = newI0;
+      this.I0 = newI0
       console.log(this.simParamData[5], "I0-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -329,11 +367,51 @@ export default {
         console.log("Preset not loaded, server problem");
       }
     },
+    onClickRun() { //Run/stop simulation button pressed
+      if (this.simRunning == false) {
+        this.runIcon = "stop"
+        this.runVariant = "danger"
+        this.runText = "Stop"
+        this.runSim()
+      } else {
+        this.endSim()
+      }
+    },
+    async runSim() {
+      try {
+        const path = "http://localhost:5000/SEIDR/RunSim"
+        const payload = {
+          simParams: this.simParamData
+        }
+        const response = await axios.post(path, payload)
+        this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
+        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
+        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.simRunning = true //Signals to start visualising simulation
+        console.log("SEIDR simulation successfully run at server")
+      } catch (error) {
+        const failureAlertPayload = {
+          message: "Unable to run simulation, failed repsonse from server",
+          variant: "danger",
+        };
+        this.showSubmissionAlert(failureAlertPayload);
+        console.log("Simulation error, server problem");
+      }
+    },
+    endSim() {
+      this.simRunning = false
+      this.runIcon = "play"
+      this.runVariant = "success"
+      this.runText = "Run Simulation"
+    }
   },
   mounted() {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
+    //Set initial values, calling initialConditions computed property to be inherited by charts
+    this.E0 = this.simParamData[4]
+    this.I0 = this.simParamData[5]
   },
 };
 </script>
@@ -354,6 +432,13 @@ export default {
 .title-and-formula .formula {
   float: left;
   padding-left: 20em;
+}
+.run-button {
+  position: fixed;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  bottom: 0;
+  right: 0;
 }
 </style>
 
