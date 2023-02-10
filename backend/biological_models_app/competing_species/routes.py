@@ -62,3 +62,12 @@ def CompetingSpecies_preset_params(preset_id):
     cursor.close()
     response["message"] = "Grabbed data for selected comepting species preset"
     return jsonify(response)
+
+@competing_species.route("/RunSim", methods=["POST"])
+def run_CompetingSpecies_sim():
+    response = {"server status": "success"}
+    sim_params = request.get_json().get("simParams")
+    #Run simulation and return data
+    response["sim_data"], response["time_data"], response["sim_max_val"] = runPredPreySim(sim_params)
+    response["message"] = "Ran simulation successfully"
+    return jsonify(response)
