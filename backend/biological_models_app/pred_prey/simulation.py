@@ -9,14 +9,7 @@ class PredatorPreySimulation:
         
     def __init__(self, sim_params):
         """
-        Param bar: 
-            2 cards: Predator, Prey
-            - Prey: N_0, a: Reproduction rate. b: Impact of predation on prey.
-              Pred: P_0, c: Rate of growth of predator poopulation, in response to prey. d: natural death rate
-            - Save Config button
-        In footer:
-            Interesting configs
-            Presets
+        Declare and initialise simulation's data
         """
         self.N = deque([]) #Holds prey population values
         self.N_out = deque([]) #For outputted steps
@@ -41,7 +34,7 @@ class PredatorPreySimulation:
         
     def Euler_method(self, step, output_step):
         """
-        Calculate ODE's rate and then apply Euler method
+        Calculate ODE's rates, apply Euler method, then add to output queue if required
         """
         #ODEs
         self.dNdt.append(self.N[-1]*(self.a - self.b*self.P[-1]))
@@ -55,7 +48,8 @@ class PredatorPreySimulation:
 
     def run_sim(self):
         """
-        Run Euler iterations for each time step until max_t
+        Initiate simulation and run Euler iterations for each time step,
+        dynamically checking for simulation end points
         """
         self.N.append(self.N_0)
         self.N_out.append(self.N_0)
@@ -93,6 +87,5 @@ def runPredPreySim(sim_params):
     return_arrays = [list(model.N_out), list(model.P_out)] #Return simulations data
     largest_val = max([max(return_arrays[0]), max(return_arrays[1])]) #Max value obtained throughout sim's output
     upper_bound = math.ceil(largest_val/10)*10 #Round up to nearest 10
-    print(len(return_arrays[0]), len(model.t_axis))
     return return_arrays, model.t_axis, upper_bound
     
