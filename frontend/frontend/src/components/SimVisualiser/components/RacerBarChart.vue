@@ -38,7 +38,6 @@ export default {
       this.racerChart.update();
     },
     chartSimStep(step) {
-      console.log("here")
       //Set each chart data index to it's corresponding simulation data index, on each iteration
       for (let i = 0; i < this.simData.length; i++) {
           this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]

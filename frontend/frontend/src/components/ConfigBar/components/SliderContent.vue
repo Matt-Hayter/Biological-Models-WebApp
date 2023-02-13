@@ -22,7 +22,7 @@
       :min="sliderData.min"
       :value="currentSimParamData"
       :max="sliderData.max"
-      :step="sliderData.step"
+      :step="sliderData.inputStep"
       @input="$emit(sliderData.emitEventName, Number($event.target.value))"
       :disabled="simRunning"
     />

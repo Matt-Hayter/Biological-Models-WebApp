@@ -30,9 +30,9 @@ export default {
       for (
         let i = this.sliderData.min;
         i <= this.sliderData.max;
-        i += this.sliderData.step
+        i += this.sliderData.tickStep
       ) {
-        tickArray.push(i);
+        tickArray.push(Number(Math.round(i+"e1")+"e-1"));
       }
       return tickArray;
     },

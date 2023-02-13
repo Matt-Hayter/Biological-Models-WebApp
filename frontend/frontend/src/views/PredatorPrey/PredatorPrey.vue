@@ -116,23 +116,26 @@ export default {
               label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
-              min: 1,
+              inputStep: 0.05,
+              tickStep: 1,
+              min: 0,
               max: 10,
-              step: 1,
             },
             {
               label: "a",
               emitEventName: "changea",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
             {
               label: "b",
               emitEventName: "changeb",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: true,
@@ -144,23 +147,26 @@ export default {
               label: "P_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
-              min: 1,
+              inputStep: 0.05,
+              tickStep: 1,
+              min: 0,
               max: 10,
-              step: 1,
             },
             {
               label: "c",
               emitEventName: "changec",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.05,
+              tickStep: 0.1,
+              min: 0,
+              max: 1,
             },
             {
               label: "d",
               emitEventName: "changed",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: false,
@@ -203,28 +209,34 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
+      if (newN0 == 0) newN0 = 1 //Non-zero params only
       this.simParamData[0] = newN0;
       this.N0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
+      if (newa == 0) newa = 0.05
       this.simParamData[1] = newa;
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
+      if (newb == 0) newb = 0.05
       this.simParamData[2] = newb;
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
+      if (newP0 == 0) newP0 = 1
       this.simParamData[3] = newP0;
       this.P0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
+      if (newc == 0) newc = 0.05
       this.simParamData[4] = newc;
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
+      if (newd == 0) newd = 0.05 //Non-zero params only
       this.simParamData[5] = newd;
       console.log(this.simParamData[5], "d-change");
     },
