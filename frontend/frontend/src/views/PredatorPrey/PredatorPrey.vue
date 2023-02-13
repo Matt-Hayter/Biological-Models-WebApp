@@ -86,17 +86,26 @@ export default {
     SimVisualiser,
   },
   data() {
+    //Params initially at slider's min values (non-zero)
+    const defaultParams = {
+        N0: 0.5,
+        a: 0.1,
+        b: 0.1,
+        P0: 0.5,
+        c: 0.05,
+        d: 0.1
+      }
     return {
-      //Params initially at slider's min values
+      //Dynamic parameter array, initially set to default values
       simParamData: [
         //Prey
-        1, //N0
-        10, //a
-        1, //b
+        defaultParams.N0, //N0
+        defaultParams.a, //a
+        defaultParams.b, //b
         //Predator
-        1, //P0
-        10, //c
-        1, //d
+        defaultParams.P0, //P0
+        defaultParams.c, //c
+        defaultParams.d, //d
       ],
       N0: null, //For use in reactive bar chart.
       P0: null,
@@ -116,7 +125,7 @@ export default {
               label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
-              inputStep: 0.05,
+              inputStep: 0.5,
               tickStep: 1,
               min: 0,
               max: 10,
@@ -147,7 +156,7 @@ export default {
               label: "P_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
-              inputStep: 0.05,
+              inputStep: 0.5,
               tickStep: 1,
               min: 0,
               max: 10,
@@ -176,12 +185,15 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
+          text: "Lots of natural prey births and predator deaths, minimal effects from predation. \
+            Both predator and prey poulations briefly reach very large peak values before \
+            plummeting to near zero.",
+          maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
           id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+          text: "",
+          maths: "a=b"
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -209,34 +221,34 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      if (newN0 == 0) newN0 = 1 //Non-zero params only
+      if (newN0 == 0) newN0 = defaultParams.N0 //Non-zero params only, set to default if 0 encountered
       this.simParamData[0] = newN0;
       this.N0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      if (newa == 0) newa = 0.05
+      if (newa == 0) newa = defaultParams.a
       this.simParamData[1] = newa;
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      if (newb == 0) newb = 0.05
+      if (newb == 0) newb = defaultParams.b
       this.simParamData[2] = newb;
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      if (newP0 == 0) newP0 = 1
+      if (newP0 == 0) newP0 = defaultParams.P0
       this.simParamData[3] = newP0;
       this.P0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      if (newc == 0) newc = 0.05
+      if (newc == 0) newc = defaultParams.c
       this.simParamData[4] = newc;
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      if (newd == 0) newd = 0.05 //Non-zero params only
+      if (newd == 0) newd = defaultParams.d
       this.simParamData[5] = newd;
       console.log(this.simParamData[5], "d-change");
     },
@@ -443,5 +455,6 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+  z-index: 2;
 }
 </style>

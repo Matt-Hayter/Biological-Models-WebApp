@@ -40,7 +40,12 @@
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
-        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions" :user-presets="userPresets"/>
+        <PresetButtons
+          v-on="$listeners"
+          :param-suggestions="paramSuggestions"
+          :user-presets="userPresets"
+          :sim-running="simRunning"
+        />
         </b-card-body>
     </b-card>
   </div>

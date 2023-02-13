@@ -7,7 +7,7 @@
           Save <b-icon icon="box-arrow-in-down" font-scale="1.4" shift-v="1.5"></b-icon>
         </b-button>
         <!--Presets dropdown-->
-        <b-dropdown dropup variant="info" no-caret @show="onClickDropdown">
+        <b-dropdown dropright variant="info" no-caret @show="onClickDropdown">
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
           </template>
@@ -66,13 +66,23 @@
           <b-icon icon="lightbulb" shift-v="3.5" style="color: black" scale="0.9"></b-icon>
         </b-iconstack>
       </b-button>
-      <b-popover target="suggestions-button" placement="right" :show.sync="showSuggestions" :no-fade="true">
+      <b-popover 
+        custom-class="custom-popover"
+        variant="info"
+        target="suggestions-button"
+        placement="right"
+        :show.sync="showSuggestions"
+        :no-fade="true"
+        >
         <!--Render all suggestions, depending on model-->
-        <div class="popover-list">
-          <ul v-for="suggestion in paramSuggestions" :key="suggestion.id">
-            <li>{{ suggestion.content }}</li>
-          </ul>
-        </div>
+        <ol class="popover-list">
+          <div v-for="suggestion in paramSuggestions" :key="suggestion.id">
+            <li v-katex:auto>
+              {{ suggestion.text }}
+              <katex-element :strict="false" :expression="suggestion.maths" />
+            </li>
+          </div>
+        </ol>
       </b-popover>
     </div>
   </div>
@@ -82,7 +92,8 @@
 export default {
   props: {
     paramSuggestions: Array,
-    userPresets: Array
+    userPresets: Array,
+    simRunning: Boolean
   },
   data() {
     return {
@@ -91,6 +102,15 @@ export default {
       bulbOn: false,
       bulbClass: "bulb-off"
     };
+  },
+  watch: {
+    //Hide suggestions if sim is running
+    simRunning: function(isSimRunning) {
+      if (isSimRunning) {
+        console.log("here")
+        this.showSuggestions = false
+      }
+    }
   },
   computed: {
     activeUser() {
@@ -163,6 +183,10 @@ export default {
 .popover-list {
   margin-bottom: -1em;
 }
+.custom-popover {
+  max-width: 500px;
+  z-index: 1;
+}
 .bulb-on {
   color: rgb(255, 174, 0);
 }
@@ -172,6 +196,6 @@ export default {
 #suggestions-button {
   float: right;
   margin-top: 2.3em;
-  margin-right: 0.5em
+  margin-right: 0.5em;
 }
 </style>
