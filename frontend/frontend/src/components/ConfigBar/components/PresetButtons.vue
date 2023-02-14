@@ -107,8 +107,7 @@ export default {
     //Hide suggestions if sim is running
     simRunning: function(isSimRunning) {
       if (isSimRunning) {
-        console.log("here")
-        this.showSuggestions = false
+        this.hideSuggestions()
       }
     }
   },
@@ -134,6 +133,9 @@ export default {
       this.$emit("deletePreset", index)
     },
     onClickDropdown() {
+      this.hideSuggestions()
+    },
+    hideSuggestions() {
       this.showSuggestions = false;
       this.bulbOn = false;
       this.bulbClass = "bulb-off";

@@ -86,29 +86,20 @@ export default {
     SimVisualiser,
   },
   data() {
-    //Params initially at slider's min values (non-zero)
-    const defaultParams = {
+    return {
+      //Params initially at slider's min values (non-zero)
+      defaultParams: {
         N0: 0.5,
         a: 0.1,
         b: 0.1,
         P0: 0.5,
         c: 0.05,
         d: 0.1
-      }
-    return {
-      //Dynamic parameter array, initially set to default values
-      simParamData: [
-        //Prey
-        defaultParams.N0, //N0
-        defaultParams.a, //a
-        defaultParams.b, //b
-        //Predator
-        defaultParams.P0, //P0
-        defaultParams.c, //c
-        defaultParams.d, //d
-      ],
-      N0: null, //For use in reactive bar chart.
-      P0: null,
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      barPlotN0: null, //For use in reactive bar chart.
+      barPlotP0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -185,9 +176,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "Lots of natural prey births and predator deaths, minimal effects from predation. \
-            Both predator and prey poulations briefly reach very large peak values before \
-            plummeting to near zero.",
+          text: "Lots of natural prey births and predator deaths, minimal effects from predation.",
           maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
@@ -215,40 +204,40 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.N0, this.P0]
+      return [this.barPlotN0, this.barPlotP0]
     }
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      if (newN0 == 0) newN0 = defaultParams.N0 //Non-zero params only, set to default if 0 encountered
+      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to default if 0 encountered
       this.simParamData[0] = newN0;
-      this.N0 = newN0;
+      this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      if (newa == 0) newa = defaultParams.a
+      if (newa == 0) newa = this.defaultParams.a //Non-zero params only
       this.simParamData[1] = newa;
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      if (newb == 0) newb = defaultParams.b
+      if (newb == 0) newb = this.defaultParams.b //Non-zero params only
       this.simParamData[2] = newb;
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      if (newP0 == 0) newP0 = defaultParams.P0
+      if (newP0 == 0) newP0 = this.defaultParams.P0 //Non-zero params only
       this.simParamData[3] = newP0;
-      this.P0 = newP0;
+      this.barPlotP0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      if (newc == 0) newc = defaultParams.c
+      if (newc == 0) newc = this.defaultParams.c //Non-zero params only
       this.simParamData[4] = newc;
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      if (newd == 0) newd = defaultParams.d
+      if (newd == 0) newd = this.defaultParams.d //Non-zero params only
       this.simParamData[5] = newd;
       console.log(this.simParamData[5], "d-change");
     },
@@ -424,11 +413,17 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    const defaultN0 = this.simParamData[0]
-    const defaultP0 = this.simParamData[3]
-    this.N0 = defaultN0
-    this.P0 = defaultP0
+    //Set simulation params to default values
+    this.simParamData.length = 5 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N0
+    this.simParamData[1] = this.defaultParams.a
+    this.simParamData[2] = this.defaultParams.b
+    this.simParamData[3] = this.defaultParams.P0
+    this.simParamData[4] = this.defaultParams.c
+    this.simParamData[5] = this.defaultParams.d
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotN0 = this.defaultParams.N0
+    this.barPlotP0 = this.defaultParams.P0
   },
 };
 </script>

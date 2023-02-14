@@ -14,6 +14,9 @@
         style="margin-left: 0.5em"
       />
     </label>
+    <div class="current-param-value-box">
+      {{ currentSimParamData }}
+    </div>
     <!--Bind inherited slider data to required range attributes-->
     <input
       type="range"
@@ -44,3 +47,21 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.current-param-value-box {
+  border-radius: 4px;
+  border-color: rgb(146, 146, 146);
+  background-color: rgba(171, 171, 171, 0.05);
+  text-align: left;
+  padding-left: 10px;
+  padding-top: 1.5px;
+  font-size: 0.9em;
+  margin-top: 10px;
+  width: 50px;
+  height: 25px;
+  border-style: outset;
+  border-width: 1px;
+  float: right;
+}
+</style>
