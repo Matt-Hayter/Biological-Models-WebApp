@@ -211,34 +211,34 @@ export default {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
       if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to default if 0 encountered
-      this.simParamData[0] = newN0;
+      this.$set(this.simParamData, 0, newN0) //Inform Vue of an array element change
       this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
       if (newa == 0) newa = this.defaultParams.a //Non-zero params only
-      this.simParamData[1] = newa;
+      this.$set(this.simParamData, 1, newa) //Inform Vue of an array element change
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
       if (newb == 0) newb = this.defaultParams.b //Non-zero params only
-      this.simParamData[2] = newb;
+      this.$set(this.simParamData, 2, newb) //Inform Vue of an array element change
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
       if (newP0 == 0) newP0 = this.defaultParams.P0 //Non-zero params only
-      this.simParamData[3] = newP0;
+      this.$set(this.simParamData, 3, newP0) //Inform Vue of an array element change
       this.barPlotP0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
       if (newc == 0) newc = this.defaultParams.c //Non-zero params only
-      this.simParamData[4] = newc;
+      this.$set(this.simParamData, 4, newc) //Inform Vue of an array element change
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
       if (newd == 0) newd = this.defaultParams.d //Non-zero params only
-      this.simParamData[5] = newd;
+      this.$set(this.simParamData, 5, newd) //Inform Vue of an array element change
       console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -414,7 +414,7 @@ export default {
       this.getAllPresets()
     }
     //Set simulation params to default values
-    this.simParamData.length = 5 //Number of params in this model
+    this.simParamData.length = 6 //Number of params in this model
     this.simParamData[0] = this.defaultParams.N0
     this.simParamData[1] = this.defaultParams.a
     this.simParamData[2] = this.defaultParams.b

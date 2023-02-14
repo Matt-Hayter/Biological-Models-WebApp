@@ -22,7 +22,7 @@
           <div v-for="(preset, index) in userPresetsUpdate" :key="preset[0]">
             <b-button-toolbar style="width: max-content;">
               <b-dropdown-item-button @click="onPresetClick(index)">
-                <b style="font-size: 1.3em;">{{ preset[1] }}</b>, {{ preset[2] }}
+                <b style="font-size: 1.2em;">{{ preset[1] }}</b>, {{ preset[2] }}
               </b-dropdown-item-button>
               <b-dropdown-item-button @click="onClickDeletePreset(index)" style="margin-top: 0.25em">
                 <b-icon icon="x"></b-icon>
