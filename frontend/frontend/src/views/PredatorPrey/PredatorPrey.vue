@@ -174,15 +174,20 @@ export default {
       ],
       configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
-        {
+      {
           id: 1,
+          text: "Steady variations between predator and prey populations",
+          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
+        },
+        {
+          id: 2,
           text: "Lots of natural prey births and predator deaths, minimal effects from predation.",
           maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
-          id: 2,
-          text: "",
-          maths: "a=b"
+          id: 3,
+          text: "Heavy predation effects, little natural prey births and predator deaths.",
+          maths: "N_{0}=10,\\ a=0.4,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.4",
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -331,6 +336,11 @@ export default {
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial value
+        const newN0 = this.simParamData[0]
+        const newP0 = this.simParamData[3]
+        this.barPlotN0 = newN0
+        this.barPlotP0 = newP0
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",

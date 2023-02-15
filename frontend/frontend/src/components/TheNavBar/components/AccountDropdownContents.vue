@@ -366,13 +366,13 @@ export default {
       this.invalidSignInAlert.showAlert = false;
     },
     initSignInForm() {
-      this.signIn.formEmail = null;
-      this.signIn.formPassword = null;
+      this.signIn.formEmail = "";
+      this.signIn.formPassword = "";
     },
     initSignUpForm() {
-      this.signUp.formUsername = null;
-      this.signUp.formEmail = null;
-      this.signUp.formPassword = null;
+      this.signUp.formUsername = "";
+      this.signUp.formEmail = "";
+      this.signUp.formPassword = "";
     },
     //Update Vuex store state with signed in user's data
     activateUserState(response) {

@@ -7,7 +7,7 @@
           Save <b-icon icon="box-arrow-in-down" font-scale="1.4" shift-v="1.5"></b-icon>
         </b-button>
         <!--Presets dropdown-->
-        <b-dropdown dropright variant="info" no-caret @show="onClickDropdown">
+        <b-dropdown dropright :disabled="simRunning" variant="info" no-caret @show="onClickDropdown">
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
           </template>

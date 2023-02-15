@@ -32,9 +32,9 @@ class PredatorPreySimulation:
         self.d = sim_params[5] #Predator natural death rate
         #Simulation params
         self.dt = 0.01 #Integration step size, constant [yrs]
-        self.output_dt = 0.01 #Initial output step size. Increases in factors of 10 for long sims [yrs]
+        self.output_dt = 0.01 #Initial output step size (minimum). Dynamically increases in factors of 2 for long sims [yrs]
         self.max_troughs = 6 #Length of simulations if oscillating
-        self.large_interval = 10 #If first turning point is not found within large interval, output_dt * 4, large_interval * 4 and repeat [yrs]
+        self.large_interval = 10 #If first turning point is not found within large interval, output_dt * 2, large_interval * 2 and repeat [yrs]
         self.max_interval = 5000 #If first turning point is not found within max interval, end sim (no periodicity found) [yrs]
         self.max_time = 13000 #End simulation if time exceeds this point [yrs]
         
@@ -139,6 +139,5 @@ def runPredPreySim(sim_params):
         upper_bound = math.ceil(largest_val/10)*10 #Round up to nearest 10
     else:
         upper_bound = math.ceil(largest_val) #Round up to nearest while number
-    print(len(model.N_out), len(model.P_out), len(model.t_axis))
     return return_arrays, model.t_axis, upper_bound
     

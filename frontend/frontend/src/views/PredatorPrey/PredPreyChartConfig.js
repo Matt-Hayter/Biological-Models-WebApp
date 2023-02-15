@@ -25,7 +25,7 @@ export default {
     scales: {
       x: {
         beginAtZero: true,
-        max: 200
+        max: 10
       },
       y: {
         grid: {
