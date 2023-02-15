@@ -183,7 +183,7 @@ export default {
   padding-right: 0.5em;
 }
 .popover-list {
-  margin-bottom: -1em;
+  margin-bottom: -0.2em;
 }
 .custom-popover {
   max-width: 500px;
