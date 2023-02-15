@@ -67,7 +67,7 @@ export default {
             clearInterval(visualisationInterval)
             resolve()
           }
-          this.currentSimTime = Number(Math.round(this.simTimeData[step]+"e2")+"e-2") //Update displayed time
+          this.currentSimTime = Number(Math.round(this.simTimeData[step]+"e1")+"e-1") //Update displayed time
           this.$refs.racerBarChart.chartSimStep(step)
           step ++ //Progress to next step
         }, 10)
