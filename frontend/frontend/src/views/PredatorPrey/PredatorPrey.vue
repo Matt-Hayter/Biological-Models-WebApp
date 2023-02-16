@@ -41,10 +41,17 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            Some text
+            The Lotka-Volterra model is a simple model describing variation in the populations of a
+            prey species (<katex-element expression="N"/>) hunted by a predator species (<katex-element expression="P"/>).
+            Solutions are oscillatory in nature,
+            with an increase in prey population not only driving more prey reproduction, but also
+            increasing predation.
           </b-card-text>
           <b-card-text>
-            Some more text
+            This model assumes that prey populations can always bounce back,
+            even from extremely low populations. This, as we know, isn't usually the case, and
+            prey can infact be hunted to extinction. Other assumptions include that there is no
+            shortage of food for the prey, and that the environment is constant.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -87,19 +94,19 @@ export default {
   },
   data() {
     return {
-      //Params initially at slider's min values
-      simParamData: [
-        //Prey
-        1, //N0
-        10, //a
-        1, //b
-        //Predator
-        1, //P0
-        10, //c
-        1, //d
-      ],
-      N0: null, //For use in reactive bar chart.
-      P0: null,
+      //Params initially at slider's min values (non-zero)
+      defaultParams: {
+        N0: 0.5,
+        a: 0.1,
+        b: 0.1,
+        P0: 0.5,
+        c: 0.05,
+        d: 0.1
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      barPlotN0: null, //For use in reactive bar chart.
+      barPlotP0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -116,23 +123,26 @@ export default {
               label: "N_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
-              min: 1,
+              inputStep: 0.5,
+              tickStep: 1,
+              min: 0,
               max: 10,
-              step: 1,
             },
             {
               label: "a",
               emitEventName: "changea",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
             {
               label: "b",
               emitEventName: "changeb",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: true,
@@ -144,23 +154,26 @@ export default {
               label: "P_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeP0",
-              min: 1,
+              inputStep: 0.5,
+              tickStep: 1,
+              min: 0,
               max: 10,
-              step: 1,
             },
             {
               label: "c",
               emitEventName: "changec",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.05,
+              tickStep: 0.1,
+              min: 0,
+              max: 1,
             },
             {
               label: "d",
               emitEventName: "changed",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: false,
@@ -168,14 +181,20 @@ export default {
       ],
       configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
-        {
+      {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
+          text: "Steady variations between predator and prey populations",
+          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
         },
         {
           id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+          text: "Lots of natural prey births and predator deaths, minimal effects from predation.",
+          maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
+        },
+        {
+          id: 3,
+          text: "Heavy predation effects, little natural prey births and predator deaths.",
+          maths: "N_{0}=10,\\ a=0.4,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.4",
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -197,35 +216,41 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.N0, this.P0]
+      return [this.barPlotN0, this.barPlotP0]
     }
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      this.simParamData[0] = newN0;
-      this.N0 = newN0;
+      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to default if 0 encountered
+      this.$set(this.simParamData, 0, newN0) //Inform Vue of an array element change
+      this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      this.simParamData[1] = newa;
+      if (newa == 0) newa = this.defaultParams.a //Non-zero params only
+      this.$set(this.simParamData, 1, newa) //Inform Vue of an array element change
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      this.simParamData[2] = newb;
+      if (newb == 0) newb = this.defaultParams.b //Non-zero params only
+      this.$set(this.simParamData, 2, newb) //Inform Vue of an array element change
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      this.simParamData[3] = newP0;
-      this.P0 = newP0;
+      if (newP0 == 0) newP0 = this.defaultParams.P0 //Non-zero params only
+      this.$set(this.simParamData, 3, newP0) //Inform Vue of an array element change
+      this.barPlotP0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      this.simParamData[4] = newc;
+      if (newc == 0) newc = this.defaultParams.c //Non-zero params only
+      this.$set(this.simParamData, 4, newc) //Inform Vue of an array element change
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      this.simParamData[5] = newd;
+      if (newd == 0) newd = this.defaultParams.d //Non-zero params only
+      this.$set(this.simParamData, 5, newd) //Inform Vue of an array element change
       console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -318,6 +343,11 @@ export default {
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial value
+        const newN0 = this.simParamData[0]
+        const newP0 = this.simParamData[3]
+        this.barPlotN0 = newN0
+        this.barPlotP0 = newP0
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -380,6 +410,7 @@ export default {
         this.simRunning = true //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
+        this.endSim() //Reset button
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
           variant: "danger",
@@ -399,9 +430,17 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    this.N0 = this.simParamData[0]
-    this.P0 = this.simParamData[3]
+    //Set simulation params to default values
+    this.simParamData.length = 6 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N0
+    this.simParamData[1] = this.defaultParams.a
+    this.simParamData[2] = this.defaultParams.b
+    this.simParamData[3] = this.defaultParams.P0
+    this.simParamData[4] = this.defaultParams.c
+    this.simParamData[5] = this.defaultParams.d
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotN0 = this.defaultParams.N0
+    this.barPlotP0 = this.defaultParams.P0
   },
 };
 </script>
@@ -428,5 +467,6 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+  z-index: 2;
 }
 </style>

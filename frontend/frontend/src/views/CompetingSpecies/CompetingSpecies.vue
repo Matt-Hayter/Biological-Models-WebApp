@@ -120,30 +120,34 @@ export default {
               label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
-              min: 10,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
               max: 50,
-              step: 5,
             },
             {
               label: "r_{1}",
               emitEventName: "changer1",
-              min: 10,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
               max: 50,
-              step: 5,
             },
             {
               label: "K_{1}",
               emitEventName: "changeK1",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
+              max: 50,
             },
             {
               label: "a_{1}",
               emitEventName: "changea1",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
+              max: 50,
             },
           ],
           isActive: true,
@@ -155,30 +159,34 @@ export default {
               label: "N_{2,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
-              min: 10,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
               max: 50,
-              step: 5,
             },
             {
               label: "r_{2}",
               emitEventName: "changer2",
-              min: 10,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
               max: 50,
-              step: 5,
             },
             {
               label: "K_{2}",
               emitEventName: "changeK2",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
+              max: 50,
             },
             {
               label: "a_{2}",
               emitEventName: "changea2",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 2.5,
+              tickStep: 5,
+              min: 0,
+              max: 50,
             },
           ],
           isActive: false,
@@ -406,6 +414,7 @@ export default {
         this.simRunning = true //Signals to start visualising simulation
         console.log("Competing Species simulation successfully run at server")
       } catch (error) {
+        this.endSim() //Reset button
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
           variant: "danger",
@@ -426,8 +435,10 @@ export default {
       this.getAllPresets()
     }
     //Set initial values, calling initialConditions computed property to be inherited by charts
-    this.N1_0 = this.simParamData[0]
-    this.N2_0 = this.simParamData[4]
+    const defaultN1_0 = this.simParamData[0]
+    const defaultN2_0 = this.simParamData[4]
+    this.N1_0 = defaultN1_0
+    this.N2_0 = defaultN2_0
   },
 };
 </script>

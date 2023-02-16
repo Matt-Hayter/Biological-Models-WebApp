@@ -26,7 +26,7 @@
       </div>
       <b-card-body style="min-height: 71.4vh">
         <!--Render all param sliders with correct labels, for each tab-->
-        <div class="param-sliders" v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
+        <div v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
           <!--Only show tab data if tab is selected (isActive=true). Rendered nonetheless.-->
           <div v-show="tabData.isActive" v-for="(sliderData, index2) in tabData.data" :key="sliderData.label">
             <!--Pass each slider's data individually to slider component-->
@@ -40,7 +40,12 @@
             <SliderTicks :slider-data="sliderData"/>
           </div>
         </div>
-        <PresetButtons v-on="$listeners" :param-suggestions="paramSuggestions" :user-presets="userPresets"/>
+        <PresetButtons
+          v-on="$listeners"
+          :param-suggestions="paramSuggestions"
+          :user-presets="userPresets"
+          :sim-running="simRunning"
+        />
         </b-card-body>
     </b-card>
   </div>

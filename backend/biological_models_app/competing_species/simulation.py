@@ -11,7 +11,8 @@ class CompetingSpeciesSimulation:
         self.N1 = deque([]) #Holds population 1 values
         self.N1_out = deque([]) #Population 1 values to be outputted
         self.N2 = deque([]) #Holds population 2 values
-        self.N1_out = deque([]) #Population 2 values to be outputted
+        self.N2_out = deque([]) #Population 2 values to be outputted
+        self.t_axis = None #Holds time values
         #Model params
         #Species 1
         self.N1_0 = sim_params[0]
@@ -53,6 +54,8 @@ class CompetingSpeciesSimulation:
 
         for step in range(1, max_step, 1):
             self.Euler_method(step, output_step)
+        
+        self.t_axis = list(np.linspace(0, len(self.N1_out)*self.output_dt, len(self.N1_out)))
 
 def runCompetingSpeciesSim(sim_params):
     #Pass params configured by user

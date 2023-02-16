@@ -390,6 +390,7 @@ export default {
         this.simRunning = true //Signals to start visualising simulation
         console.log("SEIDR simulation successfully run at server")
       } catch (error) {
+        this.endSim() //Reset button
         const failureAlertPayload = {
           message: "Unable to run simulation, failed repsonse from server",
           variant: "danger",
@@ -410,8 +411,10 @@ export default {
       this.getAllPresets()
     }
     //Set initial values, calling initialConditions computed property to be inherited by charts
-    this.E0 = this.simParamData[4]
-    this.I0 = this.simParamData[5]
+    const defaultE0 = this.simParamData[4]
+    const defaultI0 = this.simParamData[5]
+    this.E0 = defaultE0
+    this.I0 = defaultI0
   },
 };
 </script>

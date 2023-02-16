@@ -19,6 +19,7 @@ class SIRSimulation:
         self.R = deque([]) #Holds Recovered population values. Recovered individuals are permanently immune
         self.R_out = deque([]) #R values to be outputted
         self.N = deque([]) #Total population
+        self.t_axis = None #Holds time values
         self.dIdt = [-1] #Traced for simulation end time
         #User-variable model params
         self.alpha = sim_params[0] #Disease induced average lethality rate [days-1]
@@ -96,6 +97,8 @@ class SIRSimulation:
         #After peak is found, perform Euler until infections are low
         while self.I[-1] > 100:
             self.Euler_method(step, output_step)
+        
+        self.t_axis = list(np.linspace(0, len(self.S_out)*self.output_dt, len(self.S_out)))
      
 def runSEIDRSim(sim_params):
     model = SIRSimulation(sim_params)
