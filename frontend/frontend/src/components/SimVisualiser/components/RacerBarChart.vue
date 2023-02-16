@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     setUpChart(simMaxVal1) {
-      console.log(this.initialConditions)
       this.chartConfig.options.scales.x.max = simMaxVal1 //Resize bar plot to fit sim
       this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
     },
