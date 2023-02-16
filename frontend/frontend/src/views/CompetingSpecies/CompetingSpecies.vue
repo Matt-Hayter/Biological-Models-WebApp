@@ -90,20 +90,22 @@ export default {
   data() {
     return {
       //Params initially at slider's min values
-      simParamData: [
+      defaultParams: {
         //Species 1
-        10, //N1_0
-        10, //r1
-        1, //K1
-        1, //a1
+        N1_0: 10,
+        r1: 0.1,
+        K1: 10,
+        a1: 0.1,
         //Species 2
-        10, //N2_0
-        10, //r2
-        1, //K2
-        1, //a2
-      ],
-      N1_0: null,
-      N2_0: null,
+        N2_0: 10,
+        r2: 0.1,
+        K2: 10,
+        a2: 0.1
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      barPlotN1_0: null,
+      barPlotN2_0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -120,34 +122,34 @@ export default {
               label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 10,
+              tickStep: 100,
               min: 0,
-              max: 50,
+              max: 1000,
             },
             {
               label: "r_{1}",
               emitEventName: "changer1",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
               min: 0,
-              max: 50,
+              max: 2,
             },
             {
               label: "K_{1}",
               emitEventName: "changeK1",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 10,
+              tickStep: 100,
               min: 0,
-              max: 50,
+              max: 1000,
             },
             {
               label: "a_{1}",
               emitEventName: "changea1",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
               min: 0,
-              max: 50,
+              max: 2,
             },
           ],
           isActive: true,
@@ -159,34 +161,34 @@ export default {
               label: "N_{2,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 10,
+              tickStep: 100,
               min: 0,
-              max: 50,
+              max: 1000,
             },
             {
               label: "r_{2}",
               emitEventName: "changer2",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
               min: 0,
-              max: 50,
+              max: 2,
             },
             {
               label: "K_{2}",
               emitEventName: "changeK2",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 10,
+              tickStep: 100,
               min: 0,
-              max: 50,
+              max: 1000,
             },
             {
               label: "a_{2}",
               emitEventName: "changea2",
-              inputStep: 2.5,
-              tickStep: 5,
+              inputStep: 0.1,
+              tickStep: 0.2,
               min: 0,
-              max: 50,
+              max: 2,
             },
           ],
           isActive: false,
@@ -196,13 +198,9 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
-        },
-        {
-          id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
-        },
+          text: "abc",
+          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
+        }
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
       alertMessage: null,
@@ -223,42 +221,57 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.N1_0, this.N2_0]
+      return [this.barPlotN1_0, this.barPlotN2_0]
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN1_0(newN1_0) {
-      this.simParamData[0] = newN1_0;
-      this.N1_0 = newN1_0
+      if (newN1_0 == 0) newN1_0 = this.defaultParams.N1_0 //Non-zero params only, set to default if 0 encountered
+      this.$set(this.simParamData, 0, newN1_0) //Inform Vue of an array element change
+      this.barPlotN1_0 = newN1_0
       console.log(this.simParamData[0], "N1_0-change");
     },
     updater1(newr1) {
+      if (newr1 == 0) newr1 = this.defaultParams.r1 //Non-zero params only
+      this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
       this.simParamData[1] = newr1;
       console.log(this.simParamData[1], "r1-change");
     },
     updateK1(newK1) {
+      if (newK1 == 0) newK1 = this.defaultParams.K1 //Non-zero params only
+      this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
       this.simParamData[2] = newK1;
       console.log(this.simParamData[2], "K1-change");
     },
     updatea1(newa1) {
+      if (newa1 == 0) newa1 = this.defaultParams.a1 //Non-zero params only
+      this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
       this.simParamData[3] = newa1;
       console.log(this.simParamData[3], "a1-change");
     },
     updateN2_0(newN2_0) {
+      if (newN2_0 == 0) newN2_0 = this.defaultParams.N2_0 //Non-zero params only
+      this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
       this.simParamData[4] = newN2_0;
-      this.N2_0 = newN2_0
+      this.barPlotN2_0 = newN2_0
       console.log(this.simParamData[4], "N2_0-change");
     },
     updater2(newr2) {
+      if (newr2 == 0) newr2 = this.defaultParams.r2 //Non-zero params only
+      this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
       this.simParamData[5] = newr2;
       console.log(this.simParamData[5], "r2-change");
     },
     updateK2(newK2) {
+      if (newK2 == 0) newK2 = this.defaultParams.K2 //Non-zero params only
+      this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
       this.simParamData[6] = newK2;
       console.log(this.simParamData[6], "K2-change");
     },
     updatea2(newa2) {
+      if (newa2 == 0) newa2 = this.defaultParams.a2 //Non-zero params only
+      this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
       this.simParamData[7] = newa2;
       console.log(this.simParamData[7], "a2-change");
     },
@@ -352,6 +365,11 @@ export default {
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial value
+        const N1_0Index = 0
+        const N2_0Index = 4
+        this.barPlotN0 = this.simParamData[N1_0Index]
+        this.barPlotP0 = this.simParamData[N2_0Index]
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -434,11 +452,19 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    const defaultN1_0 = this.simParamData[0]
-    const defaultN2_0 = this.simParamData[4]
-    this.N1_0 = defaultN1_0
-    this.N2_0 = defaultN2_0
+    //Set simulation params to default values
+    this.simParamData.length = 8 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N1_0
+    this.simParamData[1] = this.defaultParams.r1
+    this.simParamData[2] = this.defaultParams.a1
+    this.simParamData[3] = this.defaultParams.K1
+    this.simParamData[4] = this.defaultParams.N2_0
+    this.simParamData[5] = this.defaultParams.r2
+    this.simParamData[6] = this.defaultParams.a2
+    this.simParamData[7] = this.defaultParams.K2
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotN1_0 = this.defaultParams.N1_0
+    this.barPlotN2_0 = this.defaultParams.N2_0
   },
 };
 </script>

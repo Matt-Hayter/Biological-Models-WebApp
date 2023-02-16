@@ -1,5 +1,5 @@
 <template>
-  <div class="slider-content" style="padding: 0 1.5em">
+  <div class="slider-content">
     <label
       for="slider-range"
       class="form-label d-flex"
@@ -58,7 +58,7 @@ export default {
   padding-top: 1.5px;
   font-size: 0.9em;
   margin-top: 10px;
-  width: 50px;
+  width: 55px;
   height: 25px;
   border-style: outset;
   border-width: 1px;

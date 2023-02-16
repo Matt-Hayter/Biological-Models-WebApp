@@ -96,9 +96,11 @@ export default {
     return {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
+        //Prey
         N0: 0.5,
         a: 0.1,
         b: 0.1,
+        //Predator
         P0: 0.5,
         c: 0.05,
         d: 0.1
@@ -181,7 +183,7 @@ export default {
       ],
       configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
-      {
+        {
           id: 1,
           text: "Steady variations between predator and prey populations",
           maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
@@ -344,10 +346,10 @@ export default {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
         //Set barplot initial value
-        const newN0 = this.simParamData[0]
-        const newP0 = this.simParamData[3]
-        this.barPlotN0 = newN0
-        this.barPlotP0 = newP0
+        const N0Index = 0
+        const P0Index = 3
+        this.barPlotN0 = this.simParamData[N0Index]
+        this.barPlotP0 = this.simParamData[P0Index]
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
