@@ -96,7 +96,7 @@ export default {
   },
   data() {
     return {
-      //Params initially at slider's min values
+      //Params initially at slider's min values (non-zero)
       defaultParams: {
         //Species 1
         N1_0: 20,

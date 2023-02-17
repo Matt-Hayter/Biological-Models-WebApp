@@ -27,7 +27,7 @@ export default {
     scales: {
       x: {
         beginAtZero: true,
-        max: 200
+        max: 20000
       },
       y: {
         grid: {
@@ -35,6 +35,6 @@ export default {
         }
       }
     },
-    aspectRatio: 6
+    aspectRatio: 5
   }
 };

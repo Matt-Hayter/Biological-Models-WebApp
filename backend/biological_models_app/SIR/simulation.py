@@ -26,7 +26,7 @@ class SIRSimulation:
         self.N_0 = 10000000
         self.S_0 = self.N_0 - self.I_0 #Initial susceptible poulation (10  mil)
         #Simulation params
-        self.dt = 0.0005 #Integration step size [days]
+        self.dt = 0.01 #Integration step size [days]
         self.output_dt = 0.01 #Output step size [days]
         self.t_max_stop = 2000 #If this time is reached with no infection peak found, end simulation
         
@@ -71,7 +71,7 @@ class SIRSimulation:
                 return
         #After peak is found, perform Euler until infections are low
         while self.I[-1] > 100:
-            self.Euler_method()
+            self.Euler_method(step, output_step)
         
         self.t_axis = list(np.linspace(0, len(self.S_out)*self.output_dt, len(self.S_out)))
 
