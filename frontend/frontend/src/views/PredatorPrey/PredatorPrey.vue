@@ -348,6 +348,7 @@ export default {
         //Set barplot initial value
         const N0Index = 0
         const P0Index = 3
+        this.barPlotN0 = null //Change value for computed recalculation
         this.barPlotN0 = this.simParamData[N0Index]
         this.barPlotP0 = this.simParamData[P0Index]
         const successAlertPayload = {

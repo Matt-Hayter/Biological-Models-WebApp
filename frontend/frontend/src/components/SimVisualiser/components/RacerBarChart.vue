@@ -57,7 +57,7 @@ export default {
   padding: 20px;
   background: white;
   position: relative;
-  min-height: 13vw;
+  min-height: 18vw;
   width: 95%;
 }
 </style>

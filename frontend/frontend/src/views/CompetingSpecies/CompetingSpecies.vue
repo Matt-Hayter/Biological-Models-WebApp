@@ -391,8 +391,9 @@ export default {
         //Set barplot initial value
         const N1_0Index = 0
         const N2_0Index = 4
-        this.barPlotN0 = this.simParamData[N1_0Index]
-        this.barPlotP0 = this.simParamData[N2_0Index]
+        this.barPlotN1_0 = null //Change value for computed recalculation
+        this.barPlotN1_0 = this.simParamData[N1_0Index]
+        this.barPlotN2_0 = this.simParamData[N2_0Index]
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",

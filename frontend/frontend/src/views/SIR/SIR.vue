@@ -59,8 +59,8 @@
             </ul>
           </b-card-text>
           <b-card-text>
-            In these simulations, a total population of 10 million individuals is used. Also note that within this model,
-            deaths are included within the recovered group.
+            In these simulations, a total population of 10 million individuals is used, and deaths are 
+            included within the recovered group.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -103,15 +103,18 @@ export default {
   },
   data() {
     return {
+      totalPopulation: 10000000, //Tot. sim population. Should match backend simulation
       //Params initially at slider's min values (non-zero)
       defaultParams: {
-        I0: 1,
+        I0: 1, 
         beta: 0.05,
         recipGamma: 1
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
-      barPlotI0: null, //For use in reactive bar chart.
+      barPlotS0: null, //For use in reactive bar chart.
+      barPlotI0: null,
+      barPlotR0: 0,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -129,25 +132,25 @@ export default {
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeI0",
               inputStep: 500,
-              tickStep: 2000,
+              tickStep: 5000,
               min: 0,
-              max: 20000,
+              max: 20000
             },
             {
               label: "\\beta",
               emitEventName: "changeBeta",
               inputStep: 0.05,
-              tickStep: 0.2,
+              tickStep: 0.1,
               min: 0,
-              max: 2,
+              max: 1,
             },
             {
               label: "1/ \\gamma",
               emitEventName: "changeRecipGamma",
               inputStep: 1,
-              tickStep: 3,
+              tickStep: 2,
               min: 0,
-              max: 30,
+              max: 20,
             },
           ],
           isActive: true, //Only tab, so always active
@@ -157,9 +160,23 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "COVID in china, starting period 22nd January (rough approximations based on data, see: I. Cooper, A SIR model \
-            assumption for the spread of COVID-19 in different communities, 2020)",
-          maths: "I_{0}=500,\\ a=0.35,\\ b=0.035"
+          text: "Low/moderate infectiousness and small/moderate infectious period.",
+          maths: "I_{0}=1,\\ \\beta=0.3,\\ 1/\\gamma=4"
+        },
+        {
+          id: 2,
+          text: "High infectiousness and large infectious period.",
+          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=14"
+        },
+        {
+          id: 3,
+          text: "High infectiousness and small infectious period.",
+          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=2"
+        },
+        {
+          id: 4,
+          text: "Low infectiousness and large infectious period.",
+          maths: "I_{0}=1,\\ \\beta=0.2,\\ 1/\\gamma=14"
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -181,7 +198,7 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.barPlotI0]
+      return [this.barPlotS0, this.barPlotI0, this.barPlotR0]
     },
   },
   methods: {
@@ -190,6 +207,7 @@ export default {
       if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only, set to default if 0 encountered
       this.$set(this.simParamData, 0, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
+      this.I0UpdateS0(newI0)
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
@@ -203,6 +221,11 @@ export default {
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       this.simParamData[2] = newRecipGamma;
       console.log(this.simParamData[2], "1/gamma-change");
+    },
+    //Change S0 upon change of I0 (must sum to total population)
+    I0UpdateS0(newI0) {
+      this.barPlotS0 = this.totalPopulation - newI0
+      console.log(this.barPlotS0, "S0 change from I0 change");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -284,8 +307,11 @@ export default {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
         //Set barplot initial value
-        const I0Index = 0
-        this.barPlotI0 = this.simParamData[I0Index]
+        const I0ParamIndex = 0
+        this.barPlotI0 = null //Change value for computed recalculation
+        this.barPlotI0 = this.simParamData[I0ParamIndex]
+        this.barPlotS0 = this.totalPopulation - this.barPlotI0
+        console.log(this.barPlotS0)
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -375,6 +401,7 @@ export default {
     this.simParamData[2] = this.defaultParams.recipGamma
     //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
     this.barPlotI0 = this.defaultParams.I0
+    this.barPlotS0 = this.totalPopulation - this.barPlotI0
   },
 };
 </script>
@@ -401,5 +428,6 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+  color: rgb(rgb(255, 225, 0), green, blue)
 }
 </style>

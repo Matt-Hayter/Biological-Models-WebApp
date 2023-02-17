@@ -55,6 +55,12 @@
           <b-card-text>
             Some more text
           </b-card-text>
+          <b-card-text>
+            ***<b>Note:</b> Covid related parameter suggestions are approximations based on data within "I. Cooper,
+            A SIR model assumption for the spread of COVID-19 in different communities, 2020". The
+            exaggerated infectious period (<katex-element expression="1/\gamma"/>) required to fit the
+            model to data may indicate that the SIR model is too simplistic for application to COVID.***
+          </b-card-text>
         </ModelInfo>
       </div>
       <div class="sim-visualisation-section">
