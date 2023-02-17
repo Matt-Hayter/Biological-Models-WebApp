@@ -31,7 +31,7 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
+          <h4 style="float: left">Predator-Prey (Lotka-Volterra) Model</h4>
           <div class="formula">
             <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
             <br>

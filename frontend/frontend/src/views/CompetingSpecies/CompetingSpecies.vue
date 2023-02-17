@@ -43,10 +43,17 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            Some text
+            This model describes two species occupying the same habitat, which
+            compete for shared and finite resources. Species 1 and 2 have populations
+            <katex-element expression="N_{1}"/> and <katex-element expression="N_{2}"/>
+            respectively. Within the habitat, each species exhibits it's own carrying capacity,
+            <katex-element expression="K"/>, which is the maximum species population
+            that the environment's resources could sustain.
           </b-card-text>
           <b-card-text>
-            Some more text
+            The fate of each species depends on the paramaters assigned to the model. For a chosen
+            configuration, try varying initial populations, <katex-element expression="N_{1, 0}"/> and
+            <katex-element expression="N_{2, 0}"/>, and see how the populations evolve to their final state!
           </b-card-text>
         </ModelInfo>
       </div>
@@ -92,14 +99,14 @@ export default {
       //Params initially at slider's min values
       defaultParams: {
         //Species 1
-        N1_0: 10,
+        N1_0: 20,
         r1: 0.1,
-        K1: 10,
+        K1: 20,
         a1: 0.1,
         //Species 2
-        N2_0: 10,
+        N2_0: 20,
         r2: 0.1,
-        K2: 10,
+        K2: 20,
         a2: 0.1
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
@@ -122,7 +129,7 @@ export default {
               label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
-              inputStep: 10,
+              inputStep: 20,
               tickStep: 100,
               min: 0,
               max: 1000,
@@ -138,7 +145,7 @@ export default {
             {
               label: "K_{1}",
               emitEventName: "changeK1",
-              inputStep: 10,
+              inputStep: 20,
               tickStep: 100,
               min: 0,
               max: 1000,
@@ -161,7 +168,7 @@ export default {
               label: "N_{2,0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
-              inputStep: 10,
+              inputStep: 20,
               tickStep: 100,
               min: 0,
               max: 1000,
@@ -177,7 +184,7 @@ export default {
             {
               label: "K_{2}",
               emitEventName: "changeK2",
-              inputStep: 10,
+              inputStep: 20,
               tickStep: 100,
               min: 0,
               max: 1000,
@@ -198,8 +205,24 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "abc",
-          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
+          text: "Weak competition between species (neither species goes extinct, regardless of \
+            initial populations).",
+          maths: "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
+            r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8"
+        },
+        {
+          id: 2,
+          text: "Unbalanced competition between species (species 1 always driven to extinction, \
+            regardless of starting populations)",
+          maths: "r_{1}=1,\\ K_{1}=700,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=0.5"
+        },
+        {
+          id: 3,
+          text: "Strong competition between species (either species 1 or species 2 driven to \
+            extinction, depending on initial populations. See for yourself by varying them!)",
+          maths: "r_{1}=1,\\ K_{1}=500,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=1.3"
         }
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -456,12 +479,12 @@ export default {
     this.simParamData.length = 8 //Number of params in this model
     this.simParamData[0] = this.defaultParams.N1_0
     this.simParamData[1] = this.defaultParams.r1
-    this.simParamData[2] = this.defaultParams.a1
-    this.simParamData[3] = this.defaultParams.K1
+    this.simParamData[2] = this.defaultParams.K1
+    this.simParamData[3] = this.defaultParams.a1
     this.simParamData[4] = this.defaultParams.N2_0
     this.simParamData[5] = this.defaultParams.r2
-    this.simParamData[6] = this.defaultParams.a2
-    this.simParamData[7] = this.defaultParams.K2
+    this.simParamData[6] = this.defaultParams.K2
+    this.simParamData[7] = this.defaultParams.a2
     //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
     this.barPlotN1_0 = this.defaultParams.N1_0
     this.barPlotN2_0 = this.defaultParams.N2_0
