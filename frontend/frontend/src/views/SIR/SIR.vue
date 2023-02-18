@@ -41,7 +41,7 @@
           <b-card-text>
             The SIR model is a simplistic, classical model describing disease spread throughout a
             population. Individuals within the population exist in, and transition between,
-            one of three categories:
+            one of three states:
           </b-card-text>
           <b-card-text>
             <ul>
@@ -112,7 +112,7 @@ export default {
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
-      barPlotS0: null, //For use in reactive bar chart.
+      barPlotS0: null, //For use in reactive bar chart
       barPlotI0: null,
       barPlotR0: 0,
       simRunning: false,
@@ -207,25 +207,23 @@ export default {
       if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only, set to default if 0 encountered
       this.$set(this.simParamData, 0, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
-      this.I0UpdateS0(newI0)
+      this.I0UpdateS0()
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
       if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
       this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
-      this.simParamData[1] = newBeta;
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
       if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
-      this.simParamData[2] = newRecipGamma;
       console.log(this.simParamData[2], "1/gamma-change");
     },
     //Change S0 upon change of I0 (must sum to total population)
-    I0UpdateS0(newI0) {
-      this.barPlotS0 = this.totalPopulation - newI0
-      console.log(this.barPlotS0, "S0 change from I0 change");
+    I0UpdateS0() {
+      const I0ParamIndex = 0;
+      this.barPlotS0 = this.totalPopulation - this.simParamData[I0ParamIndex]
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {

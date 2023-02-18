@@ -258,44 +258,37 @@ export default {
     updater1(newr1) {
       if (newr1 == 0) newr1 = this.defaultParams.r1 //Non-zero params only
       this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
-      this.simParamData[1] = newr1;
       console.log(this.simParamData[1], "r1-change");
     },
     updateK1(newK1) {
       if (newK1 == 0) newK1 = this.defaultParams.K1 //Non-zero params only
       this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
-      this.simParamData[2] = newK1;
       console.log(this.simParamData[2], "K1-change");
     },
     updatea1(newa1) {
       if (newa1 == 0) newa1 = this.defaultParams.a1 //Non-zero params only
       this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
-      this.simParamData[3] = newa1;
       console.log(this.simParamData[3], "a1-change");
     },
     updateN2_0(newN2_0) {
       if (newN2_0 == 0) newN2_0 = this.defaultParams.N2_0 //Non-zero params only
       this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
-      this.simParamData[4] = newN2_0;
       this.barPlotN2_0 = newN2_0
       console.log(this.simParamData[4], "N2_0-change");
     },
     updater2(newr2) {
       if (newr2 == 0) newr2 = this.defaultParams.r2 //Non-zero params only
       this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
-      this.simParamData[5] = newr2;
       console.log(this.simParamData[5], "r2-change");
     },
     updateK2(newK2) {
       if (newK2 == 0) newK2 = this.defaultParams.K2 //Non-zero params only
       this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
-      this.simParamData[6] = newK2;
       console.log(this.simParamData[6], "K2-change");
     },
     updatea2(newa2) {
       if (newa2 == 0) newa2 = this.defaultParams.a2 //Non-zero params only
       this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
-      this.simParamData[7] = newa2;
       console.log(this.simParamData[7], "a2-change");
     },
     //Respond to emitted "change active parameter tab" events

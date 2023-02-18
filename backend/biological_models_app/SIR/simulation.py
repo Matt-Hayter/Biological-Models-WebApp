@@ -27,8 +27,8 @@ class SIRSimulation:
         self.S_0 = self.N_0 - self.I_0 #Initial susceptible poulation (10  mil)
         #Simulation params
         self.dt = 0.01 #Integration step size [days]
-        self.output_dt = 0.01 #Output step size [days]
-        self.t_max_stop = 1000 #If this time is reached with no infection peak found, end simulation
+        self.output_dt = 0.01 #Minimum output step size [days]
+        self.t_max_stop = 1000 #If this time is reached with no infection peak found, end simulation [days]
         
     def Euler_method(self, step, output_step):
         #ODEs
@@ -60,13 +60,11 @@ class SIRSimulation:
                 break
             #If peak hasn't been found before max step, end sim
             if step >= max_step:
-                self.t_axis = list(np.linspace(0, len(self.S_out)*self.output_dt, len(self.S_out)))
                 return
+
         #After peak is found, perform Euler until infections are low
         while self.I[-1] > 100:
             self.Euler_method(step, output_step)
-        
-        self.t_axis = list(np.linspace(0, len(self.S_out)*self.output_dt, len(self.S_out)))
 
     def obtain_outputs(self):
         self.S_out.append(self.S_0)
@@ -79,7 +77,6 @@ class SIRSimulation:
         #Find output_dt
         while current_steps > max_steps: #While output simulation has too many steps
             self.output_dt *= 2 #Increase time between outputs
-            print("here")
             current_steps = len(self.S)/(self.output_dt/self.dt)
         
         output_step = int(round(self.output_dt/self.dt)) #Finalised number of solver steps between output steps
@@ -97,6 +94,5 @@ def runSIRSim(sim_params):
     model.run_sim()
     model.obtain_outputs()
     return_arrays = [list(model.S_out), list(model.I_out), list(model.R_out)] #Return simulations data
-    largest_val = max([max(return_arrays[0]), max(return_arrays[1]), max(return_arrays[2])]) #Max value obtained throughout sim's output
     upper_bound = model.N_0
     return return_arrays, list(model.t_axis), upper_bound

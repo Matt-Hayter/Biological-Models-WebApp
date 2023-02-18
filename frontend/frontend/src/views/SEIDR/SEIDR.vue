@@ -50,16 +50,38 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            Some text
+            This model is an extension of the classical SIR model of disease spread. It's increased
+            complexity allows for more accurate modelling of real life events, such as the spread
+            of COVID-19 within a population. Individuals within the population exist in, and transition
+            between, one of five states:
           </b-card-text>
+          <b-card-tex>
+            <ul>
+              <li>
+                Susceptible (<katex-element expression="S"/>) - Indiduals that are able to catch
+                the disease
+              </li>
+              <li>
+                Exposed (<katex-element expression="E"/>) - Indiduals that are infected but not yet
+                contagious
+              </li>
+              <li>
+                Infectious (<katex-element expression="I"/>) - Indiduals that have the disease and
+                are contagious
+              </li>
+              <li>
+                Dead (<katex-element expression="D"/>) - Indiduals that were infectious and have now died
+                from the disease
+              </li>
+              <li>
+                Recovered (<katex-element expression="R"/>) - Individuals that previously had the disease,
+                have recovered, and are now immune
+              </li>
+            </ul>
+          </b-card-tex>
           <b-card-text>
-            Some more text
-          </b-card-text>
-          <b-card-text>
-            ***<b>Note:</b> Covid related parameter suggestions are approximations based on data within "I. Cooper,
-            A SIR model assumption for the spread of COVID-19 in different communities, 2020". The
-            exaggerated infectious period (<katex-element expression="1/\gamma"/>) required to fit the
-            model to data may indicate that the SIR model is too simplistic for application to COVID.***
+            <b>Model source</b>: J. M. Carcione at al., A Simulation of a COVID-19 Epidemic Based on a
+            Deterministic SEIR Model, 2020
           </b-card-text>
         </ModelInfo>
       </div>
@@ -102,19 +124,26 @@ export default {
   },
   data() {
     return {
-      //Params initially at slider's min values
-      simParamData: [
+      totalPopulation: 10000000, //Tot. sim population
+      //Params initially at slider's min values (non-zero)
+      defaultParams: {
         //Rates
-        10, //alpha
-        10, //beta
-        1, //1/gamma
-        10, //1/epsilon
+        alpha: 0.001,
+        beta: 0.05,
+        recipGamma: 1,
+        recipEpsilon: 0.5,
         //Initial conditions
-        10, //E0
-        1, //I0
-      ],
-      E0: null,
-      I0: null,
+        E0: 1,
+        I0: 1,
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      //For use in reactive bar chart
+      barPlotS0: null,
+      barPlotE0: null,
+      barPlotI0: null,
+      barPlotD0: 0,
+      barPlotR0: 0,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -131,31 +160,35 @@ export default {
               label: "\\alpha",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeAlpha",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.02,
+              tickStep: 0.1,
+              min: 0,
+              max: 1
             },
             {
               label: "\\beta",
               emitEventName: "changeBeta",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.05,
+              tickStep: 0.1,
+              min: 0,
+              max: 1,
             },
             {
               label: "1/ \\gamma",
               emitEventName: "changeRecipGamma",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 1,
+              tickStep: 2,
+              min: 0,
+              max: 20,
             },
             {
               label: "1/ \\epsilon",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeRecipEpsilon",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 1,
+              tickStep: 2,
+              min: 0,
+              max: 20,
             },
           ],
           isActive: true,
@@ -166,16 +199,18 @@ export default {
             {
               label: "E_{0}",
               emitEventName: "changeE0",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 500,
+              tickStep: 5000,
+              min: 0,
+              max: 20000
             },
             {
               label: "I_{0}",
               emitEventName: "changeI0",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 500,
+              tickStep: 5000,
+              min: 0,
+              max: 20000
             },
           ],
           isActive: false,
@@ -185,12 +220,8 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
-        },
-        {
-          id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+          text: "High infectiousness and large infectious period.",
+          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=14"
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -212,36 +243,50 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.E0, this.I0]
+      return [this.barPlotS0, this.barPlotE0, this.barPlotI0, this.barPlotD0, this.barPlotR0]
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateAlpha(newAlpha) {
-      this.simParamData[0] = newAlpha;
+      if (newAlpha == 0) newAlpha = this.defaultParams.alpha //Non-zero params only, set to default if 0 encountered
+      this.$set(this.simParamData, 0, newAlpha) //Inform Vue of an array element change
       console.log(this.simParamData[0], "alpha-change");
     },
     updateBeta(newBeta) {
-      this.simParamData[1] = newBeta;
+      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      this.simParamData[2] = newRecipGamma;
+      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
     },
     updateRecipEpsilon(newRecipEpsilon) {
-      this.simParamData[3] = newRecipEpsilon;
+      if (newRecipEpsilon == 0) newRecipEpsilon = this.defaultParams.recipGamma //Non-zero params only
+      this.$set(this.simParamData, 3, newRecipEpsilon) //Inform Vue of an array element change
       console.log(this.simParamData[3], "1/epsilon-change");
     },
     updateE0(newE0) {
-      this.simParamData[4] = newE0;
-      this.E0 = newE0
+      if (newE0 == 0) newE0 = this.defaultParams.E0 //Non-zero params only
+      this.$set(this.simParamData, 4, newE0) //Inform Vue of an array element change
+      this.barPlotE0 = newE0
+      this.E0I0UpdateS0()
       console.log(this.simParamData[4], "E0-change");
     },
     updateI0(newI0) {
-      this.simParamData[5] = newI0;
-      this.I0 = newI0
+      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only
+      this.$set(this.simParamData, 5, newI0) //Inform Vue of an array element change
+      this.barPlotI0 = newI0
+      this.E0I0UpdateS0()
       console.log(this.simParamData[5], "I0-change");
+    },
+    E0I0UpdateS0() {
+      const E0ParamIndex = 4;
+      const I0ParamIndex = 5;
+      this.barPlotS0 = this.totalPopulation - this.simParamData[E0ParamIndex]
+        - this.simParamData[I0ParamIndex] //D0, R0 = 0
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
@@ -334,6 +379,13 @@ export default {
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial values
+        const E0ParamIndex = 4
+        const I0ParamIndex = 5
+        this.barPlotE0 = null //Change value for computed recalculation
+        this.barPlotE0 = this.simParamData[E0ParamIndex]
+        this.barPlotI0 = this.simParamData[I0ParamIndex]
+        this.barPlotS0 = this.totalPopulation - this.barPlotE0 - this.barPlotI0 //D0 and R0 = 0
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -416,11 +468,18 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    const defaultE0 = this.simParamData[4]
-    const defaultI0 = this.simParamData[5]
-    this.E0 = defaultE0
-    this.I0 = defaultI0
+    //Set simulation params to default values
+    this.simParamData.length = 6 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.alpha
+    this.simParamData[1] = this.defaultParams.beta
+    this.simParamData[2] = this.defaultParams.recipGamma
+    this.simParamData[3] = this.defaultParams.recipEpsilon
+    this.simParamData[4] = this.defaultParams.E0
+    this.simParamData[5] = this.defaultParams.I0
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotE0 = this.defaultParams.E0
+    this.barPlotI0 = this.defaultParams.I0
+    this.barPlotS0 = this.totalPopulation - this.barPlotE0 - this.barPlotI0 //D0, R0 = 0
   },
 };
 </script>
@@ -440,7 +499,7 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 20em;
+  padding-left: 18em;
 }
 .run-button {
   position: fixed;

@@ -5,16 +5,16 @@ let chartData = {
     label: 'Disease spread: SEIDR',
     data: [0, 0, 0, 0, 0],
     backgroundColor: [
-      'rgba(238, 255, 0, 0.2)',
+      'rgba(255, 220, 0, 0.3)',
       'rgba(5, 118, 248, 0.2)',
-      'rgba(145, 0, 0, 0.2)',
+      'rgba(255, 0, 0, 0.2)',
       'rgba(0, 0, 0, 0.2)',
       'rgba(0, 170, 17, 0.2)',
     ],
     borderColor: [
-      'rgba(238, 255, 0, 1)',
+      'rgba(255, 220, 0, 1)',
       'rgba(5, 118, 248, 1)',
-      'rgba(145, 0, 0, 1)',
+      'rgba(255, 0, 0, 1)',
       'rgba(0, 0, 0, 1)',
       'rgba(0, 170, 17, 1)',
     ],
@@ -31,7 +31,7 @@ export default {
     scales: {
       x: {
         beginAtZero: true,
-        max: 200
+        max: 10000000
       },
       y: {
         grid: {
@@ -39,6 +39,6 @@ export default {
         }
       }
     },
-    aspectRatio: 6
+    aspectRatio: 3.5
   }
 };
