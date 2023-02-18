@@ -161,7 +161,7 @@ export default {
         this.$refs["presetModal"].toggle("#save-button")
       } else { //If not signed in, create alert on main page
         const alertPayload = {
-          message: "Sign in or create an account to save model presets!",
+          message: "Sign in or create an account to save model presets! Using presets makes your life easier...",
           variant: "warning"
         }
         this.$emit("showPageAlert", alertPayload)

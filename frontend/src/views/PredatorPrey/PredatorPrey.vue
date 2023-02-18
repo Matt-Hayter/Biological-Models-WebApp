@@ -60,6 +60,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="predPreyChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -206,6 +207,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       predPreyChartConfig,
+      visStylingClass: "pred-prey",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",

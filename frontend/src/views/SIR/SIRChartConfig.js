@@ -27,14 +27,26 @@ export default {
     scales: {
       x: {
         beginAtZero: true,
-        max: 10000000
+        max: 10000000,
+        title: {
+          display: true,
+          text: "Population",
+          font: {
+            size: 16,
+          }
+        }
       },
       y: {
         grid: {
             color: "rgba(0, 0, 0, 0)",
+        },
+        ticks: {
+          font: {
+            size: 13
+          }
         }
       }
     },
-    aspectRatio: 5
+    aspectRatio: 4
   }
 };

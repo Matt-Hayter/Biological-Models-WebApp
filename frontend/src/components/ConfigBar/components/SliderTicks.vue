@@ -29,7 +29,7 @@ export default {
         i <= this.sliderData.max;
         i += this.sliderData.tickStep
       ) {
-        tickArray.push(Number(Math.round(i+"e1")+"e-1"));
+        tickArray.push(Number(Math.round(i+"e2")+"e-2"));
       }
       return tickArray;
     },

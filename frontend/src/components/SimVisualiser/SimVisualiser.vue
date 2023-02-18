@@ -5,6 +5,7 @@
       :chart-config="chartConfig"
       :initial-conditions="initialConditions"
       :sim-data="simData"
+      :styling-class="visStylingClass"
     />
     <div>
       <div class="time-display">
@@ -31,6 +32,7 @@ export default {
     simTimeData: Array,
     simMaxVal: Number,
     timeUnits: String,
+    visStylingClass: String,
   },
   components: {
     RacerBarChart,

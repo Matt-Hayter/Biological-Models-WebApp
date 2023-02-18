@@ -31,7 +31,10 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">SEIDR Model</h4>
+          <div class="title">
+            <h4>SEIDR Model</h4>
+            <p>(J. M. Carcione et al.)</p>
+          </div>
           <div class="formula">
             <katex-element expression="\Large\dfrac{dS}{dt}=\Lambda-\mu S - \beta \dfrac{SI}{N}"/>
             <br>
@@ -50,12 +53,12 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            This model is an extension of the classical SIR model of disease spread. It's increased
+            This model is an extension of the classical SIR model of disease spread. Its increased
             complexity allows for more accurate modelling of real life events, such as the spread
             of COVID-19 within a population. Individuals within the population exist in, and transition
             between, one of five states:
           </b-card-text>
-          <b-card-tex>
+          <b-card-text>
             <ul>
               <li>
                 Susceptible (<katex-element expression="S"/>) - Indiduals that are able to catch
@@ -66,7 +69,7 @@
                 contagious
               </li>
               <li>
-                Infectious (<katex-element expression="I"/>) - Indiduals that have the disease and
+                Infectious (<katex-element expression="I"/>) - Indiduals that are infected and
                 are contagious
               </li>
               <li>
@@ -78,7 +81,13 @@
                 have recovered, and are now immune
               </li>
             </ul>
-          </b-card-tex>
+          </b-card-text>
+          <b-card-text>
+            <katex-element expression="\Lambda ="/> population birth rate,
+            <katex-element expression="\mu ="/> rate of natural death per indivdual. Here,
+            simulations use a balanced number of births and natural deaths,
+            <katex-element expression="\Lambda=\mu N"/>, hence they are not configurable.
+          </b-card-text>
           <b-card-text>
             <b>Model source</b>: J. M. Carcione at al., A Simulation of a COVID-19 Epidemic Based on a
             Deterministic SEIR Model, 2020
@@ -90,6 +99,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="SEIDRChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -160,10 +170,10 @@ export default {
               label: "\\alpha",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeAlpha",
-              inputStep: 0.02,
-              tickStep: 0.1,
+              inputStep: 0.001,
+              tickStep: 0.04,
               min: 0,
-              max: 1
+              max: 0.2
             },
             {
               label: "\\beta",
@@ -220,8 +230,27 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "High infectiousness and large infectious period.",
-          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=14"
+          text: "COVID-19, no isolation.",
+          maths: "\\alpha=0.006,\\ \\beta=0.75,\\ 1/\\gamma=8,\\ 1/\\epsilon=3,\\, \
+            E_{0}=20000,\\, I_{0}=1"
+        },
+        {
+          id: 2,
+          text: "COVID-19, isolation measures in place.",
+          maths: "\\alpha=0.006,\\ \\beta=0.2,\\ 1/\\gamma=8,\\ 1/\\epsilon=3,\\, \
+            E_{0}=20000,\\, I_{0}=1"
+        },
+        {
+          id: 3,
+          text: "Highly lethal disease.",
+          maths: "\\alpha=0.125,\\ \\beta=0.5,\\ 1/\\gamma=8,\\ 1/\\epsilon=3,\\, \
+            E_{0}=20000,\\, I_{0}=1"
+        },
+        {
+          id: 4,
+          text: "Using suggestion 1 (no isolation COVID) as a base, play around with different parameters \
+            and observe the effects on the spread of the disease",
+          maths: ""
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -231,6 +260,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       SEIDRChartConfig,
+      visStylingClass: "SEIDR",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -497,9 +527,14 @@ export default {
   padding-top: 2em;
   padding-left: 1.5em;
 }
+.title {
+  float: left;
+  display: flex;
+  flex-direction: column;
+}
 .title-and-formula .formula {
   float: left;
-  padding-left: 18em;
+  padding-left: 17em;
 }
 .run-button {
   position: fixed;

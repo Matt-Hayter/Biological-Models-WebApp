@@ -69,6 +69,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="SIRChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -186,6 +187,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       SIRChartConfig,
+      visStylingClass: "SIR",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -418,7 +420,7 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 22em;
+  padding-left: 21em;
 }
 .run-button {
   position: fixed;

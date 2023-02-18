@@ -41,7 +41,7 @@
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item class="tex2jax_ignore" @click="onSEIDRClick">
                 <template id="#text">
-                  SEIDR Model (COVID)
+                  SEIDR Model (COVID-19)
                 </template>
               </b-dropdown-item>
             </b-dropdown-group>

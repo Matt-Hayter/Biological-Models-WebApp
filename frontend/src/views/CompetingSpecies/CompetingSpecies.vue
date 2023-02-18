@@ -46,7 +46,7 @@
             This model describes two species occupying the same habitat, which
             compete for shared and finite resources. Species 1 and 2 have populations
             <katex-element expression="N_{1}"/> and <katex-element expression="N_{2}"/>
-            respectively. Within the habitat, each species exhibits it's own carrying capacity,
+            respectively. Within the habitat, each species exhibits its own carrying capacity,
             <katex-element expression="K"/>, which is the maximum species population
             that the environment's resources could sustain.
           </b-card-text>
@@ -62,6 +62,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="compSpecChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -232,6 +233,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       compSpecChartConfig,
+      visStylingClass: "comp-spec",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
