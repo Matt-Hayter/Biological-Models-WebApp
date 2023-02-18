@@ -28,7 +28,12 @@
         <!--Render all param sliders with correct labels, for each tab-->
         <div v-for="(tabData, index1) in tabsData" :key="tabData.data.label">
           <!--Only show tab data if tab is selected (isActive=true). Rendered nonetheless.-->
-          <div v-show="tabData.isActive" v-for="(sliderData, index2) in tabData.data" :key="sliderData.label">
+          <div
+            class="ticks"
+            v-show="tabData.isActive"
+            v-for="(sliderData, index2) in tabData.data"
+            :key="sliderData.label"
+            >
             <!--Pass each slider's data individually to slider component-->
             <SliderContent 
               :slider-data="sliderData"
@@ -89,6 +94,9 @@ export default {
 </script>
 
 <style scoped>
+.ticks {
+  padding: 0 1.2em;
+}
 .param-sliders {
   display: flex;
   flex-direction: column;

@@ -5,7 +5,7 @@
       About this model
       <b-icon icon="chevron-down" font-scale="1"></b-icon>
     </b-button>
-    <b-collapse id="collapse-bar">
+    <b-collapse id="collapse-bar" footer-tag="footer">
       <b-card>
         <!--Model-specific buttom content goes here-->
         <slot></slot>

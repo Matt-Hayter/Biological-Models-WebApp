@@ -39,10 +39,28 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            Some text
+            The SIR model is a simplistic, classical model describing disease spread throughout a
+            population. Individuals within the population exist in, and transition between,
+            one of three states:
           </b-card-text>
           <b-card-text>
-            Some more text
+            <ul>
+              <li>
+                Susceptible (<katex-element expression="S"/>) - Indiduals that are able to catch
+                the disease
+              </li>
+              <li>
+                Infected (<katex-element expression="I"/>) - Individuals that currently have the disease
+              </li>
+              <li>
+                Recovered (<katex-element expression="R"/>) - Individuals that previously had the disease,
+                have recovered, and are now immune
+              </li>
+            </ul>
+          </b-card-text>
+          <b-card-text>
+            In these simulations, a total population of 10 million individuals is used, and deaths are 
+            included within the recovered group.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -51,6 +69,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="SIRChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -85,13 +104,18 @@ export default {
   },
   data() {
     return {
-      //Params initially at slider's min values
-      simParamData: [
-        10, //I0
-        10, //beta
-        1, //1/gamma
-      ],
-      I0: null,
+      totalPopulation: 10000000, //Tot. sim population. Should match backend simulation
+      //Params initially at slider's min values (non-zero)
+      defaultParams: {
+        I0: 1, 
+        beta: 0.05,
+        recipGamma: 1
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      barPlotS0: null, //For use in reactive bar chart
+      barPlotI0: null,
+      barPlotR0: 0,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
@@ -108,23 +132,26 @@ export default {
               label: "I_{0}",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeI0",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 500,
+              tickStep: 5000,
+              min: 0,
+              max: 20000
             },
             {
               label: "\\beta",
               emitEventName: "changeBeta",
-              min: 10,
-              max: 50,
-              step: 5,
+              inputStep: 0.05,
+              tickStep: 0.1,
+              min: 0,
+              max: 1,
             },
             {
               label: "1/ \\gamma",
               emitEventName: "changeRecipGamma",
-              min: 1,
-              max: 10,
-              step: 1,
+              inputStep: 1,
+              tickStep: 2,
+              min: 0,
+              max: 20,
             },
           ],
           isActive: true, //Only tab, so always active
@@ -134,12 +161,23 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
+          text: "Low/moderate infectiousness and small/moderate infectious period.",
+          maths: "I_{0}=1,\\ \\beta=0.3,\\ 1/\\gamma=4"
         },
         {
           id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+          text: "High infectiousness and large infectious period.",
+          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=14"
+        },
+        {
+          id: 3,
+          text: "High infectiousness and small infectious period.",
+          maths: "I_{0}=1,\\ \\beta=1,\\ 1/\\gamma=2"
+        },
+        {
+          id: 4,
+          text: "Low infectiousness and large infectious period.",
+          maths: "I_{0}=1,\\ \\beta=0.2,\\ 1/\\gamma=14"
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -149,6 +187,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       SIRChartConfig,
+      visStylingClass: "SIR",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -161,23 +200,32 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.I0]
+      return [this.barPlotS0, this.barPlotI0, this.barPlotR0]
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateI0(newI0) {
-      this.simParamData[0] = newI0;
-      this.I0 = newI0
+      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only, set to default if 0 encountered
+      this.$set(this.simParamData, 0, newI0) //Inform Vue of an array element change
+      this.barPlotI0 = newI0
+      this.I0UpdateS0()
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
-      this.simParamData[1] = newBeta;
+      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      this.simParamData[2] = newRecipGamma;
+      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
+    },
+    //Change S0 upon change of I0 (must sum to total population)
+    I0UpdateS0() {
+      const I0ParamIndex = 0;
+      this.barPlotS0 = this.totalPopulation - this.simParamData[I0ParamIndex]
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -258,6 +306,12 @@ export default {
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial value
+        const I0ParamIndex = 0
+        this.barPlotI0 = null //Change value for computed recalculation
+        this.barPlotI0 = this.simParamData[I0ParamIndex]
+        this.barPlotS0 = this.totalPopulation - this.barPlotI0
+        console.log(this.barPlotS0)
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -340,9 +394,14 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    const defaultI0 = this.simParamData[0]
-    this.I0 = defaultI0
+    //Set simulation params to default values
+    this.simParamData.length = 3 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.I0
+    this.simParamData[1] = this.defaultParams.beta
+    this.simParamData[2] = this.defaultParams.recipGamma
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotI0 = this.defaultParams.I0
+    this.barPlotS0 = this.totalPopulation - this.barPlotI0
   },
 };
 </script>
@@ -361,7 +420,7 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 25em;
+  padding-left: 21em;
 }
 .run-button {
   position: fixed;
@@ -369,5 +428,6 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+  color: rgb(rgb(255, 225, 0), green, blue)
 }
 </style>

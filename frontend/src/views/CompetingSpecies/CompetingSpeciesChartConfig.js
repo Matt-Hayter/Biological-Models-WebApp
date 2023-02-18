@@ -25,14 +25,26 @@ export default {
     scales: {
       x: {
         beginAtZero: true,
-        max: 200
+        max: 1000,
+        title: {
+          display: true,
+          text: "Population Density",
+          font: {
+            size: 15,
+          }
+        }
       },
       y: {
         grid: {
             color: "rgba(0, 0, 0, 0)",
+        },
+        ticks: {
+          font: {
+            size: 13
+          }
         }
       }
     },
-    aspectRatio: 6
+    aspectRatio: 5
   }
 };

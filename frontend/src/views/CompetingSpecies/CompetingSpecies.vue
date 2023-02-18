@@ -1,5 +1,5 @@
 <template>
-  <div class="SEIDR-view">
+  <div class="competing-species-view">
     <TheNavBar 
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
@@ -17,12 +17,14 @@
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
-      @changeAlpha="updateAlpha"
-      @changeBeta="updateBeta"
-      @changeRecipGamma="updateRecipGamma"
-      @changeRecipEpsilon="updateRecipEpsilon"
-      @changeE0="updateE0"
-      @changeI0="updateI0"
+      @changeN1_0="updateN1_0"
+      @changer1="updater1"
+      @changeK1="updateK1"
+      @changea1="updatea1"
+      @changeN2_0="updateN2_0"
+      @changer2="updater2"
+      @changeK2="updateK2"
+      @changea2="updatea2"
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
@@ -31,29 +33,27 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 class="tex2jax_ignore" style="float: left">SEIDR Model</h4>
+          <h4 style="float: left">Two Competing Species Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dS}{dt}=\Lambda-\mu S - \beta \dfrac{SI}{N}"/>
+            <katex-element expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})" />
             <br>
             <br>
-            <katex-element expression="\Large\dfrac{dE}{dt}=\beta \dfrac{SI}{N} - (\mu + \epsilon)E"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dI}{dt}=\epsilon E - (\gamma + \mu + \alpha)I"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dD}{dt}=\alpha I"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dR}{dt}=\gamma I - \mu R"/>
+            <katex-element expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})" />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            Some text
+            This model describes two species occupying the same habitat, which
+            compete for shared and finite resources. Species 1 and 2 have populations
+            <katex-element expression="N_{1}"/> and <katex-element expression="N_{2}"/>
+            respectively. Within the habitat, each species exhibits its own carrying capacity,
+            <katex-element expression="K"/>, which is the maximum species population
+            that the environment's resources could sustain.
           </b-card-text>
           <b-card-text>
-            Some more text
+            The fate of each species depends on the paramaters assigned to the model. For a chosen
+            configuration, try varying initial populations, <katex-element expression="N_{1, 0}"/> and
+            <katex-element expression="N_{2, 0}"/>, and see how the populations evolve to their final state!
           </b-card-text>
         </ModelInfo>
       </div>
@@ -61,7 +61,8 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="SEIDRChartConfig"
+          :chart-config="compSpecChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -84,7 +85,7 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import SEIDRChartConfig from "./SEIDRChartConfig.js";
+import compSpecChartConfig from "./CompetingSpeciesChartConfig.js";
 
 export default {
   components: {
@@ -96,24 +97,28 @@ export default {
   },
   data() {
     return {
-      //Params initially at slider's min values
-      simParamData: [
-        //Rates
-        10, //alpha
-        10, //beta
-        1, //1/gamma
-        10, //1/epsilon
-        //Initial conditions
-        10, //E0
-        1, //I0
-      ],
-      E0: null,
-      I0: null,
+      //Params initially at slider's min values (non-zero)
+      defaultParams: {
+        //Species 1
+        N1_0: 20,
+        r1: 0.1,
+        K1: 20,
+        a1: 0.1,
+        //Species 2
+        N2_0: 20,
+        r2: 0.1,
+        K2: 20,
+        a2: 0.1
+      },
+      //Dynamic parameter array, containing params in their current state (initialised to default params)
+      simParamData: [],
+      barPlotN1_0: null,
+      barPlotN2_0: null,
       simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
-      timeUnits: "days",
+      timeUnits: "years",
       //Contains user's presets
       userPresets: [],
       //Contains data for each paramater tab
@@ -122,34 +127,37 @@ export default {
         {
           data: [
             {
-              label: "\\alpha",
+              label: "N_{1,0}",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeAlpha",
-              min: 10,
-              max: 50,
-              step: 5,
+              emitEventName: "changeN1_0",
+              inputStep: 20,
+              tickStep: 100,
+              min: 0,
+              max: 1000,
             },
             {
-              label: "\\beta",
-              emitEventName: "changeBeta",
-              min: 10,
-              max: 50,
-              step: 5,
+              label: "r_{1}",
+              emitEventName: "changer1",
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
             {
-              label: "1/ \\gamma",
-              emitEventName: "changeRecipGamma",
-              min: 1,
-              max: 10,
-              step: 1,
+              label: "K_{1}",
+              emitEventName: "changeK1",
+              inputStep: 20,
+              tickStep: 100,
+              min: 0,
+              max: 1000,
             },
             {
-              label: "1/ \\epsilon",
-              //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeRecipEpsilon",
-              min: 10,
-              max: 50,
-              step: 5,
+              label: "a_{1}",
+              emitEventName: "changea1",
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: true,
@@ -157,35 +165,66 @@ export default {
         //Tab two
         {
           data: [
-            {
-              label: "E_{0}",
-              emitEventName: "changeE0",
-              min: 10,
-              max: 50,
-              step: 5,
+          {
+              label: "N_{2,0}",
+              //Name of event emitted to page component to update simParamData upon input
+              emitEventName: "changeN2_0",
+              inputStep: 20,
+              tickStep: 100,
+              min: 0,
+              max: 1000,
             },
             {
-              label: "I_{0}",
-              emitEventName: "changeI0",
-              min: 1,
-              max: 10,
-              step: 1,
+              label: "r_{2}",
+              emitEventName: "changer2",
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
+            },
+            {
+              label: "K_{2}",
+              emitEventName: "changeK2",
+              inputStep: 20,
+              tickStep: 100,
+              min: 0,
+              max: 1000,
+            },
+            {
+              label: "a_{2}",
+              emitEventName: "changea2",
+              inputStep: 0.1,
+              tickStep: 0.2,
+              min: 0,
+              max: 2,
             },
           ],
           isActive: false,
         },
       ],
-      configTabTitles: ["Rates", "Initial Conditions"],
+      configTabTitles: ["Species 1", "Species 2"],
       paramSuggestions: [
         {
           id: 1,
-          content: "This is the first suggestions. This willl caryry on here",
+          text: "Weak competition between species (neither species goes extinct, regardless of \
+            initial populations).",
+          maths: "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
+            r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8"
         },
         {
           id: 2,
-          content:
-            "Tklsnf dlzk zldfjilzdjf if jzidjlwd  djdlzidld jzd zld jzd jzldldji",
+          text: "Unbalanced competition between species (species 1 always driven to extinction, \
+            regardless of starting populations)",
+          maths: "r_{1}=1,\\ K_{1}=700,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=0.5"
         },
+        {
+          id: 3,
+          text: "Strong competition between species (either species 1 or species 2 driven to \
+            extinction, depending on initial populations. See for yourself by varying them!)",
+          maths: "r_{1}=1,\\ K_{1}=500,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=1.3"
+        }
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
       alertMessage: null,
@@ -193,7 +232,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      SEIDRChartConfig,
+      compSpecChartConfig,
+      visStylingClass: "comp-spec",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -206,47 +246,63 @@ export default {
       return this.$store.state.activeUser;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.E0, this.I0]
+      return [this.barPlotN1_0, this.barPlotN2_0]
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
-    updateAlpha(newAlpha) {
-      this.simParamData[0] = newAlpha;
-      console.log(this.simParamData[0], "alpha-change");
+    updateN1_0(newN1_0) {
+      if (newN1_0 == 0) newN1_0 = this.defaultParams.N1_0 //Non-zero params only, set to default if 0 encountered
+      this.$set(this.simParamData, 0, newN1_0) //Inform Vue of an array element change
+      this.barPlotN1_0 = newN1_0
+      console.log(this.simParamData[0], "N1_0-change");
     },
-    updateBeta(newBeta) {
-      this.simParamData[1] = newBeta;
-      console.log(this.simParamData[1], "beta-change");
+    updater1(newr1) {
+      if (newr1 == 0) newr1 = this.defaultParams.r1 //Non-zero params only
+      this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
+      console.log(this.simParamData[1], "r1-change");
     },
-    updateRecipGamma(newRecipGamma) {
-      this.simParamData[2] = newRecipGamma;
-      console.log(this.simParamData[2], "1/gamma-change");
+    updateK1(newK1) {
+      if (newK1 == 0) newK1 = this.defaultParams.K1 //Non-zero params only
+      this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
+      console.log(this.simParamData[2], "K1-change");
     },
-    updateRecipEpsilon(newRecipEpsilon) {
-      this.simParamData[3] = newRecipEpsilon;
-      console.log(this.simParamData[3], "1/epsilon-change");
+    updatea1(newa1) {
+      if (newa1 == 0) newa1 = this.defaultParams.a1 //Non-zero params only
+      this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
+      console.log(this.simParamData[3], "a1-change");
     },
-    updateE0(newE0) {
-      this.simParamData[4] = newE0;
-      this.E0 = newE0
-      console.log(this.simParamData[4], "E0-change");
+    updateN2_0(newN2_0) {
+      if (newN2_0 == 0) newN2_0 = this.defaultParams.N2_0 //Non-zero params only
+      this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
+      this.barPlotN2_0 = newN2_0
+      console.log(this.simParamData[4], "N2_0-change");
     },
-    updateI0(newI0) {
-      this.simParamData[5] = newI0;
-      this.I0 = newI0
-      console.log(this.simParamData[5], "I0-change");
+    updater2(newr2) {
+      if (newr2 == 0) newr2 = this.defaultParams.r2 //Non-zero params only
+      this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
+      console.log(this.simParamData[5], "r2-change");
+    },
+    updateK2(newK2) {
+      if (newK2 == 0) newK2 = this.defaultParams.K2 //Non-zero params only
+      this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
+      console.log(this.simParamData[6], "K2-change");
+    },
+    updatea2(newa2) {
+      if (newa2 == 0) newa2 = this.defaultParams.a2 //Non-zero params only
+      this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
+      console.log(this.simParamData[7], "a2-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
-      console.log("opened params tab");
+      console.log("opened species 1 tab");
     },
     activateTabTwo() {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
-      console.log("opened initial conditions tab");
+      console.log("opened species 2 tab");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -279,34 +335,33 @@ export default {
     },
     async addPreset(payload) {
       try {
-        console.log(payload.presetData)
-        const path = "http://localhost:5000/SEIDR/AlterPresets";
+        const path = "http://localhost:5000/CompetingSpecies/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Added ${payload.presetName} to SEIDR presets`,
+          message: `Saved ${payload.presetName} to Competing Species presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
-        console.log("Preset added");
+        console.log("Preset saved");
       } catch (error) {
         const failureAlertPayload = {
           message: "Unable to save preset, failed repsonse from server",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        console.log("Preset not saved, server problem");
       }
     },
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/SEIDR/AllPresets";
+        const path = "http://localhost:5000/CompetingSpecies/AllPresets";
         const payload = {
           userEmail: this.$store.state.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's SEIDR presets")
+        console.log("Loaded user's Pred-Prey presets")
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {
@@ -321,13 +376,19 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/SEIDR/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/CompetingSpecies/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        const presetParamsCount = 5;
+        const presetParamsCount = 7;
         for(let i = 0; i <= presetParamsCount; i++) {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
+        //Set barplot initial value
+        const N1_0Index = 0
+        const N2_0Index = 4
+        this.barPlotN1_0 = null //Change value for computed recalculation
+        this.barPlotN1_0 = this.simParamData[N1_0Index]
+        this.barPlotN2_0 = this.simParamData[N2_0Index]
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -349,7 +410,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
-        const path = `http://localhost:5000/SEIDR/AlterPresets/${presetid}`;
+        const path = `http://localhost:5000/CompetingSpecies/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
@@ -379,7 +440,7 @@ export default {
     },
     async runSim() {
       try {
-        const path = "http://localhost:5000/SEIDR/RunSim"
+        const path = "http://localhost:5000/CompetingSpecies/RunSim"
         const payload = {
           simParams: this.simParamData
         }
@@ -388,7 +449,7 @@ export default {
         this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
         this.simRunning = true //Signals to start visualising simulation
-        console.log("SEIDR simulation successfully run at server")
+        console.log("Competing Species simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
         const failureAlertPayload = {
@@ -410,19 +471,26 @@ export default {
     if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
-    //Set initial values, calling initialConditions computed property to be inherited by charts
-    const defaultE0 = this.simParamData[4]
-    const defaultI0 = this.simParamData[5]
-    this.E0 = defaultE0
-    this.I0 = defaultI0
+    //Set simulation params to default values
+    this.simParamData.length = 8 //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N1_0
+    this.simParamData[1] = this.defaultParams.r1
+    this.simParamData[2] = this.defaultParams.K1
+    this.simParamData[3] = this.defaultParams.a1
+    this.simParamData[4] = this.defaultParams.N2_0
+    this.simParamData[5] = this.defaultParams.r2
+    this.simParamData[6] = this.defaultParams.K2
+    this.simParamData[7] = this.defaultParams.a2
+    //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
+    this.barPlotN1_0 = this.defaultParams.N1_0
+    this.barPlotN2_0 = this.defaultParams.N2_0
   },
 };
 </script>
 
 <style scoped>
-.SEIDR-view {
-  /*Slightly larger to encompass longer equations*/
-  min-width: 1050px;
+.competing-species-view {
+  min-width: 1024px;
 }
 .top-section {
   display: flex;
@@ -434,7 +502,7 @@ export default {
 }
 .title-and-formula .formula {
   float: left;
-  padding-left: 20em;
+  padding-left: 9em;
 }
 .run-button {
   position: fixed;
@@ -444,4 +512,3 @@ export default {
   right: 0;
 }
 </style>
-

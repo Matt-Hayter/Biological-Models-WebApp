@@ -1,6 +1,6 @@
 <template>
   <div class="bar-chart">
-      <div class="chart-container">
+      <div class="chart-container" :class="stylingClass">
         <canvas id="racer-bar-chart"></canvas>
       </div>
   </div>
@@ -15,6 +15,7 @@ export default {
     chartConfig: Object,
     initialConditions: Array, //Listed in the order displayed sequentially in chart
     simData: Array,
+    stylingClass: String,
   },
   data() {
     return {
@@ -57,7 +58,18 @@ export default {
   padding: 20px;
   background: white;
   position: relative;
-  min-height: 13vw;
   width: 95%;
+}
+.pred-prey {
+  min-height: 16vw;
+}
+.comp-spec {
+  min-height: 16vw;
+}
+.SIR {
+  min-height: 20vw;
+}
+.SEIDR {
+  min-height: 25vw;
 }
 </style>

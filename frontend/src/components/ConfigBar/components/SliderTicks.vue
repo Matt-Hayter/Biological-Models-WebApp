@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="tick-group d-flex justify-content-between"
-    style="padding: 0 1.5em"
-  >
+  <div class="tick-group">
     <!--Assign correct number of ticks and values to slider, depending on implementation-->
     <div v-for="label in createTickLabels" :key="label">
       <div class="tick">
@@ -32,7 +29,7 @@ export default {
         i <= this.sliderData.max;
         i += this.sliderData.tickStep
       ) {
-        tickArray.push(Number(Math.round(i+"e1")+"e-1"));
+        tickArray.push(Number(Math.round(i+"e2")+"e-2"));
       }
       return tickArray;
     },
@@ -42,11 +39,16 @@ export default {
 
 <style scoped>
 .tick-group {
-  padding: 0 0.4em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: -7px;
+  margin-right: -7px;
 }
 .tick {
   display: flex;
   flex-direction: column;
+  width: 29px;
   margin-top: -0.5em;
   font-size: 0.8em;
 }
@@ -55,5 +57,8 @@ export default {
   background-color: rgb(127, 127, 127);
   height: 5px;
   margin: auto;
+}
+.tick-content {
+  margin: auto
 }
 </style>

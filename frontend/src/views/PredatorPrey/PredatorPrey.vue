@@ -31,7 +31,7 @@
       <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 style="float: left">Predator-Prey (Lotka-Voltera) Model</h4>
+          <h4 style="float: left">Predator-Prey (Lotka-Volterra) Model</h4>
           <div class="formula">
             <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
             <br>
@@ -60,6 +60,7 @@
         <SimVisualiser
           @endSim="endSim"
           :chart-config="predPreyChartConfig"
+          :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-running="simRunning"
           :sim-data="simData"
@@ -96,9 +97,11 @@ export default {
     return {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
+        //Prey
         N0: 0.5,
         a: 0.1,
         b: 0.1,
+        //Predator
         P0: 0.5,
         c: 0.05,
         d: 0.1
@@ -181,7 +184,7 @@ export default {
       ],
       configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
-      {
+        {
           id: 1,
           text: "Steady variations between predator and prey populations",
           maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
@@ -204,6 +207,7 @@ export default {
       alertSecs: 4,
       //For data visualisation
       predPreyChartConfig,
+      visStylingClass: "pred-prey",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -344,10 +348,11 @@ export default {
             this.simParamData[i] = Number(response.data["preset_params"][i])
         }
         //Set barplot initial value
-        const newN0 = this.simParamData[0]
-        const newP0 = this.simParamData[3]
-        this.barPlotN0 = newN0
-        this.barPlotP0 = newP0
+        const N0Index = 0
+        const P0Index = 3
+        this.barPlotN0 = null //Change value for computed recalculation
+        this.barPlotN0 = this.simParamData[N0Index]
+        this.barPlotP0 = this.simParamData[P0Index]
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",

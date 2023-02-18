@@ -1,6 +1,6 @@
 from biological_models_app import db
 from flask import jsonify, request, Blueprint
-from biological_models_app.SIR.simulation import runSIRSim
+from biological_models_app.SEIDR.simulation import runSEIDRSim
 
 SEIDR = Blueprint("SEIDR", __name__, url_prefix="/SEIDR")
 
