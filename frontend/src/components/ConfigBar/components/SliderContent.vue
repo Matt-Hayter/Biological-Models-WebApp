@@ -3,16 +3,27 @@
     <label
       for="slider-range"
       class="form-label d-flex"
-      style="font-size: 1.4em; float: left; margin-bottom: 0"
+      style="float: left; margin-bottom: 0"
     >
-      <katex-element :expression="sliderData.label"/>
-      <b-icon
+      <katex-element style="font-size: 1.4em" :expression="sliderData.label"/>
+      <span style="font-size: 1.2em; margin-left: 10px; margin-top: 3px;">{{ sliderData.units }}</span>
+      <div :id="sliderData.label" class="info-hit-box">
+        <b-icon
         icon="info-circle"
-        scale="0.75"
-        shift-v="-5em"
+        scale="1.1"
+        shift-v="-7em"
         variant="info"
         style="margin-left: 0.5em"
-      />
+        />
+      </div>
+      <b-popover
+        custom-class="custom-popover"
+        :target="sliderData.label"
+        variant="info"
+        triggers="hover"
+        placement="right"
+        > {{ sliderData.description }}
+      </b-popover>
     </label>
     <div class="current-param-value-box">
       {{ currentSimParamData }}
@@ -63,5 +74,12 @@ export default {
   border-style: outset;
   border-width: 1px;
   float: right;
+}
+.custom-popover {
+  max-width: 550px;
+}
+.info-hit-box {
+  width: 35px;
+  height: 30px;
 }
 </style>

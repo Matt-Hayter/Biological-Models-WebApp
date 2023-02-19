@@ -128,6 +128,8 @@ export default {
           data: [
             {
               label: "N_{1,0}",
+              units: "",
+              description: "Initial population of species 1 (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
               inputStep: 20,
@@ -137,6 +139,8 @@ export default {
             },
             {
               label: "r_{1}",
+              units: "(/yr)",
+              description: "Growth rate of species 1 (birth rate - death rate)",
               emitEventName: "changer1",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -145,6 +149,8 @@ export default {
             },
             {
               label: "K_{1}",
+              units: "",
+              description: "Carrying capacity of species 1 (Max population that environment could sustain)",
               emitEventName: "changeK1",
               inputStep: 20,
               tickStep: 100,
@@ -153,6 +159,8 @@ export default {
             },
             {
               label: "a_{1}",
+              units: "(/yr)",
+              description: "Effect of species 2 on species 1",
               emitEventName: "changea1",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -167,6 +175,8 @@ export default {
           data: [
           {
               label: "N_{2,0}",
+              units: "",
+              description: "Initial population of species 2 (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
               inputStep: 20,
@@ -176,6 +186,8 @@ export default {
             },
             {
               label: "r_{2}",
+              units: "(/yr)",
+              description: "Growth rate of species 2 (birth rate - death rate)",
               emitEventName: "changer2",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -184,6 +196,8 @@ export default {
             },
             {
               label: "K_{2}",
+              units: "",
+              description: "Carrying capacity of species 2 (Max population that environment could sustain)",
               emitEventName: "changeK2",
               inputStep: 20,
               tickStep: 100,
@@ -192,6 +206,8 @@ export default {
             },
             {
               label: "a_{2}",
+              units: "(/yr)",
+              description: "Effect of species 1 on species 2",
               emitEventName: "changea2",
               inputStep: 0.1,
               tickStep: 0.2,

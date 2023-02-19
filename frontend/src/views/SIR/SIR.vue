@@ -60,7 +60,7 @@
           </b-card-text>
           <b-card-text>
             In these simulations, a total population of 10 million individuals is used, and deaths are 
-            included within the recovered group.
+            included within the recovered group. All infected individuals are assumed to be infectious.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -130,6 +130,8 @@ export default {
           data: [
             {
               label: "I_{0}",
+              units: "",
+              description: "Initial number of infections",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeI0",
               inputStep: 500,
@@ -139,6 +141,8 @@ export default {
             },
             {
               label: "\\beta",
+              units: "(/day)",
+              description: "Rate of infection (probability of disease transmission per contact x number of contacts per unit time)",
               emitEventName: "changeBeta",
               inputStep: 0.05,
               tickStep: 0.1,
@@ -147,6 +151,8 @@ export default {
             },
             {
               label: "1/ \\gamma",
+              units: "(days)",
+              description: "Average infectious period",
               emitEventName: "changeRecipGamma",
               inputStep: 1,
               tickStep: 2,

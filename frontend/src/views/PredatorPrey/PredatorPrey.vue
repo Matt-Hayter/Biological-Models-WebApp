@@ -124,6 +124,8 @@ export default {
           data: [
             {
               label: "N_{0}",
+              units: "(/area)",
+              description: "Initial prey population density (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN0",
               inputStep: 0.5,
@@ -133,6 +135,8 @@ export default {
             },
             {
               label: "a",
+              units: "(/yr)",
+              description: "Rate of natural prey reproduction",
               emitEventName: "changea",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -141,6 +145,8 @@ export default {
             },
             {
               label: "b",
+              units: "(/yr)",
+              description: "Rate of predator consuming prey",
               emitEventName: "changeb",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -155,7 +161,8 @@ export default {
           data: [
             {
               label: "P_{0}",
-              //Name of event emitted to page component to update simParamData upon input
+              units: "(/area)",
+              description: "Initial predator population density (time = 0)",
               emitEventName: "changeP0",
               inputStep: 0.5,
               tickStep: 1,
@@ -164,6 +171,9 @@ export default {
             },
             {
               label: "c",
+              units: "(/yr)",
+              description: "Rate of growth of predator population, in response to the size of \
+                prey population",
               emitEventName: "changec",
               inputStep: 0.05,
               tickStep: 0.1,
@@ -172,6 +182,8 @@ export default {
             },
             {
               label: "d",
+              units: "(/yr)",
+              description: "Rate of predator natural death",
               emitEventName: "changed",
               inputStep: 0.1,
               tickStep: 0.2,

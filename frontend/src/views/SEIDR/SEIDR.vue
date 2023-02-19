@@ -168,6 +168,8 @@ export default {
           data: [
             {
               label: "\\alpha",
+              units: "(/day)",
+              description: "Disease induced average lethality rate",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeAlpha",
               inputStep: 0.001,
@@ -177,6 +179,8 @@ export default {
             },
             {
               label: "\\beta",
+              units: "(/day)",
+              description: "Rate of infection (probability of disease transmission per contact x number of contacts per unit time)",
               emitEventName: "changeBeta",
               inputStep: 0.05,
               tickStep: 0.1,
@@ -185,6 +189,8 @@ export default {
             },
             {
               label: "1/ \\gamma",
+              units: "(days)",
+              description: "Average infectious period",
               emitEventName: "changeRecipGamma",
               inputStep: 1,
               tickStep: 2,
@@ -193,7 +199,8 @@ export default {
             },
             {
               label: "1/ \\epsilon",
-              //Name of event emitted to page component to update simParamData upon input
+              units: "(days)",
+              description: "Average incubation period (period between exposure to disease and appearence of first sympotoms)",
               emitEventName: "changeRecipEpsilon",
               inputStep: 1,
               tickStep: 2,
@@ -208,6 +215,8 @@ export default {
           data: [
             {
               label: "E_{0}",
+              units: "",
+              description: "Initial exposed population",
               emitEventName: "changeE0",
               inputStep: 500,
               tickStep: 5000,
@@ -216,6 +225,8 @@ export default {
             },
             {
               label: "I_{0}",
+              units: "",
+              description: "Initial infectious population",
               emitEventName: "changeI0",
               inputStep: 500,
               tickStep: 5000,

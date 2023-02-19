@@ -1,6 +1,6 @@
 //Contains configuration for racer bar chart
 let chartData = {
-  labels: ['Susceptible', 'Infectious', 'Recovered'],
+  labels: ['Susceptible', 'Infected', 'Recovered'],
   datasets: [{
     label: 'Disease spread: SIR',
     data: [0, 0, 0],
