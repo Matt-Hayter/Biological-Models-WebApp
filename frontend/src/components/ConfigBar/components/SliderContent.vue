@@ -20,7 +20,7 @@
         custom-class="custom-popover"
         :target="sliderData.label"
         variant="info"
-        triggers="hover"
+        triggers="hover click"
         placement="right"
         > {{ sliderData.description }}
       </b-popover>
