@@ -375,7 +375,7 @@ export default {
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's Pred-Prey presets")
+        console.log("Loaded user's Competing Species presets")
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {

@@ -88,19 +88,19 @@ export default {
     },
     onPredPreyClick() {
       this.$store.commit("simRunningChange", false) //End current sim before navigating to next view
-      this.$router.push("/PredatorPrey");
+      this.$router.push("/PredatorPrey").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
     },
     onCompSpecClick() {
       this.$store.commit("simRunningChange", false)
-      this.$router.push("/CompetingSpecies");
+      this.$router.push("/CompetingSpecies").catch(() => {});
     },
     onSIRClick() {
       this.$store.commit("simRunningChange", false)
-      this.$router.push("/SIR");
+      this.$router.push("/SIR").catch(() => {});
     },
     onSEIDRClick() {
       this.$store.commit("simRunningChange", false)
-      this.$router.push("/SEIDR");
+      this.$router.push("/SEIDR").catch(() => {});
     },
     //Emitted from account dropdown form component
     hideDropdownForm() {
