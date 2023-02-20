@@ -93,7 +93,6 @@ export default {
   props: {
     paramSuggestions: Array,
     userPresets: Array,
-    simRunning: Boolean
   },
   data() {
     return {
@@ -115,14 +114,17 @@ export default {
     activeUser() {
       return this.$store.state.activeUser;
     },
+    simRunning() {
+      return this.$store.state.simRunning
+    },
     userPresetsUpdate() {
       return this.userPresets
     },
     emptyPresetsSignedIn() {
-      return !this.userPresets.length && this.$store.state.activeUser.isActive
+      return !this.userPresets.length && this.activeUser.isActive
     },
     emptyPresetsSignedOut() {
-      return !this.userPresets.length && !this.$store.state.activeUser.isActive
+      return !this.userPresets.length && !this.activeUser.isActive
     }
   },
   methods: {
@@ -156,7 +158,7 @@ export default {
     },
     onClickSave() {
       //So button only toggles preset naming modal when signed in
-      if (this.$store.state.activeUser.isActive == true) {
+      if (this.activeUser.isActive == true) {
         this.showSuggestions = false //Close suggestions popover
         this.$refs["presetModal"].toggle("#save-button")
       } else { //If not signed in, create alert on main page

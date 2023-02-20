@@ -12,7 +12,6 @@
       :param-suggestions="paramSuggestions"
       :sim-param-data="simParamData"
       :user-presets="userPresets"
-      :simRunning="simRunning"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
@@ -62,7 +61,6 @@
           :chart-config="predPreyChartConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
-          :sim-running="simRunning"
           :sim-data="simData"
           :sim-time-data="simTimeData"
           :sim-max-val="simMaxVal"
@@ -70,9 +68,12 @@
         />
       </div>
     </div>
-    <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
-      {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
-    </b-button>
+    <div class="run-button">
+      <span v-if="spinnerOn"> <b-spinner class="loadingSpinner"></b-spinner> </span>
+      <b-button :variant="runVariant" pill @click="onClickRun">
+        {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -110,7 +111,6 @@ export default {
       simParamData: [],
       barPlotN0: null, //For use in reactive bar chart.
       barPlotP0: null,
-      simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
@@ -224,12 +224,16 @@ export default {
       runIcon: "play",
       runVariant: "success",
       runText: "Run Simulation",
+      spinnerOn: false
     };
   },
   computed: {
     //Access Vuex store containing active user info
     activeUser() {
       return this.$store.state.activeUser;
+    },
+    simRunning() {
+      return this.$store.state.simRunning;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
       return [this.barPlotN0, this.barPlotP0]
@@ -292,17 +296,11 @@ export default {
     resetSubmissionAlert() {
       this.showAlert = false;
     },
-    activateUsername(username) {
-      this.activeUsername = username;
-    },
-    activateEmail(email) {
-      this.activeEmail = email;
-    },
     //Triggered upon a preset save
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.$store.state.activeUser.email,
+        userEmail: this.activeUser.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -333,7 +331,7 @@ export default {
       try {
         const path = "http://localhost:5000/PredPrey/AllPresets";
         const payload = {
-          userEmail: this.$store.state.activeUser.email
+          userEmail: this.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
@@ -420,11 +418,13 @@ export default {
         const payload = {
           simParams: this.simParamData
         }
+        this.spinnerOn = true //Show loading spinner
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
         this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
-        this.simRunning = true //Signals to start visualising simulation
+        this.spinnerOn = false
+        this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
@@ -437,14 +437,15 @@ export default {
       }
     },
     endSim() {
-      this.simRunning = false
+      this.spinnerOn = false
+      this.$store.commit("simRunningChange", false)
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
     }
   },
   mounted() {
-    if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
+    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
     //Set simulation params to default values
@@ -485,5 +486,9 @@ export default {
   bottom: 0;
   right: 0;
   z-index: 2;
+}
+.loadingSpinner {
+  margin-bottom: -9px;
+  margin-right: 10px;
 }
 </style>

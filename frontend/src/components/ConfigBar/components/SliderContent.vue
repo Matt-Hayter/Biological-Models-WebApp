@@ -9,11 +9,11 @@
       <span style="font-size: 1.2em; margin-left: 10px; margin-top: 3px;">{{ sliderData.units }}</span>
       <div :id="sliderData.label" class="info-hit-box">
         <b-icon
-        icon="info-circle"
-        scale="1.1"
-        shift-v="-7em"
-        variant="info"
-        style="margin-left: 0.5em"
+          icon="info-circle"
+          scale="1.1"
+          shift-v="-7em"
+          variant="info"
+          style="margin-left: 0.5em"
         />
       </div>
       <b-popover
@@ -21,7 +21,9 @@
         :target="sliderData.label"
         variant="info"
         triggers="hover click"
+        :show.sync="showParamInfo"
         placement="right"
+        :no-fade="true"
         > {{ sliderData.description }}
       </b-popover>
     </label>
@@ -49,13 +51,31 @@ export default {
     //Slider's contents are inherited
     sliderData: Object,
     currentSimParamData: Number,
-    simRunning: Boolean,
   },
   data() {
     return {
-      isRunning: true
+      isRunning: true,
+      showParamInfo: false
     };
   },
+  computed: {
+    simRunning() {
+      return this.$store.state.simRunning
+    }
+  },
+  watch: {
+    //Hide suggestions if sim is running
+    simRunning: function(isSimRunning) {
+      if (isSimRunning) {
+        this.showParamInfo = false
+      }
+    }
+  },
+  methods: {
+    tabClick() {
+      this.showParamInfo = false //Close parameter description on tab click
+    }
+  }
 };
 </script>
 
@@ -76,6 +96,7 @@ export default {
   float: right;
 }
 .custom-popover {
+  z-index: 1;
   max-width: 550px;
 }
 .info-hit-box {

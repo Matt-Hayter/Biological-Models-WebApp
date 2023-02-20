@@ -27,7 +27,6 @@ export default {
   props: {
     chartConfig: Object,
     initialConditions: Array, //Listed in the order displayed sequentially in chart
-    simRunning: Boolean,
     simData: Array,
     simTimeData: Array,
     simMaxVal: Number,
@@ -41,6 +40,11 @@ export default {
     return {
       currentSimTime: "0",
     };
+  },
+  computed: {
+    simRunning() {
+      return this.$store.state.simRunning
+    },
   },
   watch: {
     simRunning: async function(isSimRunning) {
@@ -64,10 +68,12 @@ export default {
           if (!this.simRunning) { //Check if visualisation is running
             clearInterval(visualisationInterval)
             resolve()
+            return
           }
           if (step + 1 == this.simData[0].length) { //Check if visualisation is completed 
             clearInterval(visualisationInterval)
             resolve()
+            return
           }
           this.currentSimTime = Number(Math.round(this.simTimeData[step]+"e1")+"e-1") //Update displayed time
           this.$refs.racerBarChart.chartSimStep(step)
@@ -75,7 +81,7 @@ export default {
         }, 10)
       })
     }
-  },
+  }
 };
 </script>
 

@@ -87,15 +87,19 @@ export default {
       console.log("Do Something");
     },
     onPredPreyClick() {
+      this.$store.commit("simRunningChange", false) //End current sim before navigating to next view
       this.$router.push("/PredatorPrey");
     },
     onCompSpecClick() {
+      this.$store.commit("simRunningChange", false)
       this.$router.push("/CompetingSpecies");
     },
     onSIRClick() {
+      this.$store.commit("simRunningChange", false)
       this.$router.push("/SIR");
     },
     onSEIDRClick() {
+      this.$store.commit("simRunningChange", false)
       this.$router.push("/SEIDR");
     },
     //Emitted from account dropdown form component
