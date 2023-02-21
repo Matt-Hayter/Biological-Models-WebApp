@@ -158,7 +158,7 @@ export default {
     },
     onClickSave() {
       //So button only toggles preset naming modal when signed in
-      if (this.activeUser.isActive == true) {
+      if (this.activeUser.isActive) {
         this.showSuggestions = false //Close suggestions popover
         this.$refs["presetModal"].toggle("#save-button")
       } else { //If not signed in, create alert on main page

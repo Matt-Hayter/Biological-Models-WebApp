@@ -36,7 +36,7 @@
             >
             <!--Pass each slider's data individually to slider component-->
             <SliderContent
-              ref="item"
+              ref="sliders"
               :slider-data="sliderData"
               :current-sim-param-data="simParamData[currentSliderIndex(index1,index2)]"
               v-on="$listeners"
@@ -80,18 +80,14 @@ export default {
     currentSliderIndex(i1, i2) {
       return i1*this.tabsData[0].data.length + i2
     },
-    //Update tabsData[i].isActive props if tab changes
     onTabOneClick() {
       //Close all parameter descriptions for current tab
-      for (let i = 0; i < this.$refs.item.length; i++) {
-        this.$refs.item[i].tabClick()
-      }
+      this.$refs.sliders.forEach((slider) => {slider.tabClick()})
+      //Update tabsData[i].isActive props if tab changes (delay allows for param description closure)
       setTimeout(() => this.$emit("tabOneActive"), 15)
     },
     onTabTwoClick() {
-      for (let i = 0; i < this.$refs.item.length; i++) {
-        this.$refs.item[i].tabClick()
-      }
+      this.$refs.sliders.forEach((slider) => {slider.tabClick()})
       setTimeout(() => this.$emit("tabTwoActive"), 15)
     },
   }
