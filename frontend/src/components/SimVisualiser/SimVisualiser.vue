@@ -2,7 +2,7 @@
   <div class="sim-visualiser">
     <RacerBarChart 
       ref="racerBarChart"
-      :chart-config="chartConfig"
+      :chart-config="barChartConfig"
       :initial-conditions="initialConditions"
       :sim-data="simData"
       :styling-class="visStylingClass"
@@ -17,11 +17,19 @@
         </div>
       </div>
     </div>
+    <LineChart
+      ref="lineChart"
+      :chart-config="lineChartConfig"
+      :initial-conditions="initialConditions"
+      :sim-data="simData"
+      :styling-class="visStylingClass"
+    />
   </div>
 </template>
 
 <script>
-import RacerBarChart from "@/components/SimVisualiser/components/RacerBarChart.vue";
+import RacerBarChart from "./components/RacerBarChart.vue";
+import LineChart from "./components/LineChart.vue";
 
 export default {
   props: {
@@ -29,13 +37,13 @@ export default {
     lineChartConfig: Object,
     initialConditions: Array, //Listed in the order displayed sequentially in chart
     simData: Array,
-    simTimeData: Array,
     simMaxVal: Number,
     timeUnits: String,
     visStylingClass: String,
   },
   components: {
     RacerBarChart,
+    LineChart
   },
   data() {
     return {
@@ -51,8 +59,10 @@ export default {
     simRunning: async function(isSimRunning) {
       //Visualise simulation if simRunning turns to true
       if (isSimRunning) {
+        console.log(this.simData[0])
+        const endTime = this.simData[0][this.simData[0].length - 1]["t"]
         this.$refs.racerBarChart.setUpChart(this.simMaxVal) //Setup for bar chart
-        this.$refs.racerBarChart.setUpChart(this.simData) //Setup for bar chart
+        this.$refs.lineChart.setUpChart(this.simMaxVal, endTime) //Setup for line chart
         this.currentSimTime = 0
         //Delay to update inital values and x-scales before displaying simulation
         await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -77,10 +87,11 @@ export default {
             resolve()
             return
           }
-          this.currentSimTime = Number(Math.round(this.simTimeData[step]+"e1")+"e-1") //Update displayed time
+          this.currentSimTime = Number(Math.round(this.simData[0][step]["t"]+"e1")+"e-1") //Update displayed time
           this.$refs.racerBarChart.chartSimStep(step)
+          this.$refs.lineChart.chartSimStep(step)
           step ++ //Progress to next step
-        }, 10)
+        }, 20)
       })
     }
   }

@@ -70,7 +70,7 @@ class PredatorPreySimulation:
     def obtain_outputs(self):
         self.N_out.append({"data": self.N_0, "t": 0})
         self.P_out.append({"data": self.P_0, "t": 0})
-        max_steps = 5000 #Max number of output data steps for simulation
+        max_steps = 2000 #Max number of output data steps for simulation
         current_steps = len(self.N)/(self.output_dt/self.dt) #Current number of output data steps
         
         #Find output_dt

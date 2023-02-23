@@ -28,8 +28,8 @@ export default {
     },
   },
   methods: {
-    setUpChart(simMaxVal1) {
-      this.chartConfig.options.scales.x.max = simMaxVal1 //Resize bar plot to fit sim
+    setUpChart(simMaxVal) {
+      this.chartConfig.options.scales.x.max = simMaxVal //Resize bar plot to fit sim
       this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
     },
     setInitialConditions(newICs) { //Set chart to initial values
@@ -41,7 +41,7 @@ export default {
     chartSimStep(step) {
       //Set each chart data index to it's corresponding simulation data index, on each iteration
       for (let i = 0; i < this.simData.length; i++) {
-          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]["data"]
       }
       this.racerChart.update("none"); //Update chart with current iteration's simulation data
     }

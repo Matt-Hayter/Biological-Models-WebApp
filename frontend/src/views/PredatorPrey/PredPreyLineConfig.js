@@ -38,7 +38,14 @@ export default {
     },
     scales: {
       x: {
-        type: 'linear'
+        beginAtZero: true,
+        type: 'linear',
+        max: 10
+      },
+      y: {
+        beginAtZero: true,
+        type: 'linear',
+        max: 10
       }
     }
   }

@@ -12,28 +12,45 @@ ChartJS.register(LinearScale, LineController, PointElement, LineElement)
 
 export default {
   props: {
-    lineChartConfig: Object,
+    chartConfig: Object,
+    initialConditions: Array, //Listed in the order displayed sequentially in chart
+    simData: Array,
     stylingClass: String,
   },
   data() {
     return {
       lineChart: null,
-      lineChartConfig: null,
+    }
+  },
+  watch: {
+    initialConditions: function(newICs) { //Update initial bar lengths upon user param change
+      this.setInitialConditions(newICs)
     }
   },
   methods: {
+    setUpChart(simMaxVal, endTime) {
+      this.chartConfig.options.scales.y.max = simMaxVal //Resize y data to fit sim
+      this.chartConfig.options.scales.x.max = endTime //Resize x data to fit sim
+      this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
+    },
+    setInitialConditions(newICs) { //Set chart to initial values
+      for(let i = 0; i < newICs.length; i++) {
+        this.chartConfig.data.datasets[i].data = [{"data": newICs[i], "t": 0}]
+      }
+      this.lineChart.update();
+    },
     chartSimStep(step) {
       //Set each chart data index to it's corresponding simulation data index, on each iteration
       for (let i = 0; i < this.simData.length; i++) {
-          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+        this.chartConfig.data.datasets[i].data.push(this.simData[i][step])
       }
-      this.racerChart.update("none"); //Update chart with current iteration's simulation data
+      this.lineChart.update("none"); //Update chart with current iteration's simulation data
     }
   },
   mounted() {
-    const ctx = document.getElementById("dynamic-line-chart").getContext("2d")
     //Create chart.js bar plot, using inherited configuration
-    this.lineChart = new ChartJS(ctx, this.lineChartConfig);
+    this.lineChart = new ChartJS(document.getElementById("dynamic-line-chart").getContext("2d"),
+      this.chartConfig);
   }
 };
 </script>

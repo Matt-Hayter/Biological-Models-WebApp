@@ -63,7 +63,6 @@
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
           :sim-max-val="simMaxVal"
           :time-units="timeUnits"
         />
@@ -86,7 +85,7 @@ import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
 import predPreyBarConfig from "./PredPreyBarConfig.js";
-import predPreyLineConfig from "./PredPreyBarConfig.js";
+import predPreyLineConfig from "./PredPreyLineConfig.js";
 
 export default {
   components: {
@@ -114,7 +113,6 @@ export default {
       barPlotN0: null, //For use in reactive bar chart.
       barPlotP0: null,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "years",
       //Contains user's presets
@@ -205,7 +203,7 @@ export default {
         },
         {
           id: 2,
-          text: "Lots of natural prey births and predator deaths, minimal effects from predation.",
+          text: "Minimal predation effects, lots of natural prey births and predator deaths.",
           maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
@@ -424,7 +422,6 @@ export default {
         this.spinnerOn = true //Show loading spinner
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
@@ -442,6 +439,7 @@ export default {
     endSim() {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
+      this.simData = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
