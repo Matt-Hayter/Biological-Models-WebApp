@@ -12,7 +12,6 @@
       :param-suggestions="paramSuggestions"
       :sim-param-data="simParamData"
       :user-presets="userPresets"
-      :simRunning="simRunning"
       @showPageAlert="showSubmissionAlert"
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
@@ -64,7 +63,6 @@
           :chart-config="compSpecChartConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
-          :sim-running="simRunning"
           :sim-data="simData"
           :sim-time-data="simTimeData"
           :sim-max-val="simMaxVal"
@@ -72,9 +70,12 @@
         />
       </div>
     </div>
-    <b-button class="run-button" :variant="runVariant" pill @click="onClickRun">
-      {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
-    </b-button>
+    <div class="run-button">
+      <span v-if="spinnerOn"> <b-spinner class="loadingSpinner"></b-spinner> </span>
+      <b-button :variant="runVariant" pill @click="onClickRun">
+        {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -114,7 +115,6 @@ export default {
       simParamData: [],
       barPlotN1_0: null,
       barPlotN2_0: null,
-      simRunning: false,
       simData: null, //Array of arrays, containing all sim data when obtained
       simTimeData: null, //Array containing times corresponding to simData
       simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
@@ -128,6 +128,8 @@ export default {
           data: [
             {
               label: "N_{1,0}",
+              units: "",
+              description: "Initial population of species 1 (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN1_0",
               inputStep: 20,
@@ -137,6 +139,8 @@ export default {
             },
             {
               label: "r_{1}",
+              units: "(/yr)",
+              description: "Growth rate of species 1 (birth rate - death rate)",
               emitEventName: "changer1",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -145,6 +149,8 @@ export default {
             },
             {
               label: "K_{1}",
+              units: "",
+              description: "Carrying capacity of species 1 (Max population that environment could sustain)",
               emitEventName: "changeK1",
               inputStep: 20,
               tickStep: 100,
@@ -153,6 +159,8 @@ export default {
             },
             {
               label: "a_{1}",
+              units: "(/yr)",
+              description: "Effect of species 2 on species 1",
               emitEventName: "changea1",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -167,6 +175,8 @@ export default {
           data: [
           {
               label: "N_{2,0}",
+              units: "",
+              description: "Initial population of species 2 (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
               emitEventName: "changeN2_0",
               inputStep: 20,
@@ -176,6 +186,8 @@ export default {
             },
             {
               label: "r_{2}",
+              units: "(/yr)",
+              description: "Growth rate of species 2 (birth rate - death rate)",
               emitEventName: "changer2",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -184,6 +196,8 @@ export default {
             },
             {
               label: "K_{2}",
+              units: "",
+              description: "Carrying capacity of species 2 (Max population that environment could sustain)",
               emitEventName: "changeK2",
               inputStep: 20,
               tickStep: 100,
@@ -192,6 +206,8 @@ export default {
             },
             {
               label: "a_{2}",
+              units: "(/yr)",
+              description: "Effect of species 1 on species 2",
               emitEventName: "changea2",
               inputStep: 0.1,
               tickStep: 0.2,
@@ -238,12 +254,16 @@ export default {
       runIcon: "play",
       runVariant: "success",
       runText: "Run Simulation",
+      spinnerOn: false
     };
   },
   computed: {
     //Access Vuex store containing active user info
     activeUser() {
       return this.$store.state.activeUser;
+    },
+    simRunning() {
+      return this.$store.state.simRunning;
     },
     initialConditions() { //Array inherited by bar chart for reactive display
       return [this.barPlotN1_0, this.barPlotN2_0]
@@ -316,17 +336,11 @@ export default {
     resetSubmissionAlert() {
       this.showAlert = false;
     },
-    activateUsername(username) {
-      this.activeUsername = username;
-    },
-    activateEmail(email) {
-      this.activeEmail = email;
-    },
     //Triggered upon a preset save
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.$store.state.activeUser.email,
+        userEmail: this.activeUser.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -357,11 +371,11 @@ export default {
       try {
         const path = "http://localhost:5000/CompetingSpecies/AllPresets";
         const payload = {
-          userEmail: this.$store.state.activeUser.email
+          userEmail: this.activeUser.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's Pred-Prey presets")
+        console.log("Loaded user's Competing Species presets")
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {
@@ -444,11 +458,13 @@ export default {
         const payload = {
           simParams: this.simParamData
         }
+        this.spinnerOn = true
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
         this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
         this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
-        this.simRunning = true //Signals to start visualising simulation
+        this.spinnerOn = false
+        this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("Competing Species simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
@@ -461,14 +477,15 @@ export default {
       }
     },
     endSim() {
-      this.simRunning = false
+      this.spinnerOn = false
+      this.$store.commit("simRunningChange", false)
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
     }
   },
   mounted() {
-    if (this.$store.state.activeUser.isActive) { //Don't load presets if no one is logged in
+    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
     //Set simulation params to default values
@@ -510,5 +527,9 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+}
+.loadingSpinner {
+  margin-bottom: -9px;
+  margin-right: 10px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <!--Change dropdown contents depending on sign-in status-->
-  <div v-if="!$store.state.activeUser.isActive" class="signed-out-dropdown">
+  <div v-if="!activeUser.isActive" class="signed-out-dropdown">
     <b-dropdown-form @submit="onSubmitSignIn" style="width: 20em">
       <b-form-group label="Sign in to save model presets!" />
       <b-form-group label="Email" label-for="signin-email-input">
@@ -133,13 +133,13 @@
           <div class="first-row">
             <div style="padding-top: 0.24em; float: left">User:</div>
             <div class="username-text">
-              {{ $store.state.activeUser.username }}
+              {{ activeUser.username }}
             </div>
           </div>
           <div class="second-row" style="padding-top: 0.24em">
             <div style="float: left">Email:</div>
             <div style="padding-left: 0.4em; float: left">
-              {{ $store.state.activeUser.email }}
+              {{ activeUser.email }}
             </div>
           </div>
         </b-form-text>
