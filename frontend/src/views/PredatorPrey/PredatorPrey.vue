@@ -58,7 +58,8 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="predPreyChartConfig"
+          :bar-chart-config="predPreyBarConfig"
+          :line-chart-config="predPreyLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
@@ -84,7 +85,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import predPreyChartConfig from "./PredPreyChartConfig.js";
+import predPreyBarConfig from "./PredPreyBarConfig.js";
+import predPreyLineConfig from "./PredPreyBarConfig.js";
 
 export default {
   components: {
@@ -218,7 +220,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      predPreyChartConfig,
+      predPreyBarConfig,
+      predPreyLineConfig,
       visStylingClass: "pred-prey",
       //Default run simulation button config
       runIcon: "play",

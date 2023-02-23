@@ -25,7 +25,8 @@ import RacerBarChart from "@/components/SimVisualiser/components/RacerBarChart.v
 
 export default {
   props: {
-    chartConfig: Object,
+    barChartConfig: Object,
+    lineChartConfig: Object,
     initialConditions: Array, //Listed in the order displayed sequentially in chart
     simData: Array,
     simTimeData: Array,
