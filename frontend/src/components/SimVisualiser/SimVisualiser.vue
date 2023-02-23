@@ -52,6 +52,7 @@ export default {
       //Visualise simulation if simRunning turns to true
       if (isSimRunning) {
         this.$refs.racerBarChart.setUpChart(this.simMaxVal) //Setup for bar chart
+        this.$refs.racerBarChart.setUpChart(this.simData) //Setup for bar chart
         this.currentSimTime = 0
         //Delay to update inital values and x-scales before displaying simulation
         await new Promise((resolve) => setTimeout(resolve, 1000))

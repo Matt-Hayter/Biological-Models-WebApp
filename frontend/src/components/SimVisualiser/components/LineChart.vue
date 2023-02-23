@@ -22,7 +22,13 @@ export default {
     }
   },
   methods: {
-    
+    chartSimStep(step) {
+      //Set each chart data index to it's corresponding simulation data index, on each iteration
+      for (let i = 0; i < this.simData.length; i++) {
+          this.chartConfig.data.datasets[0].data[i] = this.simData[i][step]
+      }
+      this.racerChart.update("none"); //Update chart with current iteration's simulation data
+    }
   },
   mounted() {
     const ctx = document.getElementById("dynamic-line-chart").getContext("2d")
