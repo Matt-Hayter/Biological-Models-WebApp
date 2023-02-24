@@ -28,6 +28,7 @@ export default {
   data: chartData,
   options: {
     indexAxis: "y",
+    aspectRatio: 3,
     scales: {
       x: {
         beginAtZero: true,
@@ -51,6 +52,13 @@ export default {
         }
       }
     },
-    aspectRatio: 3
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        enabled: true
+      }
+    },
   }
 };

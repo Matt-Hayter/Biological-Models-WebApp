@@ -36,7 +36,7 @@ class PredatorPreySimulation:
         self.max_troughs = 5 #Length of simulations if oscillating
         self.limit_t = 10000 #Max possible time in sim [yrs]
         
-    def Euler_method(self, step):
+    def Euler_method(self):
         """
         Calculate ODE's rates, apply Euler method, then add to output queue if required
         """
@@ -63,7 +63,7 @@ class PredatorPreySimulation:
         #End simulation when desired through or limit is found
         while step < limit_step and trough_counter < self.max_troughs:
             step += 1
-            self.Euler_method(step)
+            self.Euler_method()
             if self.dPdt[-2] < 0 and self.dPdt[-1] >= 0: #Count troughs as they are passed
                 trough_counter += 1
     

@@ -106,12 +106,12 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="SEIDRChartConfig"
+          :bar-chart-config="SEIDRBarConfig"
+          :line-chart-config="SEIDRLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -132,7 +132,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import SEIDRChartConfig from "./SEIDRChartConfig.js";
+import SEIDRBarConfig from "./SEIDRBarConfig.js";
+import SEIDRLineConfig from "./SEIDRLineConfig.js";
 
 export default {
   components: {
@@ -165,8 +166,7 @@ export default {
       barPlotD0: 0,
       barPlotR0: 0,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "days",
       //Contains user's presets
       userPresets: [],
@@ -279,7 +279,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      SEIDRChartConfig,
+      SEIDRBarConfig,
+      SEIDRLineConfig,
       visStylingClass: "SEIDR",
       //Default run simulation button config
       runIcon: "play",
@@ -492,9 +493,9 @@ export default {
         this.spinnerOn = true
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's
         this.spinnerOn = false
+        console.log(this.simData)
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("SEIDR simulation successfully run at server")
       } catch (error) {
@@ -510,6 +511,8 @@ export default {
     endSim() {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
+      this.simData = null
+      this.graphBounds = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"

@@ -14,7 +14,6 @@ class SIRSimulation:
         self.I_out = deque([]) #I values to be outputted
         self.R = deque([]) #Holds Recovered population values
         self.R_out = deque([]) #R values to be outputted
-        self.t_axis = deque([]) #Holds time values
         self.dIdt = [-1] #Traced for simulation end time
         #User variable model params
         self.I_0 = sim_params[0] #Initial infections
@@ -30,9 +29,9 @@ class SIRSimulation:
         self.min_output_dt = 0.01 #Initial output step size (minimum). Dynamically increases in factors of 2 for long sims [yrs]
         self.max_output_steps = 2500 #Max number of output data steps for simulation
         self.end_infected = 100  #End point for tail end of simulation
-        self.limit_t = 1000 #Max possible time in sim [yrs]
+        self.limit_t = 600 #Max time in sim before infection peak is found [yrs]
         
-    def Euler_method(self, step):
+    def Euler_method(self):
         #ODEs
         dSdt = -self.beta*self.S[-1]*self.I[-1]/self.N_0
         self.dIdt.append(self.beta*self.S[-1]*self.I[-1]/self.N_0 - self.gamma*self.I[-1])
@@ -56,7 +55,7 @@ class SIRSimulation:
         #Perform Euler until infection peak is found
         while True:
             step += 1
-            self.Euler_method(step)
+            self.Euler_method()
             if self.dIdt[-2] > 0 and self.dIdt[-1] <= 0:
                 break
             #If peak hasn't been found before max step, end sim
@@ -65,7 +64,7 @@ class SIRSimulation:
 
         #After peak is found, perform Euler until infections are low
         while self.I[-1] > self.end_infected:
-            self.Euler_method(step)
+            self.Euler_method()
 
     def obtain_outputs(self):
         self.S_out.append({"data": self.S_0, "t": 0})
