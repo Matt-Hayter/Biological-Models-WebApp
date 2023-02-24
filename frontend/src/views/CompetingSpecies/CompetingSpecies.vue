@@ -7,6 +7,7 @@
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -551,5 +552,9 @@ export default {
   position: fixed;
   z-index: 1;
   width: 35%;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
 }
 </style>

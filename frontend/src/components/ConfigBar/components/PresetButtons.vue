@@ -20,7 +20,7 @@
           </span>
           <!--If signed in, and have saved presets-->
           <div v-for="(preset, index) in userPresetsUpdate" :key="preset[0]">
-            <b-button-toolbar style="width: max-content;">
+            <b-button-toolbar style="width: max-content; z-index: 1;">
               <b-dropdown-item-button @click="onPresetClick(index)">
                 <b style="font-size: 1.2em;">{{ preset[1] }}</b>, {{ preset[2] }}
               </b-dropdown-item-button>
@@ -70,7 +70,7 @@
         custom-class="custom-popover"
         variant="info"
         target="suggestions-button"
-        placement="right"
+        placement="righttop"
         :show.sync="showSuggestions"
         :no-fade="true"
         >

@@ -7,6 +7,7 @@
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -25,7 +26,7 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
+    <div class="rhs-page-component" style="position: relative; margin-left: 25em">
       <div class="alert-section">
         <!--Upon sucessful sign up, sign in or preset save-->
         <TempAlert
@@ -510,5 +511,10 @@ export default {
   position: fixed;
   z-index: 1;
   width: 35%;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
+  z-index: 1;
 }
 </style>
