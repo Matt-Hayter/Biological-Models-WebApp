@@ -71,6 +71,7 @@
         variant="info"
         target="suggestions-button"
         placement="righttop"
+        fallbackPlacement="clockwise"
         :show.sync="showSuggestions"
         :no-fade="true"
         >
