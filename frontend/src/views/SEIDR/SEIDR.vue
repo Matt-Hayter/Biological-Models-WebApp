@@ -26,7 +26,7 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
+    <div class="rhs-page-component">
       <div class="alert-section">
         <!--Upon sucessful sign up, sign in or preset save-->
         <TempAlert
@@ -540,6 +540,10 @@ export default {
 </script>
 
 <style scoped>
+.rhs-page-component {
+  position: relative;
+  margin-left: 25em
+}
 .SEIDR-view {
   /*Slightly larger to encompass longer equations*/
   min-width: 1050px;
@@ -573,13 +577,16 @@ export default {
   margin-right: 10px;
 }
 .alert-section {
+  z-index: 100;
+  width: 100%;
   display: flex;
   justify-content: right;
+  position: fixed;
+  right: 0
 }
 .alert-section .alert {
-  position: fixed;
-  z-index: 1;
-  width: 35%;
+  width: 30%;
+  min-width: 300px;
 }
 .config-bar {
   position: sticky;

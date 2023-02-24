@@ -504,13 +504,16 @@ export default {
   margin-right: 10px;
 }
 .alert-section {
+  z-index: 100;
+  width: 100%;
   display: flex;
   justify-content: right;
+  position: fixed;
+  right: 0
 }
 .alert-section .alert {
-  position: fixed;
-  z-index: 2;
-  width: 35%;
+  width: 30%;
+  min-width: 300px;
 }
 .config-bar {
   position: sticky;
