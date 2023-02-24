@@ -24,6 +24,7 @@ export default {
   data: chartData,
   options: {
     indexAxis: "y",
+    aspectRatio: 4,
     scales: {
       x: {
         beginAtZero: true,
@@ -47,6 +48,13 @@ export default {
         }
       }
     },
-    aspectRatio: 4
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        enabled: true
+      }
+    },
   }
 };
