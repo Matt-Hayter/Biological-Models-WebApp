@@ -12,8 +12,7 @@ class PredatorPreySimulation:
         
     def __init__(self, sim_params):
         """
-        Declare and initialise simulation's data. Output data structures are designed for
-        usage with chart.js line graph.
+        Declare and initialise simulation's data.
         """
         self.N = deque([]) #Holds prey population values
         self.N_out = deque([]) #For outputted steps. Sequence of dicts, each containing a data and time value
@@ -38,7 +37,8 @@ class PredatorPreySimulation:
         
     def Euler_method(self):
         """
-        Calculate ODE's rates, apply Euler method, then add to output queue if required
+        Calculate current simulation step's rates using model ODEs, apply Euler method,
+        then append to data.
         """
         #ODEs
         dNdt = self.N[-1]*(self.a - self.b*self.P[-1])
@@ -49,8 +49,8 @@ class PredatorPreySimulation:
 
     def run_sim(self):
         """
-        Initiate simulation and run Euler iterations for each time step,
-        dynamically checking for simulation end points.
+        Initiate simulation and run Euler iterations for each time step, dynamically
+        checking for simulation end points.
         """
         self.N.append(self.N_0)
         self.P.append(self.P_0)
@@ -68,6 +68,10 @@ class PredatorPreySimulation:
                 trough_counter += 1
     
     def obtain_outputs(self):
+        """
+        Select data to be outputted, at time intervals depending on simulated data length.
+        Output data structures are designed for usage within chart.js line graph.
+        """
         self.N_out.append({"data": self.N_0, "t": 0})
         self.P_out.append({"data": self.P_0, "t": 0})
         output_dt = self.min_output_dt #Start with smallest output step size
@@ -108,6 +112,9 @@ def find_graph_bounds(output_arrays):
     return graph_bounds
 
 def runPredPreySim(sim_params):
+    """
+    Run simulation, given user selected parameters
+    """
     #Pass parameters configured by user
     model = PredatorPreySimulation(sim_params)
     model.run_sim()

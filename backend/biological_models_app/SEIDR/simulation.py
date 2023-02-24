@@ -8,6 +8,9 @@ import math
 class SIRSimulation:
         
     def __init__(self, sim_params):
+        """
+        Declare and initialise simulation's data.
+        """
         self.S = deque([]) #Holds susceptible population values
         self.S_out = deque([]) #S values to be outputted
         self.E = deque([]) #Infected but not yet infectious
@@ -45,6 +48,10 @@ class SIRSimulation:
         self.limit_t = 2000 #Max time in sim before infection peak is found [yrs]
         
     def Euler_method(self):
+        """
+        Calculate current simulation step's rates using model ODEs, apply Euler method,
+        then append to data.
+        """
         #ODEs
         dSdt = self.Lambda - self.mu*self.S[-1] - self.beta*self.S[-1]*self.I[-1]/self.N[-1]
         dEdt = self.beta*self.S[-1]*self.I[-1]/self.N[-1] - (self.mu + self.epsilon)*self.E[-1]
@@ -61,6 +68,10 @@ class SIRSimulation:
         self.N.append(self.S[-1] + self.E[-1] + self.I[-1] + self.R[-1])
         
     def run_sim(self):
+        """
+        Initiate simulation and run Euler iterations for each time step, dynamically
+        checking for simulation end points.
+        """
         self.S.append(self.S_0)
         self.E.append(self.E_0)
         self.I.append(self.I_0)
@@ -89,6 +100,10 @@ class SIRSimulation:
 
 
     def obtain_outputs(self):
+        """
+        Select data to be outputted, at time intervals depending on simulated data length.
+        Output data structures are designed for usage within chart.js line graph.
+        """
         self.S_out.append({"data": self.S_0, "t": 0})
         self.E_out.append({"data": self.E_0, "t": 0})
         self.I_out.append({"data": self.I_0, "t": 0})
@@ -116,7 +131,7 @@ class SIRSimulation:
 
 def find_graph_bounds(output_arrays, N_0):
     """
-    Find suitable upper limits of charts and graphs for visualisation
+    Find suitable upper limits of charts and graphs for visualisation.
     """
     x_largest = output_arrays[0][-1]["t"] #Final time value
     graph_bounds = {"data": N_0} #Upper data limit is already known (N_0)
@@ -130,6 +145,9 @@ def find_graph_bounds(output_arrays, N_0):
     return graph_bounds
      
 def runSEIDRSim(sim_params):
+    """
+    Run simulation, given user selected parameters
+    """
     model = SIRSimulation(sim_params)
     model.run_sim()
     model.obtain_outputs()

@@ -8,6 +8,9 @@ import math
 class CompetingSpeciesSimulation:
 
     def __init__(self, sim_params):
+        """
+        Declare and initialise simulation's data.
+        """
         self.N1 = deque([]) #Holds population 1 values
         self.N1_out = deque([]) #Population 1 values to be outputted
         self.N2 = deque([]) #Holds population 2 values
@@ -33,6 +36,10 @@ class CompetingSpeciesSimulation:
         self.limit_t = 2000 #Max possible time in sim [yrs]
         
     def Euler_method(self):
+        """
+        Calculate current simulation step's rates using model ODEs, apply Euler method,
+        then append to data.
+        """
         #ODEs
         dN1dt = self.r1*self.N1[-1]*(1-(self.N1[-1] + self.a1*self.N2[-1])/self.k1)
         dN2dt = self.r2*self.N2[-1]*(1-(self.N2[-1] + self.a2*self.N1[-1])/self.k2)
@@ -43,6 +50,10 @@ class CompetingSpeciesSimulation:
         return dN1dt, dN2dt
 
     def run_sim(self):
+        """
+        Initiate simulation and run Euler iterations for each time step, dynamically
+        checking for simulation end points.
+        """
         #Set initial values
         self.N1.append(self.N1_0)
         self.N2.append(self.N2_0)
@@ -58,6 +69,10 @@ class CompetingSpeciesSimulation:
                 return
 
     def obtain_outputs(self):
+        """
+        Select data to be outputted, at time intervals depending on simulated data length.
+        Output data structures are designed for usage within chart.js line graph.
+        """
         self.N1_out.append({"data": self.N1_0, "t": 0})
         self.N2_out.append({"data": self.N2_0, "t": 0})
         output_dt = self.min_output_dt #Start with smallest output step size
@@ -98,6 +113,9 @@ def find_graph_bounds(output_arrays):
     return graph_bounds
 
 def runCompetingSpeciesSim(sim_params):
+    """
+    Run simulation, given user selected parameters
+    """
     #Pass params configured by user
     model = CompetingSpeciesSimulation(sim_params)
     model.run_sim()
