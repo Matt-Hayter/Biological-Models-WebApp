@@ -51,7 +51,7 @@ export default {
       xAxisKey: "t",
       yAxisKey: "data"
     },
-    aspectRatio: 2,
+    aspectRatio: 2.5,
     scales: {
       x: {
         beginAtZero: true,

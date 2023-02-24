@@ -66,15 +66,15 @@ export default {
   width: 95%;
 }
 .pred-prey {
-  min-height: 28vw;
+  min-height: 29vw;
 }
 .comp-spec {
-  min-height: 28vw;
+  min-height: 29vw;
 }
 .SIR {
-  min-height: 20vw;
+  min-height: 33vw;
 }
 .SEIDR {
-  min-height: 25vw;
+  min-height: 33vw;
 }
 </style>

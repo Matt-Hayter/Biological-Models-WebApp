@@ -119,8 +119,8 @@ export default {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
         I0: 1, 
-        beta: 0.05,
-        recipGamma: 1
+        beta: 0.3,
+        recipGamma: 4
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
@@ -176,7 +176,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "Low/moderate infectiousness and small/moderate infectious period.",
+          text: "Default: Low/moderate infectiousness and small/moderate infectious period.",
           maths: "I_{0}=1,\\ \\beta=0.3,\\ 1/\\gamma=4"
         },
         {
@@ -226,19 +226,19 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateI0(newI0) {
-      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only, set to default if 0 encountered
+      if (newI0 == 0) newI0 = 1 //Non-zero params only, set to min if 0 encountered
       this.$set(this.simParamData, 0, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
       this.I0UpdateS0()
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
-      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      if (newBeta == 0) newBeta = 0.05 //Non-zero params only
       this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipGamma == 0) newRecipGamma = 1 //Non-zero params only
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
     },

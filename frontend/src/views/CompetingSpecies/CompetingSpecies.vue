@@ -112,14 +112,14 @@ export default {
       defaultParams: {
         //Species 1
         N1_0: 20,
-        r1: 0.1,
-        K1: 20,
-        a1: 0.1,
+        r1: 1.2,
+        K1: 500,
+        a1: 0.7,
         //Species 2
         N2_0: 20,
-        r2: 0.1,
-        K2: 20,
-        a2: 0.1
+        r2: 0.8,
+        K2: 500,
+        a2: 0.8
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
@@ -231,7 +231,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "Weak competition between species (neither species goes extinct, regardless of \
+          text: "Default: Weak competition between species (neither species goes extinct, regardless of \
             initial populations).",
           maths: "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
             r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8"
@@ -282,44 +282,44 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN1_0(newN1_0) {
-      if (newN1_0 == 0) newN1_0 = this.defaultParams.N1_0 //Non-zero params only, set to default if 0 encountered
+      if (newN1_0 == 0) newN1_0 = 20 //Non-zero params only, set to min if 0 encountered
       this.$set(this.simParamData, 0, newN1_0) //Inform Vue of an array element change
       this.barPlotN1_0 = newN1_0
       console.log(this.simParamData[0], "N1_0-change");
     },
     updater1(newr1) {
-      if (newr1 == 0) newr1 = this.defaultParams.r1 //Non-zero params only
+      if (newr1 == 0) newr1 = 0.1 //Non-zero params only
       this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
       console.log(this.simParamData[1], "r1-change");
     },
     updateK1(newK1) {
-      if (newK1 == 0) newK1 = this.defaultParams.K1 //Non-zero params only
+      if (newK1 == 0) newK1 = 20 //Non-zero params only
       this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
       console.log(this.simParamData[2], "K1-change");
     },
     updatea1(newa1) {
-      if (newa1 == 0) newa1 = this.defaultParams.a1 //Non-zero params only
+      if (newa1 == 0) newa1 = 0.1 //Non-zero params only
       this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
       console.log(this.simParamData[3], "a1-change");
     },
     updateN2_0(newN2_0) {
-      if (newN2_0 == 0) newN2_0 = this.defaultParams.N2_0 //Non-zero params only
+      if (newN2_0 == 0) newN2_0 = 20 //Non-zero params only
       this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
       this.barPlotN2_0 = newN2_0
       console.log(this.simParamData[4], "N2_0-change");
     },
     updater2(newr2) {
-      if (newr2 == 0) newr2 = this.defaultParams.r2 //Non-zero params only
+      if (newr2 == 0) newr2 = 0.1 //Non-zero params only
       this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
       console.log(this.simParamData[5], "r2-change");
     },
     updateK2(newK2) {
-      if (newK2 == 0) newK2 = this.defaultParams.K2 //Non-zero params only
+      if (newK2 == 0) newK2 = 20 //Non-zero params only
       this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
       console.log(this.simParamData[6], "K2-change");
     },
     updatea2(newa2) {
-      if (newa2 == 0) newa2 = this.defaultParams.a2 //Non-zero params only
+      if (newa2 == 0) newa2 = 0.1 //Non-zero params only
       this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
       console.log(this.simParamData[7], "a2-change");
     },

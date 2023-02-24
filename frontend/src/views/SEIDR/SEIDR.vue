@@ -149,12 +149,12 @@ export default {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
         //Rates
-        alpha: 0.001,
-        beta: 0.05,
-        recipGamma: 1,
-        recipEpsilon: 0.5,
+        alpha: 0.006,
+        beta: 0.75,
+        recipGamma: 8,
+        recipEpsilon: 3,
         //Initial conditions
-        E0: 1,
+        E0: 20000,
         I0: 1,
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
@@ -250,7 +250,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "COVID-19, no isolation.",
+          text: "Default: COVID-19, no isolation.",
           maths: "\\alpha=0.006,\\ \\beta=0.75,\\ 1/\\gamma=8,\\ 1/\\epsilon=3,\\, \
             E_{0}=20000,\\, I_{0}=1"
         },
@@ -304,34 +304,34 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateAlpha(newAlpha) {
-      if (newAlpha == 0) newAlpha = this.defaultParams.alpha //Non-zero params only, set to default if 0 encountered
+      if (newAlpha == 0) newAlpha = 0.001 //Non-zero params only, set to min if 0 encountered
       this.$set(this.simParamData, 0, newAlpha) //Inform Vue of an array element change
       console.log(this.simParamData[0], "alpha-change");
     },
     updateBeta(newBeta) {
-      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      if (newBeta == 0) newBeta = 0.05 //Non-zero params only
       this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipGamma == 0) newRecipGamma = 1 //Non-zero params only
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
     },
     updateRecipEpsilon(newRecipEpsilon) {
-      if (newRecipEpsilon == 0) newRecipEpsilon = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipEpsilon == 0) newRecipEpsilon = 0.5 //Non-zero params only
       this.$set(this.simParamData, 3, newRecipEpsilon) //Inform Vue of an array element change
       console.log(this.simParamData[3], "1/epsilon-change");
     },
     updateE0(newE0) {
-      if (newE0 == 0) newE0 = this.defaultParams.E0 //Non-zero params only
+      if (newE0 == 0) newE0 = 1 //Non-zero params only
       this.$set(this.simParamData, 4, newE0) //Inform Vue of an array element change
       this.barPlotE0 = newE0
       this.E0I0UpdateS0()
       console.log(this.simParamData[4], "E0-change");
     },
     updateI0(newI0) {
-      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only
+      if (newI0 == 0) newI0 = 1 //Non-zero params only
       this.$set(this.simParamData, 5, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
       this.E0I0UpdateS0()

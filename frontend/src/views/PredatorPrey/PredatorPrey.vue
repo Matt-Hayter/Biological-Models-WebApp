@@ -252,7 +252,7 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to default if 0 encountered
+      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to min (= default) if 0 encountered
       this.$set(this.simParamData, 0, newN0) //Inform Vue of an array element change
       this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");

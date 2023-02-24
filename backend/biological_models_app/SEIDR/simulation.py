@@ -44,7 +44,6 @@ class SIRSimulation:
         self.end_infected = 100  #End point for tail end of simulation
         self.limit_t = 2000 #Max time in sim before infection peak is found [yrs]
         
-        
     def Euler_method(self):
         #ODEs
         dSdt = self.Lambda - self.mu*self.S[-1] - self.beta*self.S[-1]*self.I[-1]/self.N[-1]
