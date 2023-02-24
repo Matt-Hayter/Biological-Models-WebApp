@@ -26,8 +26,17 @@
       @tabTwoActive="activateTabTwo"
     />
     <div class="rhs-page-component" style="margin-left: 25em">
-      <!--Upon sucessful sign up, sign in or preset save-->
-      <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
+      <div class="alert-section">
+        <!--Upon sucessful sign up, sign in or preset save-->
+        <TempAlert
+          class="alert"
+          :alert-message="alertMessage"
+          :alert-variant="alertVariant"
+          :show-alert="showAlert"
+          :alert-secs="alertSecs"
+          @resetAlert="resetSubmissionAlert"
+        />
+      </div>
       <div class="top-section">
         <div class="title-and-formula">
           <div class="title">
@@ -558,6 +567,15 @@ export default {
 .loadingSpinner {
   margin-bottom: -9px;
   margin-right: 10px;
+}
+.alert-section {
+  display: flex;
+  justify-content: right;
+}
+.alert-section .alert {
+  position: fixed;
+  z-index: 1;
+  width: 35%;
 }
 </style>
 
