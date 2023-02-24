@@ -46,6 +46,7 @@
           </div>
         </div>
         <PresetButtons
+          class="preset-buttons"
           v-on="$listeners"
           :param-suggestions="paramSuggestions"
           :user-presets="userPresets"
@@ -108,5 +109,9 @@ export default {
   position: relative;
   float: left;
   height: 100vh;
+}
+.preset-buttons {
+  position: absolute;
+  bottom: 130px;
 }
 </style>

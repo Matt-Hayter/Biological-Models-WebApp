@@ -556,5 +556,6 @@ export default {
 .config-bar {
   position: sticky;
   top: 97px;
+  z-index: 1;
 }
 </style>

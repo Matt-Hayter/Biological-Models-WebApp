@@ -3,11 +3,11 @@
     <div class="preset-save-list">
       <b-button-group class="preset-button-bar">
         <!--Save button-->
-        <b-button id="save-button" class="btn-success" @click="onClickSave">
+        <b-button id="save-button"  class="btn-success" @click="onClickSave">
           Save <b-icon icon="box-arrow-in-down" font-scale="1.4" shift-v="1.5"></b-icon>
         </b-button>
         <!--Presets dropdown-->
-        <b-dropdown dropright :disabled="simRunning" variant="info" no-caret @show="onClickDropdown">
+        <b-dropdown dropright boundary="viewport" :disabled="simRunning" variant="info" style="position: relative; z-index: 1;" no-caret @show="onClickDropdown">
           <template #button-content>
             My Presets <b-icon icon="justify" font-scale="1.5" style="margin-left: 4em"></b-icon>
           </template>
@@ -20,7 +20,7 @@
           </span>
           <!--If signed in, and have saved presets-->
           <div v-for="(preset, index) in userPresetsUpdate" :key="preset[0]">
-            <b-button-toolbar style="width: max-content; z-index: 1;">
+            <b-button-toolbar style="width: max-content;">
               <b-dropdown-item-button @click="onPresetClick(index)">
                 <b style="font-size: 1.2em;">{{ preset[1] }}</b>, {{ preset[2] }}
               </b-dropdown-item-button>
@@ -177,8 +177,6 @@ export default {
 .preset-buttons {
   display: flex;
   flex-direction: column;
-  position: relative;
-  padding-top: 2.2em;
 }
 .preset-button-bar {
   padding-left: 0.5em;
@@ -190,6 +188,7 @@ export default {
 .custom-popover {
   max-width: 500px;
   z-index: 1;
+  margin-bottom: -18px;
 }
 .bulb-on {
   color: rgb(255, 174, 0);
@@ -199,7 +198,7 @@ export default {
 }
 #suggestions-button {
   float: right;
-  margin-top: 2.3em;
+  margin-top: 1.5em;
   margin-right: 0.5em;
 }
 </style>
