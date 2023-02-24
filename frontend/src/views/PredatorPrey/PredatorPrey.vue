@@ -63,7 +63,7 @@
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -113,7 +113,7 @@ export default {
       barPlotN0: null, //For use in reactive bar chart.
       barPlotP0: null,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "years",
       //Contains user's presets
       userPresets: [],
@@ -204,12 +204,12 @@ export default {
         {
           id: 2,
           text: "Minimal predation effects, lots of natural prey births and predator deaths.",
-          maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
+          maths: "N_{0}=2,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
           id: 3,
           text: "Heavy predation effects, little natural prey births and predator deaths.",
-          maths: "N_{0}=10,\\ a=0.4,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.4",
+          maths: "N_{0}=2,\\ a=0.2,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.2",
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -422,7 +422,7 @@ export default {
         this.spinnerOn = true //Show loading spinner
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
@@ -440,6 +440,7 @@ export default {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
       this.simData = null
+      this.graphBounds = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"

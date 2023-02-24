@@ -37,7 +37,7 @@ export default {
     lineChartConfig: Object,
     initialConditions: Array, //Listed in the order displayed sequentially in chart
     simData: Array,
-    simMaxVal: Number,
+    graphBounds: Object,
     timeUnits: String,
     visStylingClass: String,
   },
@@ -47,6 +47,7 @@ export default {
   },
   data() {
     return {
+      chartUpdateTime: 15, //Configure update time for charts [ms]
       currentSimTime: "0",
     };
   },
@@ -59,10 +60,8 @@ export default {
     simRunning: async function(isSimRunning) {
       //Visualise simulation if simRunning turns to true
       if (isSimRunning) {
-        console.log(this.simData[0])
-        const endTime = this.simData[0][this.simData[0].length - 1]["t"]
-        this.$refs.racerBarChart.setUpChart(this.simMaxVal) //Setup for bar chart
-        this.$refs.lineChart.setUpChart(this.simMaxVal, endTime) //Setup for line chart
+        this.$refs.racerBarChart.setUpChart(this.graphBounds) //Setup for bar chart
+        this.$refs.lineChart.setUpChart(this.graphBounds) //Setup for line chart
         this.currentSimTime = 0
         //Delay to update inital values and x-scales before displaying simulation
         await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -91,7 +90,7 @@ export default {
           this.$refs.racerBarChart.chartSimStep(step)
           this.$refs.lineChart.chartSimStep(step)
           step ++ //Progress to next step
-        }, 20)
+        }, this.chartUpdateTime)
       })
     }
   }

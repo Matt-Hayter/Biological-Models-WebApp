@@ -28,8 +28,8 @@ export default {
     },
   },
   methods: {
-    setUpChart(simMaxVal) {
-      this.chartConfig.options.scales.x.max = simMaxVal //Resize bar plot to fit sim
+    setUpChart(graphBounds) {
+      this.chartConfig.options.scales.x.max = graphBounds["data"] //Resize bar plot to fit sim
       this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
     },
     setInitialConditions(newICs) { //Set chart to initial values

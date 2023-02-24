@@ -7,8 +7,9 @@
 </template>
 
 <script>
-import { Chart as ChartJS, LinearScale, LineController, PointElement, LineElement } from 'chart.js'
-ChartJS.register(LinearScale, LineController, PointElement, LineElement)
+import { Chart as ChartJS, LinearScale, LineController, PointElement, LineElement,
+  Legend, Tooltip } from 'chart.js'
+ChartJS.register(LinearScale, LineController, PointElement, LineElement, Legend, Tooltip)
 
 export default {
   props: {
@@ -28,9 +29,9 @@ export default {
     }
   },
   methods: {
-    setUpChart(simMaxVal, endTime) {
-      this.chartConfig.options.scales.y.max = simMaxVal //Resize y data to fit sim
-      this.chartConfig.options.scales.x.max = endTime //Resize x data to fit sim
+    setUpChart(graphBounds) {
+      this.chartConfig.options.scales.y.max = graphBounds["data"] //Resize y data to fit sim
+      this.chartConfig.options.scales.x.max = graphBounds["t"] //Resize x data to fit sim
       this.setInitialConditions(this.initialConditions) //Update chart with initial conditions
     },
     setInitialConditions(newICs) { //Set chart to initial values
@@ -44,7 +45,9 @@ export default {
       for (let i = 0; i < this.simData.length; i++) {
         this.chartConfig.data.datasets[i].data.push(this.simData[i][step])
       }
-      this.lineChart.update("none"); //Update chart with current iteration's simulation data
+      if (step % 3 == 0) {
+        this.lineChart.update("none"); //Update chart with current iteration's simulation data
+      }
     }
   },
   mounted() {
@@ -63,7 +66,7 @@ export default {
   width: 95%;
 }
 .pred-prey {
-  min-height: 30vw;
+  min-height: 28vw;
 }
 .comp-spec {
   min-height: 16vw;
