@@ -69,7 +69,7 @@ export default {
   min-height: 28vw;
 }
 .comp-spec {
-  min-height: 16vw;
+  min-height: 28vw;
 }
 .SIR {
   min-height: 20vw;

@@ -46,7 +46,9 @@ export default {
       }
     },
     plugins: {
-      legend: false,
+      legend: {
+        display: false
+      },
       tooltip: {
         enabled: true
       }

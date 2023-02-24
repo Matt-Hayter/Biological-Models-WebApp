@@ -105,7 +105,6 @@ def find_graph_bounds(output_arrays):
             graph_bounds[axes[i]] = math.ceil(axis_largest/10)*10 #Round up to nearest 10
         else:
             graph_bounds[axes[i]] = math.ceil(axis_largest) #Round up to nearest while number
-
     return graph_bounds
 
 def runPredPreySim(sim_params):

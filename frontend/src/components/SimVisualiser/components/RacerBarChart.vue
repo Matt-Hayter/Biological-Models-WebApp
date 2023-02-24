@@ -7,8 +7,9 @@
 </template>
 
 <script>
-import { Chart as ChartJS, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js'
-ChartJS.register(BarController, BarElement, CategoryScale, LinearScale)
+import { Chart as ChartJS, BarController, BarElement, CategoryScale, LinearScale,
+  Legend, Tooltip} from 'chart.js'
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Legend, Tooltip)
 
 export default {
   props: {
