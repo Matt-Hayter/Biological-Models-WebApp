@@ -54,7 +54,7 @@
       title="Create an Account"
       hide-footer
       centered
-    >
+      >
       <b-form @submit="onSubmitSignUp">
         <b-form-group
           label="Username:"
@@ -127,28 +127,96 @@
   <div v-else class="signed-in-dropdown">
     <b-dropdown-form>
       <b-form-group>
-        <b-form-text
-          style="font-size: 1.1em; display: flex; flex-direction: column"
-        >
-          <div class="first-row">
-            <div style="padding-top: 0.24em; float: left">User:</div>
-            <div class="username-text">
+        <b-form-text style="font-size: 1.1em">
+            <span style="padding-top: 0.24em; float: left">User:</span>
+            <span class="username-text">
               {{ activeUser.username }}
+            </span>
+        </b-form-text>
+      </b-form-group>
+      <b-dropdown-divider></b-dropdown-divider>
+      <div style="margin-left: -10px;">
+        <b-dropdown-item-button v-b-modal.manage-account>
+          <b>Manage account</b>
+        </b-dropdown-item-button>
+        <b-dropdown-item-button @click="onClickSignOut">
+          <b>Sign out</b>
+        </b-dropdown-item-button>
+      </div>
+    </b-dropdown-form>
+    <!--Manage account modal-->
+    <b-modal
+      ref="manageAccountModal"
+      id="manage-account"
+      title="Manage Account"
+      hide-footer
+      centered
+      >
+      <b-form-group>
+        <b-form-text class="manage-account-text">
+          <div class="first-row">
+            <div style="padding-top: 0.24em; float: left">Username:</div>
+            <!--Username display, with editable username-->
+            <div v-if="!editingUsername">
+              <div class="username-text">
+                {{ activeUser.username }}
+              </div>
+              <b-button class="edit-username-button" @click="onClickEditUsername">
+                <b-icon icon="pencil" shift-v="10" shift-h="-9" />
+              </b-button>
+            </div>
+            <!--Edit username form display-->
+            <div v-else-if="editingUsername" class="edit-username-section">
+              <b-input-group description="Usernames are converted to lower case">
+                <b-form-input
+                  id="manage-account-username-input"
+                  type="text"
+                  v-model="updatedUsername"
+                  :state="updatedUsernameState"
+                  required
+                  placeholder="Enter new username"
+                  aria-describedby="feedback-invalid-username"
+                />
+                <b-input-group-append>
+                  <b-button variant="outline-success">Save</b-button>
+                  <b-button variant="outline-primary"><b-icon icon="x"></b-icon></b-button>
+                </b-input-group-append>
+                <!--Feedback for if input is invalid (in the false state)-->
+                <b-form-invalid-feedback id="feedback-invalid-username">
+                  Please enter at least 4 characters
+                </b-form-invalid-feedback>
+              </b-input-group>
             </div>
           </div>
           <div class="second-row" style="padding-top: 0.24em">
             <div style="float: left">Email:</div>
-            <div style="padding-left: 0.4em; float: left">
+            <div class="email-text">
               {{ activeUser.email }}
             </div>
           </div>
         </b-form-text>
+        <b-button v-b-modal.delete-account style="float: right;" @click="onClickDeleteAccountModal">
+          <b-form-text>
+            Delete Account
+          </b-form-text>
+        </b-button>
       </b-form-group>
-      <b-dropdown-divider></b-dropdown-divider>
-      <b-dropdown-item-button @click="onClickSignOut">
-        <b>Sign out</b>
-      </b-dropdown-item-button>
-    </b-dropdown-form>
+    </b-modal>
+    <b-modal
+      ref="deleteAccountModal"
+      id="delete-account"
+      hide-footer
+      centered
+      >
+      <template #modal-title>
+        Account deletion <b-icon icon="exclamation-triangle" variant="danger" scale="1.2" shift-v="1" />
+      </template>
+      <b>Removing your account will permanently delete all of your associated data,
+        including all saved presets</b>
+      <b-button style="margin-top: 30px;" variant="outline-danger">
+        Delete Account
+      </b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -162,7 +230,7 @@ export default {
   },
   data() {
     return {
-      //Default sign up values
+      //Default sign up and sign in values
       signUp: {
         formUsername: "",
         formEmail: "",
@@ -172,6 +240,9 @@ export default {
         formEmail: "",
         formPassword: "",
       },
+      //Account management data
+      updatedUsername: "",
+      editingUsername: false,
       //If alert is displayed within current component (if unsuccessful)
       invalidSignUpAlert: {
         alertSecs: 8,
@@ -200,9 +271,26 @@ export default {
     activeUser() {
       return this.$store.state.activeUser;
     },
-    //Update form input state for password (valid or not), depending on current input length
+    //Update form input states (valid or not), depending on current input lengths
+    updatedUsernameState() {
+      const usernameLength = this.updatedUsername.length;
+      return this.usernameStatus(usernameLength)
+    },
     signUpUsernameState() {
       const usernameLength = this.signUp.formUsername.length;
+      return this.usernameStatus(usernameLength)
+    },
+    signUpPasswdState() {
+      const pswdLength = this.signUp.formPassword.length;
+      return this.passwdStatus(pswdLength)
+    },
+    signInPasswdState() {
+      const pswdLength = this.signIn.formPassword.length;
+      return this.passwdStatus(pswdLength)
+    },
+  },
+  methods: {
+    usernameStatus(usernameLength) {
       //Don't show as invalid if not yet typed
       if (usernameLength == 0) {
         return null;
@@ -210,8 +298,7 @@ export default {
       //Needs to be longer than 5 characters
       return usernameLength >= 4 ? null : false;
     },
-    signUpPasswdState() {
-      const pswdLength = this.signUp.formPassword.length;
+    passwdStatus(pswdLength) {
       //Don't show as invalid if not yet typed
       if (pswdLength == 0) {
         return null;
@@ -219,17 +306,6 @@ export default {
       //Needs to be longer than 7 characters
       return pswdLength >= 8 ? null : false;
     },
-    signInPasswdState() {
-      const pswdLength = this.signIn.formPassword.length;
-      //Don't show as invalid if not yet typed
-      if (pswdLength == 0) {
-        return null;
-      }
-      //Needs to be longer than 7 characters
-      return pswdLength >= 8 ? null : false;
-    },
-  },
-  methods: {
     onSubmitSignUp(event) {
       event.preventDefault();
       //Don't process sign up if fields are not adequate
@@ -276,6 +352,12 @@ export default {
       };
       this.$emit("showPageAlert", alertPayload); //Emit event to create success alert on main page
       console.log("Signed out!");
+    },
+    onClickEditUsername() {
+      this.editingUsername = true
+    },
+    onClickDeleteAccountModal() {
+      this.$refs.manageAccountModal.hide()
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
@@ -415,10 +497,35 @@ export default {
 </script>
 
 <style scoped>
+.first-row {
+  display: flex;
+  flex-direction: row;
+}
+.manage-account-text {
+  font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+}
 .username-text {
   float: left;
   padding-left: 0.4em;
   color: rgb(49, 49, 49);
   font-size: 1.3em;
+}
+.email-text {
+  float: left;
+  padding-left: 0.4em;
+  color: rgb(49, 49, 49);
+}
+.edit-username-button {
+  margin-left: 8px;
+  max-width: 20px;
+  height: 36px;
+  padding: 15px;
+}
+.edit-username-section {
+  font-size: 0.9em;
+  margin-left: 8px;
+  margin-top: -8px;
 }
 </style>

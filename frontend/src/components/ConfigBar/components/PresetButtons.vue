@@ -25,7 +25,7 @@
                 <b style="font-size: 1.2em;">{{ preset[1] }}</b>, {{ preset[2] }}
               </b-dropdown-item-button>
               <b-dropdown-item-button @click="onClickDeletePreset(index)" style="margin-top: 0.25em">
-                <b-icon icon="x"></b-icon>
+                <b-icon icon="trash" scale="0.9"></b-icon>
               </b-dropdown-item-button>
             </b-button-toolbar>
           </div>
