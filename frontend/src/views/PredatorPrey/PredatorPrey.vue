@@ -229,8 +229,8 @@ export default {
   },
   computed: {
     //Access Vuex store containing active user info
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     simRunning() {
       return this.$store.state.simRunning;
@@ -300,7 +300,7 @@ export default {
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.activeUser.email,
+        userEmail: this.user.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -331,7 +331,7 @@ export default {
       try {
         const path = "http://localhost:5000/PredPrey/AllPresets";
         const payload = {
-          userEmail: this.activeUser.email
+          userEmail: this.user.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
@@ -445,7 +445,7 @@ export default {
     }
   },
   mounted() {
-    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
+    if (this.user.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
     //Set simulation params to default values

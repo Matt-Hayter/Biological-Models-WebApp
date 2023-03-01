@@ -1,6 +1,6 @@
 <template>
   <!--Change dropdown contents depending on sign-in status-->
-  <div v-if="!activeUser.isActive" class="signed-out-dropdown">
+  <div v-if="!user.isActive" class="signed-out-dropdown">
     <b-dropdown-form @submit="onSubmitSignIn" style="width: 20em">
       <b-form-group label="Sign in to save model presets!" />
       <b-form-group label="Email" label-for="signin-email-input">
@@ -31,10 +31,10 @@
         </b-form-invalid-feedback>
       </b-form-group>
       <TempAlert
-        :alert-message="invalidSignInAlert.alertMessage"
-        :alert-variant="invalidSignInAlert.alertVariant"
-        :show-alert="invalidSignInAlert.showAlert"
-        :alert-secs="invalidSignInAlert.alertSecs"
+        :alert-message="invalidSignInAlert.message"
+        :alert-variant="invalidSignInAlert.variant"
+        :show-alert="invalidSignInAlert.show"
+        :alert-secs="invalidSignInAlert.secs"
         @resetAlert="resetInvalidSignInAlert"
       />
       <br />
@@ -106,17 +106,17 @@
           </b-form-invalid-feedback>
         </b-form-group>
         <TempAlert
-          :alert-message="invalidSignUpAlert.usernameAlertMessage"
-          :alert-variant="invalidSignUpAlert.usernameAlertVariant"
+          :alert-message="invalidSignUpAlert.usernameMessage"
+          :alert-variant="invalidSignUpAlert.usernameVariant"
           :show-alert="invalidSignUpAlert.showUsernameAlert"
-          :alert-secs="invalidSignUpAlert.alertSecs"
+          :alert-secs="invalidSignUpAlert.secs"
           @resetAlert="resetInvalidUsernameAlert"
         />
         <TempAlert
-          :alert-message="invalidSignUpAlert.emailAlertMessage"
-          :alert-variant="invalidSignUpAlert.emailAlertVariant"
+          :alert-message="invalidSignUpAlert.emailMessage"
+          :alert-variant="invalidSignUpAlert.emailVariant"
           :show-alert="invalidSignUpAlert.showEmailAlert"
-          :alert-secs="invalidSignUpAlert.alertSecs"
+          :alert-secs="invalidSignUpAlert.secs"
           @resetAlert="resetInvalidEmailAlert"
         />
         <br />
@@ -130,7 +130,7 @@
         <b-form-text style="font-size: 1.1em">
             <span style="padding-top: 0.24em; float: left">User:</span>
             <span class="username-text">
-              {{ activeUser.username }}
+              {{ user.username }}
             </span>
         </b-form-text>
       </b-form-group>
@@ -152,55 +152,62 @@
       hide-footer
       centered
       >
-      <b-form-group>
-        <b-form-text class="manage-account-text">
-          <div class="first-row">
-            <div style="padding-top: 0.24em; float: left">Username:</div>
-            <!--Username display, with editable username-->
-            <div v-if="!editingUsername">
-              <div class="username-text">
-                {{ activeUser.username }}
-              </div>
-              <b-button class="edit-username-button" @click="onClickEditUsername">
-                <b-icon icon="pencil" shift-v="10" shift-h="-9" />
-              </b-button>
+      <b-form-text class="account-info-text">
+        <div class="first-row">
+          <div style="padding-top: 0.24em; float: left">Username:</div>
+          <!--Username display, with editable username-->
+          <div v-if="!editingUsername">
+            <div class="username-text">
+              {{ user.username }}
             </div>
-            <!--Edit username form display-->
-            <div v-else-if="editingUsername" class="edit-username-section">
-              <b-input-group description="Usernames are converted to lower case">
-                <b-form-input
-                  id="manage-account-username-input"
-                  type="text"
-                  v-model="updatedUsername"
-                  :state="updatedUsernameState"
-                  required
-                  placeholder="Enter new username"
-                  aria-describedby="feedback-invalid-username"
-                />
-                <b-input-group-append>
-                  <b-button variant="outline-success">Save</b-button>
-                  <b-button variant="outline-primary"><b-icon icon="x"></b-icon></b-button>
-                </b-input-group-append>
-                <!--Feedback for if input is invalid (in the false state)-->
-                <b-form-invalid-feedback id="feedback-invalid-username">
-                  Please enter at least 4 characters
-                </b-form-invalid-feedback>
-              </b-input-group>
-            </div>
+            <b-button class="edit-username-button" @click="onClickEditUsername">
+              <b-icon icon="pencil" shift-v="10" shift-h="-9" />
+            </b-button>
           </div>
-          <div class="second-row" style="padding-top: 0.24em">
-            <div style="float: left">Email:</div>
-            <div class="email-text">
-              {{ activeUser.email }}
-            </div>
+          <!--Edit username form display-->
+          <div v-else-if="editingUsername" class="edit-username-section">
+            <b-input-group>
+              <b-form-input
+                id="manage-account-username-input"
+                type="text"
+                v-model="newUsername"
+                :state="newUsernameState"
+                placeholder="Enter new username"
+                aria-describedby="feedback-invalid-username"
+              />
+              <b-input-group-append>
+                <b-button-group>
+                  <b-button variant="outline-success" @click="onClickSubmitNewUsername">Save</b-button>
+                  <b-button variant="outline-primary" @click="onClickCancelEditUsername"><b-icon icon="x"></b-icon></b-button>
+                </b-button-group>
+              </b-input-group-append>
+              <!--Feedback for if input is invalid (in the false state)-->
+              <b-form-invalid-feedback id="feedback-invalid-username">
+                Please enter at least 4 characters
+              </b-form-invalid-feedback>
+            </b-input-group>
+            <TempAlert
+              :alert-message="newUsernameAlert.message"
+              :alert-variant="newUsernameAlert.variant"
+              :show-alert="newUsernameAlert.show"
+              :alert-secs="newUsernameAlert.secs"
+              @resetAlert="resetNewUsernameAlert"
+            />
           </div>
+        </div>
+        <div class="second-row" style="padding-top: 0.24em">
+          <div style="float: left">Email:</div>
+          <div class="email-text">
+            {{ user.email }}
+          </div>
+        </div>
+      </b-form-text>
+      <br />
+      <b-button v-b-modal.delete-account style="float: right;" @click="onClickDeleteAccountModal">
+        <b-form-text>
+          Delete Account
         </b-form-text>
-        <b-button v-b-modal.delete-account style="float: right;" @click="onClickDeleteAccountModal">
-          <b-form-text>
-            Delete Account
-          </b-form-text>
-        </b-button>
-      </b-form-group>
+      </b-button>
     </b-modal>
     <b-modal
       ref="deleteAccountModal"
@@ -241,40 +248,48 @@ export default {
         formPassword: "",
       },
       //Account management data
-      updatedUsername: "",
       editingUsername: false,
-      //If alert is displayed within current component (if unsuccessful)
+      newUsername: "",
+      //Alert displayed within current component (if unsuccessful)
       invalidSignUpAlert: {
-        alertSecs: 8,
-        alertVariant: "warning",
+        secs: 8,
+        variant: "warning",
         //For non-unique username alert
         showUsernameAlert: false,
-        usernameAlertMessage:
+        usernameMessage:
           "That username is registered with another account, please choose another",
         //For non-unique email alert
         showEmailAlert: false,
-        emailAlertMessage:
+        emailMessage:
           "That email is registered with another account, please use another",
       },
-      //If alert is displayed within current component (if unsuccessful)
+      //Alert displayed within current component (if unsuccessful)
       invalidSignInAlert: {
-        alertSecs: 4,
-        alertVariant: "warning",
-        showAlert: false,
-        alertMessage:
+        secs: 4,
+        variant: "warning",
+        show: false,
+        message:
           "Account not found, please check email and password or create an account",
+      },
+      //alert displayed within current component (successful or unsuccessful)
+      newUsernameAlert: {
+        secs: 8,
+        variant: null, //Variable
+        show: false,
+        message: null, //Variable
       },
     };
   },
   computed: {
     //Access Vuex store containing active user info
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     //Update form input states (valid or not), depending on current input lengths
-    updatedUsernameState() {
-      const usernameLength = this.updatedUsername.length;
-      return this.usernameStatus(usernameLength)
+    newUsernameState() {
+      const usernameLength = this.newUsername.length;
+      //Needs to be longer than 5 characters. Don't accept 0 characters
+      return usernameLength >= 4 ? null : false;
     },
     signUpUsernameState() {
       const usernameLength = this.signUp.formUsername.length;
@@ -309,10 +324,7 @@ export default {
     onSubmitSignUp(event) {
       event.preventDefault();
       //Don't process sign up if fields are not adequate
-      if (
-        this.signUpUsernameState == false ||
-        this.signUpPasswdState == false
-      ) {
+      if (this.signUpUsernameState == false || this.signUpPasswdState == false) {
         return;
       }
       //Handle server communication
@@ -326,9 +338,7 @@ export default {
     onSubmitSignIn(event) {
       event.preventDefault();
       //If password is too short to be valid
-      if (this.signInPasswdState == false) {
-        return;
-      }
+      if (this.signInPasswdState == false) {return}
       //Handle server communication
       const payload = {
         email: this.signIn.formEmail,
@@ -356,12 +366,25 @@ export default {
     onClickEditUsername() {
       this.editingUsername = true
     },
+    onClickCancelEditUsername() {
+      this.editingUsername = false
+      this.newUsername = ""
+    },
+    onClickSubmitNewUsername() {
+      //If username is not valid
+      if (this.newUsernameState == false) {return}
+      const payload = {
+        newUsername: this.newUsername,
+        email: this.user.email //To identify user
+      }
+      this.changeUsername(payload)
+    },
     onClickDeleteAccountModal() {
       this.$refs.manageAccountModal.hide()
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
-      const path = "http://localhost:5000/SignUp";
+      const path = "http://localhost:5000/Account/SignUp";
       try {
         const response = await axios.post(path, payload); //Send payload to server and async await response
         let input_valid = true;
@@ -403,12 +426,12 @@ export default {
     },
     //Add and validate user sign up data against database
     async signInUser(payload) {
-      const path = "http://localhost:5000/SignIn";
+      const path = "http://localhost:5000/Account/SignIn";
       try {
         const response = await axios.post(path, payload); //Send payload to server and async await response
         //If email/password comb not found, show alert on form
         if (response.data["username"] == null) {
-          this.invalidSignInAlert.showAlert = true;
+          this.invalidSignInAlert.show = true;
           console.log("No sign in, invalid sign in details");
           return;
         }
@@ -438,6 +461,42 @@ export default {
         console.log("No sign in, server problem");
       }
     },
+    async changeUsername() {
+      const path = "http://localhost:5000/Account/ChangeUsername";
+      try {
+        const response = await axios.put(path, payload); //Send payload to server
+        if (response.data["username_error"]) { //If server response says username is not unique
+          //Failure alert on modal
+          this.newUsernameAlert.message = 
+            "Username already in use, please select another. Entries are converted to lower case."
+          this.newUsernameAlert.variant = "warning"
+          this.newUsernameAlert.show = true;
+          console.log("non-unique username error");
+          return
+        }
+        //If successful:
+        //Show success alert on modal
+        this.newUsernameAlert.message = "Username updated successfully"
+        this.newUsernameAlert.variant = "success"
+        this.newUsernameAlert.show = true;
+        this.$store.commit("usernameUpdate", response.data["username"]); //Update vuex state
+        console.log("Username updated");
+        //Reset input params for username change
+        this.newUsername = ""
+        this.editingUsername = false
+        //In case of axios problems, give error alert
+      } catch (error) {
+        this.$refs.manageAccountModal.hide()
+        this.$attrsnewUsername = ""
+        this.editingUsername = false
+        const alert_obj = {
+          message: "Error changing username, failed response from server",
+          variant: "danger",
+        };
+        this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
+        console.log("No username change, server problem");
+      }
+    },
     resetInvalidUsernameAlert() {
       this.invalidSignUpAlert.showUsernameAlert = false;
     },
@@ -445,7 +504,12 @@ export default {
       this.invalidSignUpAlert.showEmailAlert = false;
     },
     resetInvalidSignInAlert() {
-      this.invalidSignInAlert.showAlert = false;
+      this.invalidSignInAlert.show = false;
+    },
+    resetNewUsernameAlert() {
+      this.newUsernameAlert.show = false;
+      this.newUsernameAlert.message = null; //Variable params
+      this.newUsernameAlert.variant = null;
     },
     initSignInForm() {
       this.signIn.formEmail = "";
@@ -501,7 +565,7 @@ export default {
   display: flex;
   flex-direction: row;
 }
-.manage-account-text {
+.account-info-text {
   font-size: 1.1em;
   display: flex;
   flex-direction: column;
