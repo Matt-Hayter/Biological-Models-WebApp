@@ -84,11 +84,11 @@ def change_username():
     response = {"server status": "success"}
     cursor = db.cursor()
     username_change_data = request.get_json() #Retrieve payload from client
-    new_username = change_username_data.get("newUsername").lower()
+    new_username = username_change_data.get("newUsername").lower()
     #Check username is unique
     query = "SELECT EXISTS(SELECT * FROM users WHERE username = %s);"
-    query_result = cursor.execute(query, (new_username,))
-    if query_result.fetchone()[0] == False: #If username doesn't already exist
+    cursor.execute(query, (new_username,))
+    if cursor.fetchone()[0] == False: #If username doesn't already exist
         #Change username in database
         query = "UPDATE users SET username = %s WHERE email = %s"
         cursor.execute(query, (new_username, username_change_data.get("email").lower()))
@@ -101,5 +101,4 @@ def change_username():
         cursor.close()
         response["message"] = "Username not updated, not unique"
         response["username_error"] = True
-    print("here")
     return jsonify(response)

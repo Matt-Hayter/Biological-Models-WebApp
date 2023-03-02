@@ -186,14 +186,23 @@
                 Please enter at least 4 characters
               </b-form-invalid-feedback>
             </b-input-group>
-            <TempAlert
-              :alert-message="newUsernameAlert.message"
-              :alert-variant="newUsernameAlert.variant"
-              :show-alert="newUsernameAlert.show"
-              :alert-secs="newUsernameAlert.secs"
-              @resetAlert="resetNewUsernameAlert"
-            />
           </div>
+        </div>
+        <div class="username-change-alerts">
+          <TempAlert
+            :alert-message="newUsernameSuccessAlert.message"
+            :alert-variant="newUsernameSuccessAlert.variant"
+            :show-alert="newUsernameSuccessAlert.show"
+            :alert-secs="newUsernameSuccessAlert.secs"
+            @resetAlert="resetNewUsernameSuccessAlert"
+          />
+          <TempAlert
+            :alert-message="newUsernameFailureAlert.message"
+            :alert-variant="newUsernameFailureAlert.variant"
+            :show-alert="newUsernameFailureAlert.show"
+            :alert-secs="newUsernameFailureAlert.secs"
+            @resetAlert="resetNewUsernameFailureAlert"
+          />
         </div>
         <div class="second-row" style="padding-top: 0.24em">
           <div style="float: left">Email:</div>
@@ -272,11 +281,17 @@ export default {
           "Account not found, please check email and password or create an account",
       },
       //alert displayed within current component (successful or unsuccessful)
-      newUsernameAlert: {
-        secs: 8,
-        variant: null, //Variable
+      newUsernameSuccessAlert: {
+        secs: 4,
+        variant: "success", //Variable
         show: false,
-        message: null, //Variable
+        message: "Username updated successfully", //Variable
+      },
+      newUsernameFailureAlert: {
+        secs: 4,
+        variant: "warning", //Variable
+        show: false,
+        message: "Username already in use, please select another. Entries are converted to lower case", //Variable
       },
     };
   },
@@ -461,25 +476,19 @@ export default {
         console.log("No sign in, server problem");
       }
     },
-    async changeUsername() {
+    async changeUsername(payload) {
       const path = "http://localhost:5000/Account/ChangeUsername";
       try {
         const response = await axios.put(path, payload); //Send payload to server
-        console.log("here")
         if (response.data["username_error"]) { //If server response says username is not unique
           //Failure alert on modal
-          this.newUsernameAlert.message = 
-            "Username already in use, please select another. Entries are converted to lower case."
-          this.newUsernameAlert.variant = "warning"
-          this.newUsernameAlert.show = true;
+          this.newUsernameFailureAlert.show = true
           console.log("non-unique username error");
           return
         }
         //If successful:
         //Show success alert on modal
-        this.newUsernameAlert.message = "Username updated successfully"
-        this.newUsernameAlert.variant = "success"
-        this.newUsernameAlert.show = true;
+        this.newUsernameSuccessAlert.show = true
         this.$store.commit("usernameUpdate", response.data["username"]); //Update vuex state
         console.log("Username updated");
         //Reset input params for username change
@@ -507,10 +516,11 @@ export default {
     resetInvalidSignInAlert() {
       this.invalidSignInAlert.show = false;
     },
-    resetNewUsernameAlert() {
-      this.newUsernameAlert.show = false;
-      this.newUsernameAlert.message = null; //Variable params
-      this.newUsernameAlert.variant = null;
+    resetNewUsernameSuccessAlert() {
+      this.newUsernameSuccessAlert.show = false;
+    },
+    resetNewUsernameFailureAlert() {
+      this.newUsernameFailureAlert.show = false;
     },
     initSignInForm() {
       this.signIn.formEmail = "";
@@ -592,5 +602,8 @@ export default {
   font-size: 0.9em;
   margin-left: 8px;
   margin-top: -8px;
+}
+.username-change-alerts {
+  font-size: 0.85em;
 }
 </style>
