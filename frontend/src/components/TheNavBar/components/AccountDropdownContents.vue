@@ -136,7 +136,7 @@
       </b-form-group>
       <b-dropdown-divider></b-dropdown-divider>
       <div style="margin-left: -10px;">
-        <b-dropdown-item-button v-b-modal.manage-account>
+        <b-dropdown-item-button v-b-modal.manage-account-modal>
           <b>Manage account</b>
         </b-dropdown-item-button>
         <b-dropdown-item-button @click="onClickSignOut">
@@ -147,7 +147,7 @@
     <!--Manage account modal-->
     <b-modal
       ref="manageAccountModal"
-      id="manage-account"
+      id="manage-account-modal"
       title="Manage Account"
       hide-footer
       centered
@@ -167,12 +167,12 @@
           <!--Edit username form display-->
           <div v-else-if="editingUsername" class="edit-username-section">
             <b-input-group>
-              <b-form-input
+              <b-form-input 
                 id="manage-account-username-input"
                 type="text"
                 v-model="newUsername"
                 :state="newUsernameState"
-                placeholder="Enter new username"
+                placeholder="New username"
                 aria-describedby="feedback-invalid-username"
               />
               <b-input-group-append>

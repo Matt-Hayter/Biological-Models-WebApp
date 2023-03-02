@@ -82,6 +82,11 @@
             </ul>
           </b-card-text>
           <b-card-text>
+            In these simulations, the total population (<katex-element expression="N"/>) varies with time
+            as the death toll rises, and is initially set to <katex-element expression="N=N_{0}=10"/>
+            million individuals. 
+          </b-card-text>
+          <b-card-text>
             <katex-element expression="\Lambda ="/> population birth rate,
             <katex-element expression="\mu ="/> rate of natural death per indivdual. Here,
             simulations use a balanced number of births and natural deaths,

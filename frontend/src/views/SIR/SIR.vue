@@ -58,8 +58,9 @@
             </ul>
           </b-card-text>
           <b-card-text>
-            In these simulations, a total population of 10 million individuals is used, and deaths are 
-            included within the recovered group. All infected individuals are assumed to be infectious.
+            In these simulations, a total, constant population of <katex-element expression="N=N_{0}=10"/>
+            million individuals is used, and deaths are not considered. All infected individuals are assumed
+            to be infectious.
           </b-card-text>
         </ModelInfo>
       </div>
