@@ -43,9 +43,20 @@
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
             This model describes two species occupying the same habitat, which
-            compete for shared and finite resources. Species 1 and 2 have populations
-            <katex-element expression="N_{1}"/> and <katex-element expression="N_{2}"/>
-            respectively. Within the habitat, each species exhibits its own carrying capacity,
+            compete for shared and finite resources. 
+          </b-card-text>
+          <b-card-text>
+            <ul>
+              <li>
+                <katex-element expression="N_{1}"/> - Species 1 population
+              </li>
+              <li>
+                <katex-element expression="N_{2}"/> - Species 2 population
+              </li>
+            </ul>
+          </b-card-text>
+          <b-card-text>
+            Within the habitat, each species exhibits its own carrying capacity,
             <katex-element expression="K"/>, which is the maximum species population
             that the environment's resources could sustain.
           </b-card-text>

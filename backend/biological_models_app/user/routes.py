@@ -101,4 +101,5 @@ def change_username():
         cursor.close()
         response["message"] = "Username not updated, not unique"
         response["username_error"] = True
+    print("here")
     return jsonify(response)

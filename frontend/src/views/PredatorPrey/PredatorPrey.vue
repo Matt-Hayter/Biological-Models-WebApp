@@ -40,17 +40,29 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            The Lotka-Volterra model is a simple model describing variation in the populations of a
+            The Lotka-Volterra model simplistically describes population variations within system containing a
             prey species (<katex-element expression="N"/>) hunted by a predator species (<katex-element expression="P"/>).
-            Solutions are oscillatory in nature,
-            with an increase in prey population not only driving more prey reproduction, but also
-            increasing predation.
           </b-card-text>
           <b-card-text>
-            This model assumes that prey populations can always bounce back,
+            <ul>
+              <li>
+                <katex-element expression="N"/> - Prey population density
+              </li>
+              <li>
+                <katex-element expression="P"/> - Predator population density
+              </li>
+            </ul>
+          </b-card-text>
+          <b-card-text>
+            This model assumes that prey populations are always able to bounce back,
             even from extremely low populations. This, as we know, isn't usually the case, and
             prey can infact be hunted to extinction. Other assumptions include that there is no
             shortage of food for the prey, and that the environment is constant.
+          </b-card-text>
+          <b-card-text>
+            Solutions are oscillatory in nature,
+            with an increase in prey population not only driving more prey reproduction, but also
+            increasing predation.
           </b-card-text>
         </ModelInfo>
       </div>

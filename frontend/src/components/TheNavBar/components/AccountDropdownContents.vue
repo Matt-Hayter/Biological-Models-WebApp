@@ -465,6 +465,7 @@ export default {
       const path = "http://localhost:5000/Account/ChangeUsername";
       try {
         const response = await axios.put(path, payload); //Send payload to server
+        console.log("here")
         if (response.data["username_error"]) { //If server response says username is not unique
           //Failure alert on modal
           this.newUsernameAlert.message = 
@@ -487,7 +488,7 @@ export default {
         //In case of axios problems, give error alert
       } catch (error) {
         this.$refs.manageAccountModal.hide()
-        this.$attrsnewUsername = ""
+        this.newUsername = ""
         this.editingUsername = false
         const alert_obj = {
           message: "Error changing username, failed response from server",
