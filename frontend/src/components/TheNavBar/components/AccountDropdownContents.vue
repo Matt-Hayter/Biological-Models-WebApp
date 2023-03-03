@@ -279,7 +279,7 @@ export default {
         variant: "warning",
         show: false,
         message:
-          "Account not found, please check email and password or create an account",
+          "Login unsuccessful, please check email and password combination or create an account",
       },
       //alert displayed within current component (successful or unsuccessful)
       newUsernameSuccessAlert: {
