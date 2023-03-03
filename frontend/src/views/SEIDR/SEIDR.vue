@@ -7,6 +7,7 @@
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -25,9 +26,18 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
-      <!--Upon sucessful sign up, sign in or preset save-->
-      <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
+    <div class="rhs-page-component">
+      <div class="alert-section">
+        <!--Upon sucessful sign up, sign in or preset save-->
+        <TempAlert
+          class="alert"
+          :alert-message="alertMessage"
+          :alert-variant="alertVariant"
+          :show-alert="showAlert"
+          :alert-secs="alertSecs"
+          @resetAlert="resetSubmissionAlert"
+        />
+      </div>
       <div class="top-section">
         <div class="title-and-formula">
           <div class="title">
@@ -97,12 +107,12 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="SEIDRChartConfig"
+          :bar-chart-config="SEIDRBarConfig"
+          :line-chart-config="SEIDRLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -123,7 +133,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import SEIDRChartConfig from "./SEIDRChartConfig.js";
+import SEIDRBarConfig from "./SEIDRBarConfig.js";
+import SEIDRLineConfig from "./SEIDRLineConfig.js";
 
 export default {
   components: {
@@ -139,12 +150,12 @@ export default {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
         //Rates
-        alpha: 0.001,
-        beta: 0.05,
-        recipGamma: 1,
-        recipEpsilon: 0.5,
+        alpha: 0.006,
+        beta: 0.75,
+        recipGamma: 8,
+        recipEpsilon: 3,
         //Initial conditions
-        E0: 1,
+        E0: 20000,
         I0: 1,
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
@@ -156,8 +167,7 @@ export default {
       barPlotD0: 0,
       barPlotR0: 0,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "days",
       //Contains user's presets
       userPresets: [],
@@ -241,7 +251,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "COVID-19, no isolation.",
+          text: "Default: COVID-19, no isolation.",
           maths: "\\alpha=0.006,\\ \\beta=0.75,\\ 1/\\gamma=8,\\ 1/\\epsilon=3,\\, \
             E_{0}=20000,\\, I_{0}=1"
         },
@@ -270,7 +280,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      SEIDRChartConfig,
+      SEIDRBarConfig,
+      SEIDRLineConfig,
       visStylingClass: "SEIDR",
       //Default run simulation button config
       runIcon: "play",
@@ -294,34 +305,34 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateAlpha(newAlpha) {
-      if (newAlpha == 0) newAlpha = this.defaultParams.alpha //Non-zero params only, set to default if 0 encountered
+      if (newAlpha == 0) newAlpha = 0.001 //Non-zero params only, set to min if 0 encountered
       this.$set(this.simParamData, 0, newAlpha) //Inform Vue of an array element change
       console.log(this.simParamData[0], "alpha-change");
     },
     updateBeta(newBeta) {
-      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      if (newBeta == 0) newBeta = 0.05 //Non-zero params only
       this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipGamma == 0) newRecipGamma = 1 //Non-zero params only
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
     },
     updateRecipEpsilon(newRecipEpsilon) {
-      if (newRecipEpsilon == 0) newRecipEpsilon = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipEpsilon == 0) newRecipEpsilon = 0.5 //Non-zero params only
       this.$set(this.simParamData, 3, newRecipEpsilon) //Inform Vue of an array element change
       console.log(this.simParamData[3], "1/epsilon-change");
     },
     updateE0(newE0) {
-      if (newE0 == 0) newE0 = this.defaultParams.E0 //Non-zero params only
+      if (newE0 == 0) newE0 = 1 //Non-zero params only
       this.$set(this.simParamData, 4, newE0) //Inform Vue of an array element change
       this.barPlotE0 = newE0
       this.E0I0UpdateS0()
       console.log(this.simParamData[4], "E0-change");
     },
     updateI0(newI0) {
-      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only
+      if (newI0 == 0) newI0 = 1 //Non-zero params only
       this.$set(this.simParamData, 5, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
       this.E0I0UpdateS0()
@@ -483,9 +494,9 @@ export default {
         this.spinnerOn = true
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's
         this.spinnerOn = false
+        console.log(this.simData)
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("SEIDR simulation successfully run at server")
       } catch (error) {
@@ -501,6 +512,8 @@ export default {
     endSim() {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
+      this.simData = null
+      this.graphBounds = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
@@ -527,6 +540,10 @@ export default {
 </script>
 
 <style scoped>
+.rhs-page-component {
+  position: relative;
+  margin-left: 25em
+}
 .SEIDR-view {
   /*Slightly larger to encompass longer equations*/
   min-width: 1050px;
@@ -558,6 +575,23 @@ export default {
 .loadingSpinner {
   margin-bottom: -9px;
   margin-right: 10px;
+}
+.alert-section {
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  position: fixed;
+  right: 0
+}
+.alert-section .alert {
+  width: 30%;
+  min-width: 300px;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
+  z-index: 1;
 }
 </style>
 

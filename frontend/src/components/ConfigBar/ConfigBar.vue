@@ -1,7 +1,7 @@
 <template>
   <div class="config-bar">
     <!--Enclose config within card-->
-    <b-card class="rounded-0" style="width:25em; position: relative; float: left;" no-body>
+    <b-card class="config-bar-card rounded-0" no-body>
       <!--If tabs are required-->
       <div v-if="configTabTitles.length == 2">
         <b-card-header header-tag="nav">
@@ -46,6 +46,7 @@
           </div>
         </div>
         <PresetButtons
+          class="preset-buttons"
           v-on="$listeners"
           :param-suggestions="paramSuggestions"
           :user-presets="userPresets"
@@ -102,5 +103,15 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+.config-bar-card {
+  width: 25em;
+  position: relative;
+  float: left;
+  height: 100vh;
+}
+.preset-buttons {
+  position: absolute;
+  bottom: 130px;
 }
 </style>

@@ -7,6 +7,7 @@
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -25,9 +26,18 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
-      <!--Upon sucessful sign up, sign in or preset save-->
-      <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
+    <div class="rhs-page-component" style="position: relative; margin-left: 25em">
+      <div class="alert-section">
+        <!--Upon sucessful sign up, sign in or preset save-->
+        <TempAlert
+          class="alert"
+          :alert-message="alertMessage"
+          :alert-variant="alertVariant"
+          :show-alert="showAlert"
+          :alert-secs="alertSecs"
+          @resetAlert="resetSubmissionAlert"
+        />
+      </div>
       <div class="top-section">
         <div class="title-and-formula">
           <h4 style="float: left">Predator-Prey (Lotka-Volterra) Model</h4>
@@ -58,12 +68,12 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="predPreyChartConfig"
+          :bar-chart-config="predPreyBarConfig"
+          :line-chart-config="predPreyLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -84,7 +94,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import predPreyChartConfig from "./PredPreyChartConfig.js";
+import predPreyBarConfig from "./PredPreyBarConfig.js";
+import predPreyLineConfig from "./PredPreyLineConfig.js";
 
 export default {
   components: {
@@ -112,8 +123,7 @@ export default {
       barPlotN0: null, //For use in reactive bar chart.
       barPlotP0: null,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "years",
       //Contains user's presets
       userPresets: [],
@@ -203,13 +213,13 @@ export default {
         },
         {
           id: 2,
-          text: "Lots of natural prey births and predator deaths, minimal effects from predation.",
-          maths: "N_{0}=1,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
+          text: "Minimal predation effects, lots of natural prey births and predator deaths.",
+          maths: "N_{0}=2,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
           id: 3,
           text: "Heavy predation effects, little natural prey births and predator deaths.",
-          maths: "N_{0}=10,\\ a=0.4,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.4",
+          maths: "N_{0}=2,\\ a=0.2,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.2",
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -218,7 +228,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      predPreyChartConfig,
+      predPreyBarConfig,
+      predPreyLineConfig,
       visStylingClass: "pred-prey",
       //Default run simulation button config
       runIcon: "play",
@@ -242,7 +253,7 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to default if 0 encountered
+      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to min (= default) if 0 encountered
       this.$set(this.simParamData, 0, newN0) //Inform Vue of an array element change
       this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");
@@ -421,8 +432,7 @@ export default {
         this.spinnerOn = true //Show loading spinner
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("Pred Prey simulation successfully run at server")
@@ -439,6 +449,8 @@ export default {
     endSim() {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
+      this.simData = null
+      this.graphBounds = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
@@ -490,5 +502,22 @@ export default {
 .loadingSpinner {
   margin-bottom: -9px;
   margin-right: 10px;
+}
+.alert-section {
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  position: fixed;
+  right: 0
+}
+.alert-section .alert {
+  width: 30%;
+  min-width: 300px;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
+  z-index: 1;
 }
 </style>
