@@ -74,7 +74,6 @@ def sign_in():
         response["email"] = db_email
         response["message"] = "User account found and logged in"
     except:
-        cursor.close()  
         response["message"] = "User account not found"
     return jsonify(response)
 
@@ -101,4 +100,29 @@ def change_username():
         cursor.close()
         response["message"] = "Username not updated, not unique"
         response["username_error"] = True
+    return jsonify(response)
+
+@user.route("/DeleteAccount", methods=["PUT"])
+def delete_account():
+    response = {"server status": "success"}
+    cursor = db.cursor()
+    request_data = request.get_json() #Retrieve payload from client
+    #Get user's id (primary key)
+    query = "SELECT id FROM users WHERE email = %s;"
+    cursor.execute(query, (request_data.get("email").lower(),))
+    user_id = cursor.fetchone()[0]
+    if not user_id: #If email isn't found in database
+        raise ValueError
+    #Delete account and presets from tables
+    query = "DELETE FROM pred_prey_presets WHERE owner_id = %s; \
+        DELETE FROM competing_species_presets WHERE owner_id = %s; \
+        DELETE FROM sir_presets WHERE owner_id = %s; \
+        DELETE FROM seidr_presets WHERE owner_id = %s; \
+        DELETE FROM users WHERE id = %s;"
+    query_results = cursor.execute(query, (user_id, user_id, user_id, user_id, user_id), multi=True)
+    for result in query_results: #Clear cursor results
+        result.fetchall()
+    db.commit()
+    cursor.close()
+    response["message"] = "Account and presets deleted!"
     return jsonify(response)

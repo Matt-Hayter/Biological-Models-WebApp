@@ -229,7 +229,7 @@
       </template>
       <b>Removing your account will permanently delete all of your associated data,
         including all saved presets</b>
-      <b-button style="margin-top: 30px;" variant="outline-danger">
+      <b-button style="margin-top: 30px;" variant="outline-danger" @click="onClickDeleteAccount">
         Delete Account
       </b-button>
     </b-modal>
@@ -397,6 +397,12 @@ export default {
     onClickDeleteAccountModal() {
       this.$refs.manageAccountModal.hide()
     },
+    onClickDeleteAccount() {
+      const payload = {
+        email: this.user.email //To identify user
+      }
+      this.deleteAccount(payload)
+    },
     //Add and validate user sign up data against database
     async addUser(payload) {
       const path = "http://localhost:5000/Account/SignUp";
@@ -432,7 +438,7 @@ export default {
       } catch (error) {
         this.$refs.signUpModal.hide(); //Hide modal following submission
         const alert_obj = {
-          message: "Error creating account, failed response from server",
+          message: "Error creating account, failed response from server. Please try again at another time",
           variant: "danger",
         };
         this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
@@ -469,7 +475,7 @@ export default {
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
         const unsucc_alert_obj = {
-          message: "Error signing in, failed response from server",
+          message: "Error signing in, failed response from server. Please try again at another time",
           variant: "danger",
         };
         this.$emit("showPageAlert", unsucc_alert_obj); //Emit event to create failure alert on main page
@@ -500,11 +506,39 @@ export default {
         this.newUsername = ""
         this.editingUsername = false
         const alert_obj = {
-          message: "Error changing username, failed response from server",
+          message: "Error changing username, failed response from server. Please try again at another time",
           variant: "danger",
         };
         this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
-        console.log("No username change, server problem");
+        console.log("No username change, server problem")
+      }
+    },
+    async deleteAccount(payload) {
+      const path = "http://localhost:5000/Account/DeleteAccount"
+      try {
+        await axios.put(path, payload) //Send payload to server
+        const deleteVuexPayload = {
+          isActive: false,
+          username: null,
+          email: null
+        }
+        this.$refs.deleteAccountModal.hide()
+        const alertPayload = {
+          message: `Deleted ${this.user.email}'s account`,
+          variant: "dark"
+        }
+        this.$emit("showPageAlert", alertPayload) //Emit event to create failure alert on main page
+        this.$store.commit("userUpdate", deleteVuexPayload)
+        console.log("Account deleted")
+        //In case of axios problems, give error alert
+      } catch (error) {
+        this.$refs.deleteAccountModal.hide()
+        const alertPayload = {
+          message: "Error deleting account, failed response from server. Please try again at another time",
+          variant: "danger",
+        };
+        this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
+        console.log("Account not deleted, server problem");
       }
     },
     resetInvalidUsernameAlert() {
@@ -604,6 +638,6 @@ export default {
   margin-top: -8px;
 }
 .username-change-alerts {
-  font-size: 0.85em;
+  font-size: 0.9em;
 }
 </style>

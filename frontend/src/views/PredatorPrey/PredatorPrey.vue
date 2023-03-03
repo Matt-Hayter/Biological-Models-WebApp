@@ -331,7 +331,7 @@ export default {
         console.log("Preset added");
       } catch (error) {
         const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server",
+          message: "Unable to save preset, failed repsonse from server. Please try again at another time",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
@@ -351,7 +351,7 @@ export default {
       } catch (error) {
         //Only show alert upon failure
         const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server",
+          message: "Unable to fetch presets, failed repsonse from server. Please try again at another time",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
@@ -383,7 +383,7 @@ export default {
         console.log("Preset loaded");
       } catch (error) {
         const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server",
+          message: "Unable to load preset, failed repsonse from server. Please try again at another time",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
@@ -407,7 +407,7 @@ export default {
         console.log("Preset deleted");
       } catch (error) {
         const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server",
+          message: "Unable to delete preset, failed repsonse from server. Please try again at another time",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
@@ -441,7 +441,7 @@ export default {
       } catch (error) {
         this.endSim() //Reset button
         const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server",
+          message: "Unable to run simulation, failed repsonse from server. Please try again at another time",
           variant: "danger",
         };
         this.showSubmissionAlert(failureAlertPayload);
