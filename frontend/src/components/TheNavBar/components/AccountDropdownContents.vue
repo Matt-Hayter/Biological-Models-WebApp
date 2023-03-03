@@ -151,6 +151,7 @@
       title="Manage Account"
       hide-footer
       centered
+      @hidden="onHiddenManageAccountModal"
       >
       <b-form-text class="account-info-text">
         <div class="first-row">
@@ -402,6 +403,10 @@ export default {
         email: this.user.email //To identify user
       }
       this.deleteAccount(payload)
+    },
+    onHiddenManageAccountModal() {
+      this.editingUsername = false
+      this.newUsername = ""
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
