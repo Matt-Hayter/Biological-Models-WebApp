@@ -330,18 +330,13 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        this.prepareServerAlert("saving preset", "Preset not saved")
       }
     },
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const path = "http://localhost:5000/PredPrey/AllPresets"
         const payload = {
           userEmail: this.user.email
         };
@@ -349,20 +344,14 @@ export default {
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
         console.log("Loaded user's Pred-Prey presets")
       } catch (error) {
-        //Only show alert upon failure
-        const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Presets not loaded, server problem");
+        this.prepareServerAlert("fetching presets", "Error fetching presets")
       }
     },
     //Upon selecting a preset, get params from server
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 5;
@@ -382,12 +371,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("loading preset", "Preset not loaded")
       }
     },
     initPresets() { //Clear presets
@@ -406,12 +390,7 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("deleting preset", "Preset not deleted")
       }
     },
     onClickRun() { //Run/stop simulation button pressed
@@ -440,13 +419,16 @@ export default {
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
-        const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Simulation error, server problem");
+        this.prepareServerAlert("running simulation", "Simulation erorr")
       }
+    },
+    prepareServerAlert(alertString, logString) {
+      const failureAlertPayload = {
+        message: `Error ${alertString}, failed repsonse from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.showSubmissionAlert(failureAlertPayload);
+      console.log(`${logString}, server problem`);
     },
     endSim() {
       this.spinnerOn = false

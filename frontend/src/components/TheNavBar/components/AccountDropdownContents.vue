@@ -442,12 +442,7 @@ export default {
         //In case of axios problems, give error alert
       } catch (error) {
         this.$refs.signUpModal.hide(); //Hide modal following submission
-        const alert_obj = {
-          message: "Error creating account, failed response from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
-        console.log("No account created, server problem");
+        this.emitServerErrorMessage("creating account", "No account created")
       }
     },
     //Add and validate user sign up data against database
@@ -479,12 +474,7 @@ export default {
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
-        const unsucc_alert_obj = {
-          message: "Error signing in, failed response from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.$emit("showPageAlert", unsucc_alert_obj); //Emit event to create failure alert on main page
-        console.log("No sign in, server problem");
+        this.emitServerErrorMessage("signing in", "No sign in")
       }
     },
     async changeUsername(payload) {
@@ -510,12 +500,7 @@ export default {
         this.$refs.manageAccountModal.hide()
         this.newUsername = ""
         this.editingUsername = false
-        const alert_obj = {
-          message: "Error changing username, failed response from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.$emit("showPageAlert", alert_obj); //Emit event to create failure alert on main page
-        console.log("No username change, server problem")
+        this.emitServerErrorMessage("changing username", "No username change")
       }
     },
     async deleteAccount(payload) {
@@ -538,13 +523,16 @@ export default {
         //In case of axios problems, give error alert
       } catch (error) {
         this.$refs.deleteAccountModal.hide()
-        const alertPayload = {
-          message: "Error deleting account, failed response from server. Please try again at another time",
+        this.emitServerErrorMessage("deleting account", "Account not deleted")
+      }
+    },
+    emitServerErrorMessage(alertString, logString) {
+      const alertPayload = {
+          message: `Error ${alertString}, failed response from server. Please try again at another time`,
           variant: "danger",
         };
         this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
-        console.log("Account not deleted, server problem");
-      }
+        console.log(`${logString}, server problem`);
     },
     resetInvalidUsernameAlert() {
       this.invalidSignUpAlert.showUsernameAlert = false;
@@ -569,33 +557,6 @@ export default {
       this.signUp.formUsername = "";
       this.signUp.formEmail = "";
       this.signUp.formPassword = "";
-    },
-    //Update Vuex store state with signed in user's data
-    activateUserState(response) {
-      const userStatePayload = {
-        username: response.data["username"],
-        email: response.data["email"],
-        isActive: true,
-      }
-      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
-    },
-    //Update Vuex store state with signed in user's data
-    activateUserState(response) {
-      const userStatePayload = {
-        username: response.data["username"],
-        email: response.data["email"],
-        isActive: true,
-      }
-      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
-    },
-    //Update Vuex store state with signed in user's data
-    activateUserState(response) {
-      const userStatePayload = {
-        username: response.data["username"],
-        email: response.data["email"],
-        isActive: true,
-      }
-      this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
     },
     //Update Vuex store state with signed in user's data
     activateUserState(response) {

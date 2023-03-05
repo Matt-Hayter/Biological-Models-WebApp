@@ -272,12 +272,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        this.prepareServerAlert("saving preset", "Preset not saved")
       }
     },
     //Bring user's presets to client-side
@@ -292,12 +287,7 @@ export default {
         console.log("Loaded user's SIR presets")
       } catch (error) {
         //Only show alert upon failure
-        const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Presets not loaded, server problem");
+        this.prepareServerAlert("fetching presets", "Error fetching presets")
       }
     },
     //Upon selecting a preset, get params from server
@@ -324,12 +314,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("loading preset", "Preset not loaded");
       }
     },
     initPresets() { //Clear presets
@@ -348,12 +333,7 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("deleting preset", "Preset not deleted")
       }
     },
     onClickRun() { //Run/stop simulation button pressed
@@ -382,13 +362,16 @@ export default {
         console.log("SIR simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
-        const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server. Please try again at another time",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Simulation error, server problem");
+        this.prepareServerAlert("running simulation", "Simulation erorr")
       }
+    },
+    prepareServerAlert(alertString, logString) {
+      const failureAlertPayload = {
+        message: `Error ${alertString}, failed repsonse from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.showSubmissionAlert(failureAlertPayload);
+      console.log(`${logString}, server problem`);
     },
     endSim() {
       this.spinnerOn = false
