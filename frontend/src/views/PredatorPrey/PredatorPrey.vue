@@ -50,17 +50,29 @@
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            The Lotka-Volterra model is a simple model describing variation in the populations of a
+            The Lotka-Volterra model simplistically describes population variations within system containing a
             prey species (<katex-element expression="N"/>) hunted by a predator species (<katex-element expression="P"/>).
-            Solutions are oscillatory in nature,
-            with an increase in prey population not only driving more prey reproduction, but also
-            increasing predation.
           </b-card-text>
           <b-card-text>
-            This model assumes that prey populations can always bounce back,
+            <ul>
+              <li>
+                <katex-element expression="N"/> - Prey population density
+              </li>
+              <li>
+                <katex-element expression="P"/> - Predator population density
+              </li>
+            </ul>
+          </b-card-text>
+          <b-card-text>
+            This model assumes that prey populations are always able to bounce back,
             even from extremely low populations. This, as we know, isn't usually the case, and
             prey can infact be hunted to extinction. Other assumptions include that there is no
             shortage of food for the prey, and that the environment is constant.
+          </b-card-text>
+          <b-card-text>
+            Solutions are oscillatory in nature,
+            with an increase in prey population not only driving more prey reproduction, but also
+            increasing predation.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -240,8 +252,8 @@ export default {
   },
   computed: {
     //Access Vuex store containing active user info
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     simRunning() {
       return this.$store.state.simRunning;
@@ -311,7 +323,7 @@ export default {
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.activeUser.email,
+        userEmail: this.user.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -329,39 +341,28 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        this.prepareServerAlert("saving preset", "Preset not saved")
       }
     },
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/PredPrey/AllPresets";
+        const path = "http://localhost:5000/PredPrey/AllPresets"
         const payload = {
-          userEmail: this.activeUser.email
+          userEmail: this.user.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
         console.log("Loaded user's Pred-Prey presets")
       } catch (error) {
-        //Only show alert upon failure
-        const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Presets not loaded, server problem");
+        this.prepareServerAlert("fetching presets", "Error fetching presets")
       }
     },
     //Upon selecting a preset, get params from server
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 5;
@@ -381,12 +382,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("loading preset", "Preset not loaded")
       }
     },
     initPresets() { //Clear presets
@@ -405,12 +401,7 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("deleting preset", "Preset not deleted")
       }
     },
     onClickRun() { //Run/stop simulation button pressed
@@ -438,13 +429,16 @@ export default {
         console.log("Pred Prey simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
-        const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Simulation error, server problem");
+        this.prepareServerAlert("running simulation", "Simulation erorr")
       }
+    },
+    prepareServerAlert(alertString, logString) {
+      const failureAlertPayload = {
+        message: `Error ${alertString}, failed repsonse from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.showSubmissionAlert(failureAlertPayload);
+      console.log(`${logString}, server problem`);
     },
     endSim() {
       this.spinnerOn = false
@@ -457,7 +451,7 @@ export default {
     }
   },
   mounted() {
-    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
+    if (this.user.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
     //Set simulation params to default values

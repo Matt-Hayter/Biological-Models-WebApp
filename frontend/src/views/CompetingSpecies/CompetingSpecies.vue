@@ -1,10 +1,10 @@
 <template>
   <div class="competing-species-view">
-    <TheNavBar 
+    <TheNavBar
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
       @initPresets="initPresets"
-      />
+    />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
       class="config-bar"
@@ -44,25 +44,42 @@
         <div class="title-and-formula">
           <h4 style="float: left">Two Competing Species Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})" />
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})" />
+            <katex-element
+              expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})"
+            />
+            <br />
+            <br />
+            <katex-element
+              expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})"
+            />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
             This model describes two species occupying the same habitat, which
-            compete for shared and finite resources. Species 1 and 2 have populations
-            <katex-element expression="N_{1}"/> and <katex-element expression="N_{2}"/>
-            respectively. Within the habitat, each species exhibits its own carrying capacity,
-            <katex-element expression="K"/>, which is the maximum species population
-            that the environment's resources could sustain.
+            compete for shared and finite resources.
           </b-card-text>
           <b-card-text>
-            The fate of each species depends on the paramaters assigned to the model. For a chosen
-            configuration, try varying initial populations, <katex-element expression="N_{1, 0}"/> and
-            <katex-element expression="N_{2, 0}"/>, and see how the populations evolve to their final state!
+            <ul>
+              <li>
+                <katex-element expression="N_{1}" /> - Species 1 population
+              </li>
+              <li>
+                <katex-element expression="N_{2}" /> - Species 2 population
+              </li>
+            </ul>
+          </b-card-text>
+          <b-card-text>
+            Within the habitat, each species exhibits its own carrying capacity,
+            <katex-element expression="K" />, which is the maximum species
+            population that the environment's resources could sustain.
+          </b-card-text>
+          <b-card-text>
+            The fate of each species depends on the paramaters assigned to the
+            model. For a chosen configuration, try varying initial populations,
+            <katex-element expression="N_{1, 0}" /> and
+            <katex-element expression="N_{2, 0}" />, and see how the populations
+            evolve to their final state!
           </b-card-text>
         </ModelInfo>
       </div>
@@ -81,7 +98,9 @@
       </div>
     </div>
     <div class="run-button">
-      <span v-if="spinnerOn"> <b-spinner class="loadingSpinner"></b-spinner> </span>
+      <span v-if="spinnerOn">
+        <b-spinner class="loadingSpinner"></b-spinner>
+      </span>
       <b-button :variant="runVariant" pill @click="onClickRun">
         {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
       </b-button>
@@ -160,7 +179,8 @@ export default {
             {
               label: "K_{1}",
               units: "",
-              description: "Carrying capacity of species 1 (Max population that environment could sustain)",
+              description:
+                "Carrying capacity of species 1 (Max population that environment could sustain)",
               emitEventName: "changeK1",
               inputStep: 20,
               tickStep: 100,
@@ -183,7 +203,7 @@ export default {
         //Tab two
         {
           data: [
-          {
+            {
               label: "N_{2,0}",
               units: "",
               description: "Initial population of species 2 (time = 0)",
@@ -207,7 +227,8 @@ export default {
             {
               label: "K_{2}",
               units: "",
-              description: "Carrying capacity of species 2 (Max population that environment could sustain)",
+              description:
+                "Carrying capacity of species 2 (Max population that environment could sustain)",
               emitEventName: "changeK2",
               inputStep: 20,
               tickStep: 100,
@@ -234,23 +255,26 @@ export default {
           id: 1,
           text: "Default: Weak competition between species (neither species goes extinct, regardless of \
             initial populations).",
-          maths: "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
-            r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8"
+          maths:
+            "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
+            r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8",
         },
         {
           id: 2,
           text: "Unbalanced competition between species (species 1 always driven to extinction, \
             regardless of starting populations)",
-          maths: "r_{1}=1,\\ K_{1}=700,\\ a_{1}=1.5,\\ \
-            r_{2}=1,\\ K_{2}=500,\\ a_{2}=0.5"
+          maths:
+            "r_{1}=1,\\ K_{1}=700,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=0.5",
         },
         {
           id: 3,
           text: "Strong competition between species (either species 1 or species 2 driven to \
             extinction, depending on initial populations. See for yourself by varying them!)",
-          maths: "r_{1}=1,\\ K_{1}=500,\\ a_{1}=1.5,\\ \
-            r_{2}=1,\\ K_{2}=500,\\ a_{2}=1.3"
-        }
+          maths:
+            "r_{1}=1,\\ K_{1}=500,\\ a_{1}=1.5,\\ \
+            r_{2}=1,\\ K_{2}=500,\\ a_{2}=1.3",
+        },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
       alertMessage: null,
@@ -265,19 +289,20 @@ export default {
       runIcon: "play",
       runVariant: "success",
       runText: "Run Simulation",
-      spinnerOn: false
+      spinnerOn: false,
     };
   },
   computed: {
     //Access Vuex store containing active user info
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     simRunning() {
       return this.$store.state.simRunning;
     },
-    initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.barPlotN1_0, this.barPlotN2_0]
+    initialConditions() {
+      //Array inherited by bar chart for reactive display
+      return [this.barPlotN1_0, this.barPlotN2_0];
     },
   },
   methods: {
@@ -351,7 +376,7 @@ export default {
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.activeUser.email,
+        userEmail: this.user.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -369,12 +394,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset saved");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not saved, server problem");
+        this.prepareServerAlert("saving preset", "Preset not saved")
       }
     },
     //Bring user's presets to client-side
@@ -382,38 +402,33 @@ export default {
       try {
         const path = "http://localhost:5000/CompetingSpecies/AllPresets";
         const payload = {
-          userEmail: this.activeUser.email
+          userEmail: this.user.email,
         };
-        const response = await axios.post(path, payload) //Identify user with email
-        this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's Competing Species presets")
+        const response = await axios.post(path, payload); //Identify user with email
+        this.userPresets = response.data["presets"]; //Update frontend presets with those in database
+        console.log("Loaded user's Competing Species presets");
       } catch (error) {
         //Only show alert upon failure
-        const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Presets not loaded, server problem");
+        this.prepareServerAlert("fetching presets", "Error fetching presets")
       }
     },
     //Upon selecting a preset, get params from server
     async getPresetParams(presetIndex) {
       try {
-        const presetid = this.userPresets[presetIndex][0] //Identify preset
+        const presetid = this.userPresets[presetIndex][0]; //Identify preset
         const path = `http://localhost:5000/CompetingSpecies/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 7;
-        for(let i = 0; i <= presetParamsCount; i++) {
-            this.simParamData[i] = Number(response.data["preset_params"][i])
+        for (let i = 0; i <= presetParamsCount; i++) {
+          this.simParamData[i] = Number(response.data["preset_params"][i]);
         }
         //Set barplot initial value
-        const N1_0Index = 0
-        const N2_0Index = 4
-        this.barPlotN1_0 = null //Change value for computed recalculation
-        this.barPlotN1_0 = this.simParamData[N1_0Index]
-        this.barPlotN2_0 = this.simParamData[N2_0Index]
+        const N1_0Index = 0;
+        const N2_0Index = 4;
+        this.barPlotN1_0 = null; //Change value for computed recalculation
+        this.barPlotN1_0 = this.simParamData[N1_0Index];
+        this.barPlotN2_0 = this.simParamData[N2_0Index];
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -421,20 +436,16 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("loading preset", "Preset not loaded");
       }
     },
-    initPresets() { //Clear presets
-      this.userPresets = []
+    initPresets() {
+      //Clear presets
+      this.userPresets = [];
     },
     async deletePreset(presetIndex) {
       try {
-        const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
+        const presetid = this.userPresets[presetIndex][0]; //Identify preset (non-sensitive -> use key)
         const path = `http://localhost:5000/CompetingSpecies/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
@@ -445,46 +456,46 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("deleting preset", "Preset not deleted");
       }
     },
-    onClickRun() { //Run/stop simulation button pressed
+    onClickRun() {
+      //Run/stop simulation button pressed
       if (this.simRunning == false) {
-        this.runIcon = "stop"
-        this.runVariant = "danger"
-        this.runText = "Stop"
-        this.runSim()
+        this.runIcon = "stop";
+        this.runVariant = "danger";
+        this.runText = "Stop";
+        this.runSim();
       } else {
-        this.endSim()
+        this.endSim();
       }
     },
     async runSim() {
       try {
-        const path = "http://localhost:5000/CompetingSpecies/RunSim"
+        const path = "http://localhost:5000/CompetingSpecies/RunSim";
         const payload = {
           simParams: this.simParamData
         }
-        this.spinnerOn = true
-        const response = await axios.post(path, payload)
-        this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's axis
-        this.spinnerOn = false
-        this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
-        console.log("Competing Species simulation successfully run at server")
+        this.spinnerOn = true;
+        const response = await axios.post(path, payload);
+        this.simData = response.data["sim_data"]; //Array of arrays, containing all sim data
+        this.simTimeData = response.data["time_data"]; //Times corresponding to sim's data
+        this.simMaxVal = response.data["sim_max_val"]; //Max value, for upper bound of visualisation's axis
+        this.spinnerOn = false;
+        this.$store.commit("simRunningChange", true); //Signals to start visualising simulation
+        console.log("Competing Species simulation successfully run at server");
       } catch (error) {
-        this.endSim() //Reset button
-        const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Simulation error, server problem");
+        this.endSim(); //Reset button
+        this.prepareServerAlert("running simulation", "Simulation erorr");
       }
+    },
+    prepareServerAlert(alertString, logString) {
+      const failureAlertPayload = {
+        message: `Error ${alertString}, failed repsonse from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.showSubmissionAlert(failureAlertPayload);
+      console.log(`${logString}, server problem`);
     },
     endSim() {
       this.spinnerOn = false
@@ -497,22 +508,23 @@ export default {
     }
   },
   mounted() {
-    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
-      this.getAllPresets()
+    if (this.user.isActive) {
+      //Don't load presets if no one is logged in
+      this.getAllPresets();
     }
     //Set simulation params to default values
-    this.simParamData.length = 8 //Number of params in this model
-    this.simParamData[0] = this.defaultParams.N1_0
-    this.simParamData[1] = this.defaultParams.r1
-    this.simParamData[2] = this.defaultParams.K1
-    this.simParamData[3] = this.defaultParams.a1
-    this.simParamData[4] = this.defaultParams.N2_0
-    this.simParamData[5] = this.defaultParams.r2
-    this.simParamData[6] = this.defaultParams.K2
-    this.simParamData[7] = this.defaultParams.a2
+    this.simParamData.length = 8; //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N1_0;
+    this.simParamData[1] = this.defaultParams.r1;
+    this.simParamData[2] = this.defaultParams.K1;
+    this.simParamData[3] = this.defaultParams.a1;
+    this.simParamData[4] = this.defaultParams.N2_0;
+    this.simParamData[5] = this.defaultParams.r2;
+    this.simParamData[6] = this.defaultParams.K2;
+    this.simParamData[7] = this.defaultParams.a2;
     //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
-    this.barPlotN1_0 = this.defaultParams.N1_0
-    this.barPlotN2_0 = this.defaultParams.N2_0
+    this.barPlotN1_0 = this.defaultParams.N1_0;
+    this.barPlotN2_0 = this.defaultParams.N2_0;
   },
 };
 </script>

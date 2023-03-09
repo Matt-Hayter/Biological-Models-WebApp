@@ -68,8 +68,9 @@
             </ul>
           </b-card-text>
           <b-card-text>
-            In these simulations, a total population of 10 million individuals is used, and deaths are 
-            included within the recovered group. All infected individuals are assumed to be infectious.
+            In these simulations, a total, constant population of <katex-element expression="N=N_{0}=10"/>
+            million individuals is used, and deaths are not considered. All infected individuals are assumed
+            to be infectious.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -214,8 +215,8 @@ export default {
   },
   computed: {
     //Access Vuex store containing active user info
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     simRunning() {
       return this.$store.state.simRunning;
@@ -264,7 +265,7 @@ export default {
     async handlePresetName(presetName) {
       const presetPayload = {
         //Active user's email for database identification
-        userEmail: this.activeUser.email,
+        userEmail: this.user.email,
         presetName: presetName,
         presetData: this.simParamData,
       };
@@ -282,12 +283,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to save preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not added, server problem");
+        this.prepareServerAlert("saving preset", "Preset not saved")
       }
     },
     //Bring user's presets to client-side
@@ -295,19 +291,14 @@ export default {
       try {
         const path = "http://localhost:5000/SIR/AllPresets";
         const payload = {
-          userEmail: this.activeUser.email
+          userEmail: this.user.email
         };
         const response = await axios.post(path, payload) //Identify user with email
         this.userPresets = response.data["presets"] //Update frontend presets with those in database
         console.log("Loaded user's SIR presets")
       } catch (error) {
         //Only show alert upon failure
-        const failureAlertPayload = {
-          message: "Unable to fetch presets, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Presets not loaded, server problem");
+        this.prepareServerAlert("fetching presets", "Error fetching presets")
       }
     },
     //Upon selecting a preset, get params from server
@@ -334,12 +325,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to load preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("loading preset", "Preset not loaded");
       }
     },
     initPresets() { //Clear presets
@@ -358,12 +344,7 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        const failureAlertPayload = {
-          message: "Unable to delete preset, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Preset not loaded, server problem");
+        this.prepareServerAlert("deleting preset", "Preset not deleted")
       }
     },
     onClickRun() { //Run/stop simulation button pressed
@@ -391,13 +372,16 @@ export default {
         console.log("SIR simulation successfully run at server")
       } catch (error) {
         this.endSim() //Reset button
-        const failureAlertPayload = {
-          message: "Unable to run simulation, failed repsonse from server",
-          variant: "danger",
-        };
-        this.showSubmissionAlert(failureAlertPayload);
-        console.log("Simulation error, server problem");
+        this.prepareServerAlert("running simulation", "Simulation erorr")
       }
+    },
+    prepareServerAlert(alertString, logString) {
+      const failureAlertPayload = {
+        message: `Error ${alertString}, failed repsonse from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.showSubmissionAlert(failureAlertPayload);
+      console.log(`${logString}, server problem`);
     },
     endSim() {
       this.spinnerOn = false
@@ -410,7 +394,7 @@ export default {
     }
   },
   mounted() {
-    if (this.activeUser.isActive) { //Don't load presets if no one is logged in
+    if (this.user.isActive) { //Don't load presets if no one is logged in
       this.getAllPresets()
     }
     //Set simulation params to default values

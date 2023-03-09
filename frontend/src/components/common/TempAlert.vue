@@ -37,6 +37,7 @@ export default {
       if (this.showAlert == true) {
         //Show alert and start timer (b-alert's show attribute enables an automatic countdown of binded data)
         this.alertCountDown = this.alertSecs;
+
         console.log("Showing alert");
         this.$emit("resetAlert"); //Set showAlert back to false before next alert
       }

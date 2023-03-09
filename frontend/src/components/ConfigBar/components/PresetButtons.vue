@@ -25,7 +25,7 @@
                 <b style="font-size: 1.2em;">{{ preset[1] }}</b>, {{ preset[2] }}
               </b-dropdown-item-button>
               <b-dropdown-item-button @click="onClickDeletePreset(index)" style="margin-top: 0.25em">
-                <b-icon icon="x"></b-icon>
+                <b-icon icon="trash" scale="0.9"></b-icon>
               </b-dropdown-item-button>
             </b-button-toolbar>
           </div>
@@ -112,8 +112,8 @@ export default {
     }
   },
   computed: {
-    activeUser() {
-      return this.$store.state.activeUser;
+    user() {
+      return this.$store.state.user;
     },
     simRunning() {
       return this.$store.state.simRunning
@@ -122,10 +122,10 @@ export default {
       return this.userPresets
     },
     emptyPresetsSignedIn() {
-      return !this.userPresets.length && this.activeUser.isActive
+      return !this.userPresets.length && this.user.isActive
     },
     emptyPresetsSignedOut() {
-      return !this.userPresets.length && !this.activeUser.isActive
+      return !this.userPresets.length && !this.user.isActive
     }
   },
   methods: {
@@ -159,7 +159,7 @@ export default {
     },
     onClickSave() {
       //So button only toggles preset naming modal when signed in
-      if (this.activeUser.isActive) {
+      if (this.user.isActive) {
         this.showSuggestions = false //Close suggestions popover
         this.$refs["presetModal"].toggle("#save-button")
       } else { //If not signed in, create alert on main page

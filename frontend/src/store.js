@@ -10,12 +10,12 @@ Vue.use(Vuex);
 const vuexLocal = new VuexPersistence({
   key: "user",
   storage: window.localStorage, //5Mb local storage
-  reducer: (state) => ({ activeUser: state.activeUser }), //State properties required after refresh
+  reducer: (state) => ({ user: state.user }), //State properties required after refresh
 });
 
 export const store = new Vuex.Store({
   state: {
-    activeUser: {
+    user: {
       isActive: false,
       username: null,
       email: null,
@@ -25,9 +25,12 @@ export const store = new Vuex.Store({
   mutations: {
     //Updating user credentials upon sign in/out
     userUpdate(state, payload) {
-      state.activeUser.isActive = payload.isActive;
-      state.activeUser.username = payload.username;
-      state.activeUser.email = payload.email;
+      state.user.isActive = payload.isActive;
+      state.user.username = payload.username;
+      state.user.email = payload.email;
+    },
+    usernameUpdate(state, newUsername) {
+      state.user.username = newUsername;
     },
     //Update simulation visualisation state
     simRunningChange(state, isRunning) {
