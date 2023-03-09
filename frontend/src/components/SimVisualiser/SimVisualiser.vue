@@ -1,6 +1,6 @@
 <template>
   <div class="sim-visualiser">
-    <RacerBarChart 
+    <RacerBarChart
       ref="racerBarChart"
       :chart-config="barChartConfig"
       :initial-conditions="initialConditions"
@@ -9,9 +9,7 @@
     />
     <div>
       <div class="time-display">
-        <span class="sim-time">
-          Time elapsed ({{ timeUnits }}):
-        </span>
+        <span class="sim-time"> Time elapsed ({{ timeUnits }}): </span>
         <div class="sim-time-box">
           {{ currentSimTime }}
         </div>
@@ -43,7 +41,7 @@ export default {
   },
   components: {
     RacerBarChart,
-    LineChart
+    LineChart,
   },
   data() {
     return {
@@ -53,47 +51,51 @@ export default {
   },
   computed: {
     simRunning() {
-      return this.$store.state.simRunning
+      return this.$store.state.simRunning;
     },
   },
   watch: {
-    simRunning: async function(isSimRunning) {
+    simRunning: async function (isSimRunning) {
       //Visualise simulation if simRunning turns to true
       if (isSimRunning) {
-        this.$refs.racerBarChart.setUpChart(this.graphBounds) //Setup for bar chart
-        this.$refs.lineChart.setUpChart(this.graphBounds) //Setup for line chart
-        this.currentSimTime = 0
+        this.$refs.racerBarChart.setUpChart(this.graphBounds); //Setup for bar chart
+        this.$refs.lineChart.setUpChart(this.graphBounds); //Setup for line chart
+        this.currentSimTime = 0;
         //Delay to update inital values and x-scales before displaying simulation
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        await this.visualiseSim() //Begin racer chart animation
-        this.$emit("endSim")
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await this.visualiseSim(); //Begin racer chart animation
+        this.$emit("endSim");
       }
-    }
+    },
   },
   methods: {
     async visualiseSim() {
-      let step = 0 //For all simulation time steps
+      let step = 0; //For all simulation time steps
       //Iterate through dataset with a time delay between iterations
       return new Promise((resolve) => {
         const visualisationInterval = setInterval(() => {
-          if (!this.simRunning) { //Check if visualisation is running
-            clearInterval(visualisationInterval)
-            resolve()
-            return
+          if (!this.simRunning) {
+            //Check if visualisation is running
+            clearInterval(visualisationInterval);
+            resolve();
+            return;
           }
-          if (step + 1 == this.simData[0].length) { //Check if visualisation is completed 
-            clearInterval(visualisationInterval)
-            resolve()
-            return
+          if (step + 1 == this.simData[0].length) {
+            //Check if visualisation is completed
+            clearInterval(visualisationInterval);
+            resolve();
+            return;
           }
-          this.currentSimTime = Number(Math.round(this.simData[0][step]["t"]+"e1")+"e-1") //Update displayed time
-          this.$refs.racerBarChart.chartSimStep(step)
-          this.$refs.lineChart.chartSimStep(step)
-          step ++ //Progress to next step
-        }, this.chartUpdateTime)
-      })
-    }
-  }
+          this.currentSimTime = Number(
+            Math.round(this.simData[0][step]["t"] + "e1") + "e-1"
+          ); //Update displayed time
+          this.$refs.racerBarChart.chartSimStep(step);
+          this.$refs.lineChart.chartSimStep(step);
+          step++; //Progress to next step
+        }, this.chartUpdateTime);
+      });
+    },
+  },
 };
 </script>
 

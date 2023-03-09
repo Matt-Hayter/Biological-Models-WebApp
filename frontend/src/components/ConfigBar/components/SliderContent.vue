@@ -5,8 +5,10 @@
       class="form-label d-flex"
       style="float: left; margin-bottom: 0"
     >
-      <katex-element style="font-size: 1.4em" :expression="sliderData.label"/>
-      <span style="font-size: 1.2em; margin-left: 10px; margin-top: 3px;">{{ sliderData.units }}</span>
+      <katex-element style="font-size: 1.4em" :expression="sliderData.label" />
+      <span style="font-size: 1.2em; margin-left: 10px; margin-top: 3px">{{
+        sliderData.units
+      }}</span>
       <div :id="sliderData.label" class="info-hit-box">
         <b-icon
           icon="info-circle"
@@ -24,7 +26,8 @@
         :show.sync="showParamInfo"
         placement="right"
         :no-fade="true"
-        > {{ sliderData.description }}
+      >
+        {{ sliderData.description }}
       </b-popover>
     </label>
     <div class="current-param-value-box">
@@ -55,27 +58,27 @@ export default {
   data() {
     return {
       isRunning: true,
-      showParamInfo: false
+      showParamInfo: false,
     };
   },
   computed: {
     simRunning() {
-      return this.$store.state.simRunning
-    }
+      return this.$store.state.simRunning;
+    },
   },
   watch: {
     //Hide suggestions if sim is running
-    simRunning: function(isSimRunning) {
+    simRunning: function (isSimRunning) {
       if (isSimRunning) {
-        this.showParamInfo = false
+        this.showParamInfo = false;
       }
-    }
+    },
   },
   methods: {
     tabClick() {
-      this.showParamInfo = false //Close parameter description on tab click
-    }
-  }
+      this.showParamInfo = false; //Close parameter description on tab click
+    },
+  },
 };
 </script>
 

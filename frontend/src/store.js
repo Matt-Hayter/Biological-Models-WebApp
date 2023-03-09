@@ -20,7 +20,7 @@ export const store = new Vuex.Store({
       username: null,
       email: null,
     },
-    simRunning: false
+    simRunning: false,
   },
   mutations: {
     //Updating user credentials upon sign in/out
@@ -35,7 +35,7 @@ export const store = new Vuex.Store({
     //Update simulation visualisation state
     simRunningChange(state, isRunning) {
       state.simRunning = isRunning;
-    }
+    },
   },
   plugins: [
     vuexLocal.plugin, //Store state between page refreshes
