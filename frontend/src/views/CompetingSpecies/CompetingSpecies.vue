@@ -7,6 +7,7 @@
     />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -27,15 +28,18 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
-      <!--Upon sucessful sign up, sign in or preset save-->
-      <TempAlert
-        :alert-message="alertMessage"
-        :alert-variant="alertVariant"
-        :show-alert="showAlert"
-        :alert-secs="alertSecs"
-        @resetAlert="resetSubmissionAlert"
-      />
+    <div class="rhs-page-component">
+      <div class="alert-section">
+        <!--Upon sucessful sign up, sign in or preset save-->
+        <TempAlert
+          class="alert"
+          :alert-message="alertMessage"
+          :alert-variant="alertVariant"
+          :show-alert="showAlert"
+          :alert-secs="alertSecs"
+          @resetAlert="resetSubmissionAlert"
+        />
+      </div>
       <div class="top-section">
         <div class="title-and-formula">
           <h4 style="float: left">Two Competing Species Model</h4>
@@ -83,12 +87,12 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="compSpecChartConfig"
+          :bar-chart-config="compSpecBarConfig"
+          :line-chart-config="compSpecLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -111,7 +115,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import compSpecChartConfig from "./CompetingSpeciesChartConfig.js";
+import compSpecBarConfig from "./CompSpecBarConfig.js";
+import compSpecLineConfig from "./CompSpecLineConfig.js";
 
 export default {
   components: {
@@ -127,22 +132,21 @@ export default {
       defaultParams: {
         //Species 1
         N1_0: 20,
-        r1: 0.1,
-        K1: 20,
-        a1: 0.1,
+        r1: 1.2,
+        K1: 500,
+        a1: 0.7,
         //Species 2
         N2_0: 20,
-        r2: 0.1,
-        K2: 20,
-        a2: 0.1,
+        r2: 0.8,
+        K2: 500,
+        a2: 0.8
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
       barPlotN1_0: null,
       barPlotN2_0: null,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "years",
       //Contains user's presets
       userPresets: [],
@@ -249,7 +253,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "Weak competition between species (neither species goes extinct, regardless of \
+          text: "Default: Weak competition between species (neither species goes extinct, regardless of \
             initial populations).",
           maths:
             "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
@@ -278,7 +282,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      compSpecChartConfig,
+      compSpecBarConfig,
+      compSpecLineConfig,
       visStylingClass: "comp-spec",
       //Default run simulation button config
       runIcon: "play",
@@ -303,45 +308,45 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN1_0(newN1_0) {
-      if (newN1_0 == 0) newN1_0 = this.defaultParams.N1_0; //Non-zero params only, set to default if 0 encountered
-      this.$set(this.simParamData, 0, newN1_0); //Inform Vue of an array element change
-      this.barPlotN1_0 = newN1_0;
+      if (newN1_0 == 0) newN1_0 = 20 //Non-zero params only, set to min if 0 encountered
+      this.$set(this.simParamData, 0, newN1_0) //Inform Vue of an array element change
+      this.barPlotN1_0 = newN1_0
       console.log(this.simParamData[0], "N1_0-change");
     },
     updater1(newr1) {
-      if (newr1 == 0) newr1 = this.defaultParams.r1; //Non-zero params only
-      this.$set(this.simParamData, 1, newr1); //Inform Vue of an array element change
+      if (newr1 == 0) newr1 = 0.1 //Non-zero params only
+      this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
       console.log(this.simParamData[1], "r1-change");
     },
     updateK1(newK1) {
-      if (newK1 == 0) newK1 = this.defaultParams.K1; //Non-zero params only
-      this.$set(this.simParamData, 2, newK1); //Inform Vue of an array element change
+      if (newK1 == 0) newK1 = 20 //Non-zero params only
+      this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
       console.log(this.simParamData[2], "K1-change");
     },
     updatea1(newa1) {
-      if (newa1 == 0) newa1 = this.defaultParams.a1; //Non-zero params only
-      this.$set(this.simParamData, 3, newa1); //Inform Vue of an array element change
+      if (newa1 == 0) newa1 = 0.1 //Non-zero params only
+      this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
       console.log(this.simParamData[3], "a1-change");
     },
     updateN2_0(newN2_0) {
-      if (newN2_0 == 0) newN2_0 = this.defaultParams.N2_0; //Non-zero params only
-      this.$set(this.simParamData, 4, newN2_0); //Inform Vue of an array element change
-      this.barPlotN2_0 = newN2_0;
+      if (newN2_0 == 0) newN2_0 = 20 //Non-zero params only
+      this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
+      this.barPlotN2_0 = newN2_0
       console.log(this.simParamData[4], "N2_0-change");
     },
     updater2(newr2) {
-      if (newr2 == 0) newr2 = this.defaultParams.r2; //Non-zero params only
-      this.$set(this.simParamData, 5, newr2); //Inform Vue of an array element change
+      if (newr2 == 0) newr2 = 0.1 //Non-zero params only
+      this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
       console.log(this.simParamData[5], "r2-change");
     },
     updateK2(newK2) {
-      if (newK2 == 0) newK2 = this.defaultParams.K2; //Non-zero params only
-      this.$set(this.simParamData, 6, newK2); //Inform Vue of an array element change
+      if (newK2 == 0) newK2 = 20 //Non-zero params only
+      this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
       console.log(this.simParamData[6], "K2-change");
     },
     updatea2(newa2) {
-      if (newa2 == 0) newa2 = this.defaultParams.a2; //Non-zero params only
-      this.$set(this.simParamData, 7, newa2); //Inform Vue of an array element change
+      if (newa2 == 0) newa2 = 0.1 //Non-zero params only
+      this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
       console.log(this.simParamData[7], "a2-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -469,8 +474,8 @@ export default {
       try {
         const path = "http://localhost:5000/CompetingSpecies/RunSim";
         const payload = {
-          simParams: this.simParamData,
-        };
+          simParams: this.simParamData
+        }
         this.spinnerOn = true;
         const response = await axios.post(path, payload);
         this.simData = response.data["sim_data"]; //Array of arrays, containing all sim data
@@ -493,12 +498,14 @@ export default {
       console.log(`${logString}, server problem`);
     },
     endSim() {
-      this.spinnerOn = false;
-      this.$store.commit("simRunningChange", false);
-      this.runIcon = "play";
-      this.runVariant = "success";
-      this.runText = "Run Simulation";
-    },
+      this.spinnerOn = false
+      this.$store.commit("simRunningChange", false)
+      this.simData = null
+      this.graphBounds = null
+      this.runIcon = "play"
+      this.runVariant = "success"
+      this.runText = "Run Simulation"
+    }
   },
   mounted() {
     if (this.user.isActive) {
@@ -523,6 +530,10 @@ export default {
 </script>
 
 <style scoped>
+.rhs-page-component {
+  position: relative;
+  margin-left: 25em
+}
 .competing-species-view {
   min-width: 1024px;
 }
@@ -548,5 +559,22 @@ export default {
 .loadingSpinner {
   margin-bottom: -9px;
   margin-right: 10px;
+}
+.alert-section {
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  position: fixed;
+  right: 0
+}
+.alert-section .alert {
+  width: 30%;
+  min-width: 300px;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
+  z-index: 1;
 }
 </style>

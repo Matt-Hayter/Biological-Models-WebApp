@@ -7,6 +7,7 @@
       />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
+      class="config-bar"
       :tabs-data="tabsData"
       :config-tab-titles="configTabTitles"
       :param-suggestions="paramSuggestions"
@@ -20,9 +21,18 @@
       @changeBeta="updateBeta"
       @changeRecipGamma="updateRecipGamma"
     />
-    <div class="rhs-page-component" style="margin-left: 25em">
-      <!--Upon sucessful sign up, sign in or preset save-->
-      <TempAlert :alert-message="alertMessage" :alert-variant="alertVariant" :show-alert="showAlert" :alert-secs="alertSecs" @resetAlert="resetSubmissionAlert" />
+    <div class="rhs-page-component">
+      <div class="alert-section">
+        <!--Upon sucessful sign up, sign in or preset save-->
+        <TempAlert
+          class="alert"
+          :alert-message="alertMessage"
+          :alert-variant="alertVariant"
+          :show-alert="showAlert"
+          :alert-secs="alertSecs"
+          @resetAlert="resetSubmissionAlert"
+        />
+      </div>
       <div class="top-section">
         <div class="title-and-formula">
           <h4 style="float: left">SIR Model</h4>
@@ -68,12 +78,12 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :chart-config="SIRChartConfig"
+          :bar-chart-config="SIRBarConfig"
+          :line-chart-config="SIRLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
-          :sim-time-data="simTimeData"
-          :sim-max-val="simMaxVal"
+          :graph-bounds="graphBounds"
           :time-units="timeUnits"
         />
       </div>
@@ -94,7 +104,8 @@ import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
 import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import SIRChartConfig from "./SIRChartConfig.js";
+import SIRBarConfig from "./SIRBarConfig.js";
+import SIRLineConfig from "./SIRLineConfig.js";
 
 export default {
   components: {
@@ -110,8 +121,8 @@ export default {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
         I0: 1, 
-        beta: 0.05,
-        recipGamma: 1
+        beta: 0.3,
+        recipGamma: 4
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
@@ -119,8 +130,7 @@ export default {
       barPlotI0: null,
       barPlotR0: 0,
       simData: null, //Array of arrays, containing all sim data when obtained
-      simTimeData: null, //Array containing times corresponding to simData
-      simMaxVal: null, //Max value, for upper bound of visualisation's axis when obtained
+      graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "days",
       //Contains user's presets
       userPresets: [],
@@ -168,7 +178,7 @@ export default {
       paramSuggestions: [
         {
           id: 1,
-          text: "Low/moderate infectiousness and small/moderate infectious period.",
+          text: "Default: Low/moderate infectiousness and small/moderate infectious period.",
           maths: "I_{0}=1,\\ \\beta=0.3,\\ 1/\\gamma=4"
         },
         {
@@ -193,7 +203,8 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      SIRChartConfig,
+      SIRBarConfig,
+      SIRLineConfig,
       visStylingClass: "SIR",
       //Default run simulation button config
       runIcon: "play",
@@ -217,19 +228,19 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateI0(newI0) {
-      if (newI0 == 0) newI0 = this.defaultParams.I0 //Non-zero params only, set to default if 0 encountered
+      if (newI0 == 0) newI0 = 1 //Non-zero params only, set to min if 0 encountered
       this.$set(this.simParamData, 0, newI0) //Inform Vue of an array element change
       this.barPlotI0 = newI0
       this.I0UpdateS0()
       console.log(this.simParamData[0], "I0-change");
     },
     updateBeta(newBeta) {
-      if (newBeta == 0) newBeta = this.defaultParams.beta //Non-zero params only
+      if (newBeta == 0) newBeta = 0.05 //Non-zero params only
       this.$set(this.simParamData, 1, newBeta) //Inform Vue of an array element change
       console.log(this.simParamData[1], "beta-change");
     },
     updateRecipGamma(newRecipGamma) {
-      if (newRecipGamma == 0) newRecipGamma = this.defaultParams.recipGamma //Non-zero params only
+      if (newRecipGamma == 0) newRecipGamma = 1 //Non-zero params only
       this.$set(this.simParamData, 2, newRecipGamma) //Inform Vue of an array element change
       console.log(this.simParamData[2], "1/gamma-change");
     },
@@ -355,8 +366,7 @@ export default {
         this.spinnerOn = true
         const response = await axios.post(path, payload)
         this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"] //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"] //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's
         this.spinnerOn = false
         this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
         console.log("SIR simulation successfully run at server")
@@ -376,6 +386,8 @@ export default {
     endSim() {
       this.spinnerOn = false
       this.$store.commit("simRunningChange", false)
+      this.simData = null
+      this.graphBounds = null
       this.runIcon = "play"
       this.runVariant = "success"
       this.runText = "Run Simulation"
@@ -398,6 +410,10 @@ export default {
 </script>
 
 <style scoped>
+.rhs-page-component {
+  position: relative;
+  margin-left: 25em
+}
 .SIR-view {
   min-width: 1024px;
 }
@@ -424,5 +440,22 @@ export default {
 .loadingSpinner {
   margin-bottom: -9px;
   margin-right: 10px;
+}
+.alert-section {
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  position: fixed;
+  right: 0
+}
+.alert-section .alert {
+  width: 30%;
+  min-width: 300px;
+}
+.config-bar {
+  position: sticky;
+  top: 97px;
+  z-index: 1;
 }
 </style>

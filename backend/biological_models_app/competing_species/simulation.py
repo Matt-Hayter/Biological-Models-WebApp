@@ -8,6 +8,9 @@ import math
 class CompetingSpeciesSimulation:
 
     def __init__(self, sim_params):
+        """
+        Declare and initialise simulation's data.
+        """
         self.N1 = deque([]) #Holds population 1 values
         self.N1_out = deque([]) #Population 1 values to be outputted
         self.N2 = deque([]) #Holds population 2 values
@@ -27,11 +30,16 @@ class CompetingSpeciesSimulation:
         
         #Simulation params
         self.dt = 0.001 #Integration step size [yrs]
-        self.output_dt = 0.01 #Initial output step size (minimum). Dynamically increases in factors of 2 for long sims [yrs]
-        self.min_dxdt = 0.5 #Gradient after which which simulation ends
-        self.limit_t = 2000 #Max possible steps in sim [yrs]
+        self.min_output_dt = 0.01 #Initial output step size (minimum). Dynamically increases in factors of 2 for long sims [yrs]
+        self.max_output_steps = 2500 #Max number of output data steps for simulation
+        self.min_dxdt = 0.05 #Gradient after which which simulation ends
+        self.limit_t = 2000 #Max possible time in sim [yrs]
         
     def Euler_method(self):
+        """
+        Calculate current simulation step's rates using model ODEs, apply Euler method,
+        then append to data.
+        """
         #ODEs
         dN1dt = self.r1*self.N1[-1]*(1-(self.N1[-1] + self.a1*self.N2[-1])/self.k1)
         dN2dt = self.r2*self.N2[-1]*(1-(self.N2[-1] + self.a2*self.N1[-1])/self.k2)
@@ -42,6 +50,10 @@ class CompetingSpeciesSimulation:
         return dN1dt, dN2dt
 
     def run_sim(self):
+        """
+        Initiate simulation and run Euler iterations for each time step, dynamically
+        checking for simulation end points.
+        """
         #Set initial values
         self.N1.append(self.N1_0)
         self.N2.append(self.N2_0)
@@ -53,42 +65,61 @@ class CompetingSpeciesSimulation:
         while step < limit_step:
             step += 1
             dN1dt, dN2dt = self.Euler_method()
-            if abs(dN1dt) < 0.05 and abs(dN2dt) < 0.05: #End sim when stabalised
+            if abs(dN1dt) < self.min_dxdt and abs(dN2dt) < self.min_dxdt: #End sim when stabalised
                 return
 
     def obtain_outputs(self):
-        self.N1_out.append(self.N1_0)
-        self.N2_out.append(self.N2_0)
-        self.t_axis.append(0)
-        max_steps = 5000 #Max number of output data steps for simulation
-        current_steps = len(self.N1)/(self.output_dt/self.dt) #Current number of output data steps
+        """
+        Select data to be outputted, at time intervals depending on simulated data length.
+        Output data structures are designed for usage within chart.js line graph.
+        """
+        self.N1_out.append({"data": self.N1_0, "t": 0})
+        self.N2_out.append({"data": self.N2_0, "t": 0})
+        output_dt = self.min_output_dt #Start with smallest output step size
+        current_steps = len(self.N1)/(output_dt/self.dt) #Current number of output data steps
         
         #Find output_dt
-        while current_steps > max_steps: #While output simulation has too many steps
-            self.output_dt *= 2 #Increase time between outputs
-            current_steps = len(self.N1)/(self.output_dt/self.dt)
+        while current_steps > self.max_output_steps: #While output simulation has too many steps
+            output_dt *= 2 #Increase time between outputs
+            current_steps = len(self.N1)/(output_dt/self.dt)
         
-        output_step = int(round(self.output_dt/self.dt)) #Finalised number of solver steps between output steps
+        output_step = int(round(output_dt/self.dt)) #Finalised number of solver steps between output steps
         step = output_step
         #Iterate through all output steps, accessing relevant simulation indices and appending to outputs
         while step < len(self.N1):
-            self.N1_out.append(self.N1[step])
-            self.N2_out.append(self.N2[step])
-            self.t_axis.append(self.t_axis[-1] + self.output_dt)
+            next_t = self.N1_out[-1]["t"] + output_dt #Add output dt to last t
+            self.N1_out.append({"data": self.N1[step], "t": next_t})
+            self.N2_out.append({"data": self.N2[step], "t": next_t})
             step += output_step
 
+def find_graph_bounds(output_arrays):
+    """
+    Find suitable upper limits of charts and graphs for visualisation
+    """
+    x_largest = output_arrays[0][-1]["t"] #Final time value
+    y_largest = max([ #Max value obtained throughout sim's output
+        max(dict_element["data"] for dict_element in output_arrays[0]),
+        max(dict_element["data"] for dict_element in output_arrays[1])])
+    axes = ["t", "data"]
+    graph_bounds = {} #Return dictionary
+    #Produce appropriate upper limits for plots
+    for i, axis_largest in enumerate((x_largest, y_largest)):
+        if axis_largest >= 1000:
+            graph_bounds[axes[i]] = math.ceil(axis_largest/100)*100 #Round up to nearest 100
+        elif axis_largest >= 30: 
+            graph_bounds[axes[i]] = math.ceil(axis_largest/10)*10 #Round up to nearest 10
+        else:
+            graph_bounds[axes[i]] = math.ceil(axis_largest) #Round up to nearest while number
+    return graph_bounds
+
 def runCompetingSpeciesSim(sim_params):
+    """
+    Run simulation, given user selected parameters
+    """
     #Pass params configured by user
     model = CompetingSpeciesSimulation(sim_params)
     model.run_sim()
     model.obtain_outputs()
-    return_arrays = [list(model.N1_out), list(model.N2_out)] #Return simulations data
-    largest_val = max([max(return_arrays[0]), max(return_arrays[1])]) #Max value obtained throughout sim's output
-    #Produce appropriate upper bound for plots
-    if largest_val >= 1000:
-        upper_bound = math.ceil(largest_val/100)*100 #Round up to nearest 100
-    elif largest_val >= 30: 
-        upper_bound = math.ceil(largest_val/10)*10 #Round up to nearest 10
-    else:
-        upper_bound = math.ceil(largest_val) #Round up to nearest while number
-    return return_arrays, list(model.t_axis), upper_bound
+    output_arrays = [list(model.N1_out), list(model.N2_out)] #Return simulations data
+    graph_bounds = find_graph_bounds(output_arrays)
+    return output_arrays, graph_bounds

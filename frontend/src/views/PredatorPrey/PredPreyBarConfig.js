@@ -2,7 +2,6 @@
 let chartData = {
   labels: ['Prey', 'Predator'],
   datasets: [{
-    label: 'Predator-Prey',
     data: [0, 0],
     backgroundColor: [
       'rgba(54, 162, 255, 0.2)',
@@ -22,13 +21,14 @@ export default {
   data: chartData,
   options: {
     indexAxis: "y",
+    aspectRatio: 5,
     scales: {
       x: {
         beginAtZero: true,
         max: 10,
         title: {
           display: true,
-          text: "Population Density",
+          text: "Population Density (/area)",
           font: {
             size: 15,
           }
@@ -45,6 +45,13 @@ export default {
         }
       }
     },
-    aspectRatio: 5
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        enabled: true
+      }
+    },
   }
 };
