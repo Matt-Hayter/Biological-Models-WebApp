@@ -476,14 +476,13 @@ export default {
         const payload = {
           simParams: this.simParamData,
         };
-        this.spinnerOn = true;
+        this.spinnerOn = true; //Show loading spinner
         const response = await axios.post(path, payload);
         this.simData = response.data["sim_data"]; //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"]; //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"]; //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"]; //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false;
         this.$store.commit("simRunningChange", true); //Signals to start visualising simulation
-        console.log("Competing Species simulation successfully run at server");
+        console.log("Competing species simulation successfully run at server");
       } catch (error) {
         this.endSim(); //Reset button
         this.prepareServerAlert("running simulation", "Simulation erorr");
