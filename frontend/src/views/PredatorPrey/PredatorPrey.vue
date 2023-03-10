@@ -1,10 +1,10 @@
 <template>
   <div class="predator-prey-view">
-    <TheNavBar 
+    <TheNavBar
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
       @initPresets="initPresets"
-      />
+    />
     <!--Pass props to child component and handle emitted events for configuration bar-->
     <ConfigBar
       class="config-bar"
@@ -26,7 +26,10 @@
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component" style="position: relative; margin-left: 25em">
+    <div
+      class="rhs-page-component"
+      style="position: relative; margin-left: 25em"
+    >
       <div class="alert-section">
         <!--Upon sucessful sign up, sign in or preset save-->
         <TempAlert
@@ -42,36 +45,39 @@
         <div class="title-and-formula">
           <h4 style="float: left">Predator-Prey (Lotka-Volterra) Model</h4>
           <div class="formula">
-            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)"/>
-            <br>
-            <br>
-            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)"/>
+            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)" />
+            <br />
+            <br />
+            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)" />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            The Lotka-Volterra model simplistically describes population variations within system containing a
-            prey species (<katex-element expression="N"/>) hunted by a predator species (<katex-element expression="P"/>).
+            The Lotka-Volterra model simplistically describes population
+            variations within system containing a prey species (<katex-element
+              expression="N"
+            />) hunted by a predator species (<katex-element expression="P" />).
           </b-card-text>
           <b-card-text>
             <ul>
               <li>
-                <katex-element expression="N"/> - Prey population density
+                <katex-element expression="N" /> - Prey population density
               </li>
               <li>
-                <katex-element expression="P"/> - Predator population density
+                <katex-element expression="P" /> - Predator population density
               </li>
             </ul>
           </b-card-text>
           <b-card-text>
-            This model assumes that prey populations are always able to bounce back,
-            even from extremely low populations. This, as we know, isn't usually the case, and
-            prey can infact be hunted to extinction. Other assumptions include that there is no
-            shortage of food for the prey, and that the environment is constant.
+            This model assumes that prey populations are always able to bounce
+            back, even from extremely low populations. This, as we know, isn't
+            usually the case, and prey can infact be hunted to extinction. Other
+            assumptions include that there is no shortage of food for the prey,
+            and that the environment is constant.
           </b-card-text>
           <b-card-text>
-            Solutions are oscillatory in nature,
-            with an increase in prey population not only driving more prey reproduction, but also
+            Solutions are oscillatory in nature, with an increase in prey
+            population not only driving more prey reproduction, but also
             increasing predation.
           </b-card-text>
         </ModelInfo>
@@ -91,7 +97,9 @@
       </div>
     </div>
     <div class="run-button">
-      <span v-if="spinnerOn"> <b-spinner class="loadingSpinner"></b-spinner> </span>
+      <span v-if="spinnerOn">
+        <b-spinner class="loadingSpinner"></b-spinner>
+      </span>
       <b-button :variant="runVariant" pill @click="onClickRun">
         {{ runText }} <b-icon :icon="runIcon" scale="1.5" shift-v="1"></b-icon>
       </b-button>
@@ -128,7 +136,7 @@ export default {
         //Predator
         P0: 0.5,
         c: 0.05,
-        d: 0.1
+        d: 0.1,
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
@@ -194,7 +202,8 @@ export default {
             {
               label: "c",
               units: "(/yr)",
-              description: "Rate of growth of predator population, in response to the size of \
+              description:
+                "Rate of growth of predator population, in response to the size of \
                 prey population",
               emitEventName: "changec",
               inputStep: 0.05,
@@ -221,7 +230,7 @@ export default {
         {
           id: 1,
           text: "Steady variations between predator and prey populations",
-          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1"
+          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1",
         },
         {
           id: 2,
@@ -247,7 +256,7 @@ export default {
       runIcon: "play",
       runVariant: "success",
       runText: "Run Simulation",
-      spinnerOn: false
+      spinnerOn: false,
     };
   },
   computed: {
@@ -258,42 +267,43 @@ export default {
     simRunning() {
       return this.$store.state.simRunning;
     },
-    initialConditions() { //Array inherited by bar chart for reactive display
-      return [this.barPlotN0, this.barPlotP0]
-    }
+    initialConditions() {
+      //Array inherited by bar chart for reactive display
+      return [this.barPlotN0, this.barPlotP0];
+    },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN0(newN0) {
-      if (newN0 == 0) newN0 = this.defaultParams.N0 //Non-zero params only, set to min (= default) if 0 encountered
-      this.$set(this.simParamData, 0, newN0) //Inform Vue of an array element change
+      if (newN0 == 0) newN0 = this.defaultParams.N0; //Non-zero params only, set to min (= default) if 0 encountered
+      this.$set(this.simParamData, 0, newN0); //Inform Vue of an array element change
       this.barPlotN0 = newN0;
       console.log(this.simParamData[0], "N0-change");
     },
     updatea(newa) {
-      if (newa == 0) newa = this.defaultParams.a //Non-zero params only
-      this.$set(this.simParamData, 1, newa) //Inform Vue of an array element change
+      if (newa == 0) newa = this.defaultParams.a; //Non-zero params only
+      this.$set(this.simParamData, 1, newa); //Inform Vue of an array element change
       console.log(this.simParamData[1], "a-change");
     },
     updateb(newb) {
-      if (newb == 0) newb = this.defaultParams.b //Non-zero params only
-      this.$set(this.simParamData, 2, newb) //Inform Vue of an array element change
+      if (newb == 0) newb = this.defaultParams.b; //Non-zero params only
+      this.$set(this.simParamData, 2, newb); //Inform Vue of an array element change
       console.log(this.simParamData[2], "b-change");
     },
     updateP0(newP0) {
-      if (newP0 == 0) newP0 = this.defaultParams.P0 //Non-zero params only
-      this.$set(this.simParamData, 3, newP0) //Inform Vue of an array element change
+      if (newP0 == 0) newP0 = this.defaultParams.P0; //Non-zero params only
+      this.$set(this.simParamData, 3, newP0); //Inform Vue of an array element change
       this.barPlotP0 = newP0;
       console.log(this.simParamData[3], "P0-change");
     },
     updatec(newc) {
-      if (newc == 0) newc = this.defaultParams.c //Non-zero params only
-      this.$set(this.simParamData, 4, newc) //Inform Vue of an array element change
+      if (newc == 0) newc = this.defaultParams.c; //Non-zero params only
+      this.$set(this.simParamData, 4, newc); //Inform Vue of an array element change
       console.log(this.simParamData[4], "c-change");
     },
     updated(newd) {
-      if (newd == 0) newd = this.defaultParams.d //Non-zero params only
-      this.$set(this.simParamData, 5, newd) //Inform Vue of an array element change
+      if (newd == 0) newd = this.defaultParams.d; //Non-zero params only
+      this.$set(this.simParamData, 5, newd); //Inform Vue of an array element change
       console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -341,40 +351,40 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset added");
       } catch (error) {
-        this.prepareServerAlert("saving preset", "Preset not saved")
+        this.prepareServerAlert("saving preset", "Preset not saved");
       }
     },
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/PredPrey/AllPresets"
+        const path = "http://localhost:5000/PredPrey/AllPresets";
         const payload = {
-          userEmail: this.user.email
+          userEmail: this.user.email,
         };
-        const response = await axios.post(path, payload) //Identify user with email
-        this.userPresets = response.data["presets"] //Update frontend presets with those in database
-        console.log("Loaded user's Pred-Prey presets")
+        const response = await axios.post(path, payload); //Identify user with email
+        this.userPresets = response.data["presets"]; //Update frontend presets with those in database
+        console.log("Loaded user's Pred-Prey presets");
       } catch (error) {
-        this.prepareServerAlert("fetching presets", "Error fetching presets")
+        this.prepareServerAlert("fetching presets", "Error fetching presets");
       }
     },
     //Upon selecting a preset, get params from server
     async getPresetParams(presetIndex) {
       try {
-        const presetid = this.userPresets[presetIndex][0] //Identify preset
-        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`
+        const presetid = this.userPresets[presetIndex][0]; //Identify preset
+        const path = `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 5;
-        for(let i = 0; i <= presetParamsCount; i++) {
-            this.simParamData[i] = Number(response.data["preset_params"][i])
+        for (let i = 0; i <= presetParamsCount; i++) {
+          this.simParamData[i] = Number(response.data["preset_params"][i]);
         }
         //Set barplot initial value
-        const N0Index = 0
-        const P0Index = 3
-        this.barPlotN0 = null //Change value for computed recalculation
-        this.barPlotN0 = this.simParamData[N0Index]
-        this.barPlotP0 = this.simParamData[P0Index]
+        const N0Index = 0;
+        const P0Index = 3;
+        this.barPlotN0 = null; //Change value for computed recalculation
+        this.barPlotN0 = this.simParamData[N0Index];
+        this.barPlotP0 = this.simParamData[P0Index];
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -382,15 +392,16 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset loaded");
       } catch (error) {
-        this.prepareServerAlert("loading preset", "Preset not loaded")
+        this.prepareServerAlert("loading preset", "Preset not loaded");
       }
     },
-    initPresets() { //Clear presets
-      this.userPresets = []
+    initPresets() {
+      //Clear presets
+      this.userPresets = [];
     },
     async deletePreset(presetIndex) {
       try {
-        const presetid = this.userPresets[presetIndex][0] //Identify preset (non-sensitive -> use key)
+        const presetid = this.userPresets[presetIndex][0]; //Identify preset (non-sensitive -> use key)
         const path = `http://localhost:5000/PredPrey/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
@@ -401,35 +412,36 @@ export default {
         this.showSubmissionAlert(deletedAlertPayload);
         console.log("Preset deleted");
       } catch (error) {
-        this.prepareServerAlert("deleting preset", "Preset not deleted")
+        this.prepareServerAlert("deleting preset", "Preset not deleted");
       }
     },
-    onClickRun() { //Run/stop simulation button pressed
+    onClickRun() {
+      //Run/stop simulation button pressed
       if (this.simRunning == false) {
-        this.runIcon = "stop"
-        this.runVariant = "danger"
-        this.runText = "Stop"
-        this.runSim()
+        this.runIcon = "stop";
+        this.runVariant = "danger";
+        this.runText = "Stop";
+        this.runSim();
       } else {
-        this.endSim()
+        this.endSim();
       }
     },
     async runSim() {
       try {
-        const path = "http://localhost:5000/PredPrey/RunSim"
+        const path = "http://localhost:5000/PredPrey/RunSim";
         const payload = {
-          simParams: this.simParamData
-        }
-        this.spinnerOn = true //Show loading spinner
-        const response = await axios.post(path, payload)
-        this.simData = response.data["sim_data"] //Array of arrays, containing all sim data
-        this.graphBounds = response.data["graph_bounds"] //Max value, for upper bound of visualisation's axis
-        this.spinnerOn = false
-        this.$store.commit("simRunningChange", true) //Signals to start visualising simulation
-        console.log("Pred Prey simulation successfully run at server")
+          simParams: this.simParamData,
+        };
+        this.spinnerOn = true; //Show loading spinner
+        const response = await axios.post(path, payload);
+        this.simData = response.data["sim_data"]; //Array of arrays, containing all sim data
+        this.graphBounds = response.data["graph_bounds"]; //Max value, for upper bound of visualisation's axis
+        this.spinnerOn = false;
+        this.$store.commit("simRunningChange", true); //Signals to start visualising simulation
+        console.log("Pred Prey simulation successfully run at server");
       } catch (error) {
-        this.endSim() //Reset button
-        this.prepareServerAlert("running simulation", "Simulation erorr")
+        this.endSim(); //Reset button
+        this.prepareServerAlert("running simulation", "Simulation erorr");
       }
     },
     prepareServerAlert(alertString, logString) {
@@ -441,30 +453,31 @@ export default {
       console.log(`${logString}, server problem`);
     },
     endSim() {
-      this.spinnerOn = false
-      this.$store.commit("simRunningChange", false)
-      this.simData = null
-      this.graphBounds = null
-      this.runIcon = "play"
-      this.runVariant = "success"
-      this.runText = "Run Simulation"
-    }
+      this.spinnerOn = false;
+      this.$store.commit("simRunningChange", false);
+      this.simData = null;
+      this.graphBounds = null;
+      this.runIcon = "play";
+      this.runVariant = "success";
+      this.runText = "Run Simulation";
+    },
   },
   mounted() {
-    if (this.user.isActive) { //Don't load presets if no one is logged in
-      this.getAllPresets()
+    if (this.user.isActive) {
+      //Don't load presets if no one is logged in
+      this.getAllPresets();
     }
     //Set simulation params to default values
-    this.simParamData.length = 6 //Number of params in this model
-    this.simParamData[0] = this.defaultParams.N0
-    this.simParamData[1] = this.defaultParams.a
-    this.simParamData[2] = this.defaultParams.b
-    this.simParamData[3] = this.defaultParams.P0
-    this.simParamData[4] = this.defaultParams.c
-    this.simParamData[5] = this.defaultParams.d
+    this.simParamData.length = 6; //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N0;
+    this.simParamData[1] = this.defaultParams.a;
+    this.simParamData[2] = this.defaultParams.b;
+    this.simParamData[3] = this.defaultParams.P0;
+    this.simParamData[4] = this.defaultParams.c;
+    this.simParamData[5] = this.defaultParams.d;
     //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
-    this.barPlotN0 = this.defaultParams.N0
-    this.barPlotP0 = this.defaultParams.P0
+    this.barPlotN0 = this.defaultParams.N0;
+    this.barPlotP0 = this.defaultParams.P0;
   },
 };
 </script>
@@ -503,7 +516,7 @@ export default {
   display: flex;
   justify-content: right;
   position: fixed;
-  right: 0
+  right: 0;
 }
 .alert-section .alert {
   width: 30%;

@@ -2,7 +2,10 @@
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <!--Section for bran and model categories dropdown-->
-      <div class="navbar-model-categories" style="display: flex; justify-content: left;">
+      <div
+        class="navbar-model-categories"
+        style="display: flex; justify-content: left"
+      >
         <a class="navbar-brand" href="#">Biological Models Visualiser</a>
         <div id="navbarColor02">
           <b-dropdown
@@ -16,9 +19,13 @@
           >
             <b-dropdown-group header="Multiple Species Models">
               <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item @click="onPredPreyClick">Predator-Prey</b-dropdown-item>
-              <br>
-              <b-dropdown-item @click="onCompSpecClick">Competing Species</b-dropdown-item>
+              <b-dropdown-item @click="onPredPreyClick"
+                >Predator-Prey</b-dropdown-item
+              >
+              <br />
+              <b-dropdown-item @click="onCompSpecClick"
+                >Competing Species</b-dropdown-item
+              >
             </b-dropdown-group>
           </b-dropdown>
         </div>
@@ -36,33 +43,29 @@
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item @click="onSIRClick">SIR Model</b-dropdown-item>
             </b-dropdown-group>
-            <br>
+            <br />
             <b-dropdown-group header="Extended">
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item class="tex2jax_ignore" @click="onSEIDRClick">
-                <template id="#text">
-                  SEIDR Model (COVID-19)
-                </template>
+                <template id="#text"> SEIDR Model (COVID-19) </template>
               </b-dropdown-item>
             </b-dropdown-group>
           </b-dropdown>
         </div>
       </div>
       <!--For account section-->
-      <div id="navbarColor02" style="display: flex; justify-content: right;">
-        <b-dropdown
-          ref = "signInForm"
-          class="nav-link"
-          right
-          variant="dark"
-        >
+      <div id="navbarColor02" style="display: flex; justify-content: right">
+        <b-dropdown ref="signInForm" class="nav-link" right variant="dark">
           <!--Use icon within dropdown button-->
           <template #button-content>
             Account
             <b-icon icon="person-lines-fill" font-scale="1.6"></b-icon>
           </template>
           <!--Pass form submission events up the inheritance hierachy-->
-          <AccountDropdownContents v-on="$listeners" @hideDropdown="hideDropdownForm" />
+          <AccountDropdownContents
+            v-on="$listeners"
+            @hideDropdown="hideDropdownForm"
+          />
         </b-dropdown>
       </div>
     </div>
@@ -87,19 +90,19 @@ export default {
       console.log("Do Something");
     },
     onPredPreyClick() {
-      this.$store.commit("simRunningChange", false) //End current sim before navigating to next view
+      this.$store.commit("simRunningChange", false); //End current sim before navigating to next view
       this.$router.push("/PredatorPrey").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
     },
     onCompSpecClick() {
-      this.$store.commit("simRunningChange", false)
+      this.$store.commit("simRunningChange", false);
       this.$router.push("/CompetingSpecies").catch(() => {});
     },
     onSIRClick() {
-      this.$store.commit("simRunningChange", false)
+      this.$store.commit("simRunningChange", false);
       this.$router.push("/SIR").catch(() => {});
     },
     onSEIDRClick() {
-      this.$store.commit("simRunningChange", false)
+      this.$store.commit("simRunningChange", false);
       this.$router.push("/SEIDR").catch(() => {});
     },
     //Emitted from account dropdown form component

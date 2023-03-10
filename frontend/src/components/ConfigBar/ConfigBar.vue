@@ -5,13 +5,28 @@
       <!--If tabs are required-->
       <div v-if="configTabTitles.length == 2">
         <b-card-header header-tag="nav">
-          <b-nav card-header tabs fill style="display: flex; flex-direction: column">
-            <p style="font-size: 1.5em; margin-bottom: -0.07em;">Model Parameters</p>
+          <b-nav
+            card-header
+            tabs
+            fill
+            style="display: flex; flex-direction: column"
+          >
+            <p style="font-size: 1.5em; margin-bottom: -0.07em">
+              Model Parameters
+            </p>
             <div tabs>
-              <b-nav-item style="float: left" :active="tabsData[0].isActive" @click="onTabOneClick()" >
+              <b-nav-item
+                style="float: left"
+                :active="tabsData[0].isActive"
+                @click="onTabOneClick()"
+              >
                 {{ configTabTitles[0] }}
               </b-nav-item>
-              <b-nav-item style="float: left" :active="tabsData[1].isActive" @click="onTabTwoClick()">
+              <b-nav-item
+                style="float: left"
+                :active="tabsData[1].isActive"
+                @click="onTabTwoClick()"
+              >
                 {{ configTabTitles[1] }}
               </b-nav-item>
             </div>
@@ -21,7 +36,7 @@
       <!--If no tabs required-->
       <div v-else-if="configTabTitles.length == 1">
         <b-card-header>
-          <p style="font-size: 1.5em; margin-top: 0.6em;">Model Parameters</p>
+          <p style="font-size: 1.5em; margin-top: 0.6em">Model Parameters</p>
         </b-card-header>
       </div>
       <b-card-body style="min-height: 71.4vh">
@@ -33,16 +48,18 @@
             v-show="tabData.isActive"
             v-for="(sliderData, index2) in tabData.data"
             :key="sliderData.label"
-            >
+          >
             <!--Pass each slider's data individually to slider component-->
             <SliderContent
               ref="sliders"
               :slider-data="sliderData"
-              :current-sim-param-data="simParamData[currentSliderIndex(index1,index2)]"
+              :current-sim-param-data="
+                simParamData[currentSliderIndex(index1, index2)]
+              "
               v-on="$listeners"
-              >
+            >
             </SliderContent>
-            <SliderTicks :slider-data="sliderData"/>
+            <SliderTicks :slider-data="sliderData" />
           </div>
         </div>
         <PresetButtons
@@ -51,7 +68,7 @@
           :param-suggestions="paramSuggestions"
           :user-presets="userPresets"
         />
-        </b-card-body>
+      </b-card-body>
     </b-card>
   </div>
 </template>
@@ -79,19 +96,23 @@ export default {
   },
   methods: {
     currentSliderIndex(i1, i2) {
-      return i1*this.tabsData[0].data.length + i2
+      return i1 * this.tabsData[0].data.length + i2;
     },
     onTabOneClick() {
       //Close all parameter descriptions for current tab
-      this.$refs.sliders.forEach((slider) => {slider.tabClick()})
+      this.$refs.sliders.forEach((slider) => {
+        slider.tabClick();
+      });
       //Update tabsData[i].isActive props if tab changes (delay allows for param description closure)
-      setTimeout(() => this.$emit("tabOneActive"), 15)
+      setTimeout(() => this.$emit("tabOneActive"), 15);
     },
     onTabTwoClick() {
-      this.$refs.sliders.forEach((slider) => {slider.tabClick()})
-      setTimeout(() => this.$emit("tabTwoActive"), 15)
+      this.$refs.sliders.forEach((slider) => {
+        slider.tabClick();
+      });
+      setTimeout(() => this.$emit("tabTwoActive"), 15);
     },
-  }
+  },
 };
 </script>
 

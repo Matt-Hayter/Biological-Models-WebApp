@@ -54,7 +54,7 @@
       title="Create an Account"
       hide-footer
       centered
-      >
+    >
       <b-form @submit="onSubmitSignUp">
         <b-form-group
           label="Username:"
@@ -128,14 +128,14 @@
     <b-dropdown-form>
       <b-form-group>
         <b-form-text style="font-size: 1.1em">
-            <span style="padding-top: 0.24em; float: left">User:</span>
-            <span class="username-text">
-              {{ user.username }}
-            </span>
+          <span style="padding-top: 0.24em; float: left">User:</span>
+          <span class="username-text">
+            {{ user.username }}
+          </span>
         </b-form-text>
       </b-form-group>
       <b-dropdown-divider></b-dropdown-divider>
-      <div style="margin-left: -10px;">
+      <div style="margin-left: -10px">
         <b-dropdown-item-button v-b-modal.manage-account-modal>
           <b>Manage account</b>
         </b-dropdown-item-button>
@@ -152,7 +152,7 @@
       hide-footer
       centered
       @hidden="onHiddenManageAccountModal"
-      >
+    >
       <b-form-text class="account-info-text">
         <div class="first-row">
           <div style="padding-top: 0.24em; float: left">Username:</div>
@@ -168,7 +168,7 @@
           <!--Edit username form display-->
           <div v-else-if="editingUsername" class="edit-username-section">
             <b-input-group>
-              <b-form-input 
+              <b-form-input
                 id="manage-account-username-input"
                 type="text"
                 v-model="newUsername"
@@ -178,8 +178,16 @@
               />
               <b-input-group-append>
                 <b-button-group>
-                  <b-button variant="outline-success" @click="onClickSubmitNewUsername">Save</b-button>
-                  <b-button variant="outline-primary" @click="onClickCancelEditUsername"><b-icon icon="x"></b-icon></b-button>
+                  <b-button
+                    variant="outline-success"
+                    @click="onClickSubmitNewUsername"
+                    >Save</b-button
+                  >
+                  <b-button
+                    variant="outline-primary"
+                    @click="onClickCancelEditUsername"
+                    ><b-icon icon="x"></b-icon
+                  ></b-button>
                 </b-button-group>
               </b-input-group-append>
               <!--Feedback for if input is invalid (in the false state)-->
@@ -213,24 +221,33 @@
         </div>
       </b-form-text>
       <br />
-      <b-button v-b-modal.delete-account style="float: right;" @click="onClickDeleteAccountModal">
-        <b-form-text>
-          Delete Account
-        </b-form-text>
+      <b-button
+        v-b-modal.delete-account
+        style="float: right"
+        @click="onClickDeleteAccountModal"
+      >
+        <b-form-text> Delete Account </b-form-text>
       </b-button>
     </b-modal>
-    <b-modal
-      ref="deleteAccountModal"
-      id="delete-account"
-      hide-footer
-      centered
-      >
+    <b-modal ref="deleteAccountModal" id="delete-account" hide-footer centered>
       <template #modal-title>
-        Account deletion <b-icon icon="exclamation-triangle" variant="danger" scale="1.2" shift-v="1" />
+        Account deletion
+        <b-icon
+          icon="exclamation-triangle"
+          variant="danger"
+          scale="1.2"
+          shift-v="1"
+        />
       </template>
-      <b>Removing your account will permanently delete all of your associated data,
-        including all saved presets</b>
-      <b-button style="margin-top: 30px;" variant="outline-danger" @click="onClickDeleteAccount">
+      <b
+        >Removing your account will permanently delete all of your associated
+        data, including all saved presets</b
+      >
+      <b-button
+        style="margin-top: 30px"
+        variant="outline-danger"
+        @click="onClickDeleteAccount"
+      >
         Delete Account
       </b-button>
     </b-modal>
@@ -292,7 +309,8 @@ export default {
         secs: 4,
         variant: "warning", //Variable
         show: false,
-        message: "Username already in use, please select another. Entries are converted to lower case", //Variable
+        message:
+          "Username already in use, please select another. Entries are converted to lower case", //Variable
       },
     };
   },
@@ -309,15 +327,15 @@ export default {
     },
     signUpUsernameState() {
       const usernameLength = this.signUp.formUsername.length;
-      return this.usernameStatus(usernameLength)
+      return this.usernameStatus(usernameLength);
     },
     signUpPasswdState() {
       const pswdLength = this.signUp.formPassword.length;
-      return this.passwdStatus(pswdLength)
+      return this.passwdStatus(pswdLength);
     },
     signInPasswdState() {
       const pswdLength = this.signIn.formPassword.length;
-      return this.passwdStatus(pswdLength)
+      return this.passwdStatus(pswdLength);
     },
   },
   methods: {
@@ -340,7 +358,10 @@ export default {
     onSubmitSignUp(event) {
       event.preventDefault();
       //Don't process sign up if fields are not adequate
-      if (this.signUpUsernameState == false || this.signUpPasswdState == false) {
+      if (
+        this.signUpUsernameState == false ||
+        this.signUpPasswdState == false
+      ) {
         return;
       }
       //Handle server communication
@@ -354,7 +375,9 @@ export default {
     onSubmitSignIn(event) {
       event.preventDefault();
       //If password is too short to be valid
-      if (this.signInPasswdState == false) {return}
+      if (this.signInPasswdState == false) {
+        return;
+      }
       //Handle server communication
       const payload = {
         email: this.signIn.formEmail,
@@ -371,7 +394,7 @@ export default {
         isActive: false,
       };
       this.$store.commit("userUpdate", userStatePayload); //call userUpdate state mutation
-      this.$emit("initPresets") //Clear previous user's presets
+      this.$emit("initPresets"); //Clear previous user's presets
       const alertPayload = {
         message: "Signed out, see you soon!",
         variant: "success",
@@ -380,33 +403,35 @@ export default {
       console.log("Signed out!");
     },
     onClickEditUsername() {
-      this.editingUsername = true
+      this.editingUsername = true;
     },
     onClickCancelEditUsername() {
-      this.editingUsername = false
-      this.newUsername = ""
+      this.editingUsername = false;
+      this.newUsername = "";
     },
     onClickSubmitNewUsername() {
       //If username is not valid
-      if (this.newUsernameState == false) {return}
+      if (this.newUsernameState == false) {
+        return;
+      }
       const payload = {
         newUsername: this.newUsername,
-        email: this.user.email //To identify user
-      }
-      this.changeUsername(payload)
+        email: this.user.email, //To identify user
+      };
+      this.changeUsername(payload);
     },
     onClickDeleteAccountModal() {
-      this.$refs.manageAccountModal.hide()
+      this.$refs.manageAccountModal.hide();
     },
     onClickDeleteAccount() {
       const payload = {
-        email: this.user.email //To identify user
-      }
-      this.deleteAccount(payload)
+        email: this.user.email, //To identify user
+      };
+      this.deleteAccount(payload);
     },
     onHiddenManageAccountModal() {
-      this.editingUsername = false
-      this.newUsername = ""
+      this.editingUsername = false;
+      this.newUsername = "";
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
@@ -435,14 +460,14 @@ export default {
           variant: "success",
         };
         this.$emit("showPageAlert", successAlertPayload); //Create successful sign in alert on main page
-        this.activateUserState(response) //Update Vuex state with user's data
+        this.activateUserState(response); //Update Vuex state with user's data
         console.log("Account created");
-        this.$emit("loadPresets") //Load all user's presets
+        this.$emit("loadPresets"); //Load all user's presets
         this.initSignUpForm(); //Reset form
         //In case of axios problems, give error alert
       } catch (error) {
         this.$refs.signUpModal.hide(); //Hide modal following submission
-        this.emitServerErrorMessage("creating account", "No account created")
+        this.emitServerErrorMessage("creating account", "No account created");
       }
     },
     //Add and validate user sign up data against database
@@ -463,76 +488,77 @@ export default {
           variant: "success",
         };
         this.$emit("showPageAlert", success_alert_obj); //Create success alert on main page
-        this.activateUserState(response) //Update Vuex state with user's data
+        this.activateUserState(response); //Update Vuex state with user's data
         console.log(
           "Signed in as ",
           response.data["username"],
           response.data["email"]
         );
         this.initSignInForm(); //Reset form
-        this.$emit("loadPresets") //Load all user's presets
+        this.$emit("loadPresets"); //Load all user's presets
         //In case of axios problems, give error alert
       } catch (error) {
         this.$emit("hideDropdown"); //Emit event to Navbar, hiding sign in form following submission
-        this.emitServerErrorMessage("signing in", "No sign in")
+        this.emitServerErrorMessage("signing in", "No sign in");
       }
     },
     async changeUsername(payload) {
       const path = "http://localhost:5000/Account/ChangeUsername";
       try {
         const response = await axios.put(path, payload); //Send payload to server
-        if (response.data["username_error"]) { //If server response says username is not unique
+        if (response.data["username_error"]) {
+          //If server response says username is not unique
           //Failure alert on modal
-          this.newUsernameFailureAlert.show = true
+          this.newUsernameFailureAlert.show = true;
           console.log("non-unique username error");
-          return
+          return;
         }
         //If successful:
         //Show success alert on modal
-        this.newUsernameSuccessAlert.show = true
+        this.newUsernameSuccessAlert.show = true;
         this.$store.commit("usernameUpdate", response.data["username"]); //Update vuex state
         console.log("Username updated");
         //Reset input params for username change
-        this.newUsername = ""
-        this.editingUsername = false
+        this.newUsername = "";
+        this.editingUsername = false;
         //In case of axios problems, give error alert
       } catch (error) {
-        this.$refs.manageAccountModal.hide()
-        this.newUsername = ""
-        this.editingUsername = false
-        this.emitServerErrorMessage("changing username", "No username change")
+        this.$refs.manageAccountModal.hide();
+        this.newUsername = "";
+        this.editingUsername = false;
+        this.emitServerErrorMessage("changing username", "No username change");
       }
     },
     async deleteAccount(payload) {
-      const path = "http://localhost:5000/Account/DeleteAccount"
+      const path = "http://localhost:5000/Account/DeleteAccount";
       try {
-        await axios.put(path, payload) //Send payload to server
+        await axios.put(path, payload); //Send payload to server
         const deleteVuexPayload = {
           isActive: false,
           username: null,
-          email: null
-        }
-        this.$refs.deleteAccountModal.hide()
+          email: null,
+        };
+        this.$refs.deleteAccountModal.hide();
         const alertPayload = {
           message: `Deleted ${this.user.email}'s account`,
-          variant: "dark"
-        }
-        this.$emit("showPageAlert", alertPayload) //Emit event to create failure alert on main page
-        this.$store.commit("userUpdate", deleteVuexPayload)
-        console.log("Account deleted")
+          variant: "dark",
+        };
+        this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
+        this.$store.commit("userUpdate", deleteVuexPayload);
+        console.log("Account deleted");
         //In case of axios problems, give error alert
       } catch (error) {
-        this.$refs.deleteAccountModal.hide()
-        this.emitServerErrorMessage("deleting account", "Account not deleted")
+        this.$refs.deleteAccountModal.hide();
+        this.emitServerErrorMessage("deleting account", "Account not deleted");
       }
     },
     emitServerErrorMessage(alertString, logString) {
       const alertPayload = {
-          message: `Error ${alertString}, failed response from server. Please try again at another time`,
-          variant: "danger",
-        };
-        this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
-        console.log(`${logString}, server problem`);
+        message: `Error ${alertString}, failed response from server. Please try again at another time`,
+        variant: "danger",
+      };
+      this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
+      console.log(`${logString}, server problem`);
     },
     resetInvalidUsernameAlert() {
       this.invalidSignUpAlert.showUsernameAlert = false;
@@ -564,7 +590,7 @@ export default {
         username: response.data["username"],
         email: response.data["email"],
         isActive: true,
-      }
+      };
       this.$store.commit("userUpdate", userStatePayload); //call userUpdate Vuex state mutation
     },
   },

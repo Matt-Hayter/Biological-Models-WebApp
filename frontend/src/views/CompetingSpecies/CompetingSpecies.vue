@@ -139,7 +139,7 @@ export default {
         N2_0: 20,
         r2: 0.8,
         K2: 500,
-        a2: 0.8
+        a2: 0.8,
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
@@ -308,45 +308,45 @@ export default {
   methods: {
     //Update simulation data with emitted event data upon slider input
     updateN1_0(newN1_0) {
-      if (newN1_0 == 0) newN1_0 = 20 //Non-zero params only, set to min if 0 encountered
-      this.$set(this.simParamData, 0, newN1_0) //Inform Vue of an array element change
-      this.barPlotN1_0 = newN1_0
+      if (newN1_0 == 0) newN1_0 = 20; //Non-zero params only, set to min if 0 encountered
+      this.$set(this.simParamData, 0, newN1_0); //Inform Vue of an array element change
+      this.barPlotN1_0 = newN1_0;
       console.log(this.simParamData[0], "N1_0-change");
     },
     updater1(newr1) {
-      if (newr1 == 0) newr1 = 0.1 //Non-zero params only
-      this.$set(this.simParamData, 1, newr1) //Inform Vue of an array element change
+      if (newr1 == 0) newr1 = 0.1; //Non-zero params only
+      this.$set(this.simParamData, 1, newr1); //Inform Vue of an array element change
       console.log(this.simParamData[1], "r1-change");
     },
     updateK1(newK1) {
-      if (newK1 == 0) newK1 = 20 //Non-zero params only
-      this.$set(this.simParamData, 2, newK1) //Inform Vue of an array element change
+      if (newK1 == 0) newK1 = 20; //Non-zero params only
+      this.$set(this.simParamData, 2, newK1); //Inform Vue of an array element change
       console.log(this.simParamData[2], "K1-change");
     },
     updatea1(newa1) {
-      if (newa1 == 0) newa1 = 0.1 //Non-zero params only
-      this.$set(this.simParamData, 3, newa1) //Inform Vue of an array element change
+      if (newa1 == 0) newa1 = 0.1; //Non-zero params only
+      this.$set(this.simParamData, 3, newa1); //Inform Vue of an array element change
       console.log(this.simParamData[3], "a1-change");
     },
     updateN2_0(newN2_0) {
-      if (newN2_0 == 0) newN2_0 = 20 //Non-zero params only
-      this.$set(this.simParamData, 4, newN2_0) //Inform Vue of an array element change
-      this.barPlotN2_0 = newN2_0
+      if (newN2_0 == 0) newN2_0 = 20; //Non-zero params only
+      this.$set(this.simParamData, 4, newN2_0); //Inform Vue of an array element change
+      this.barPlotN2_0 = newN2_0;
       console.log(this.simParamData[4], "N2_0-change");
     },
     updater2(newr2) {
-      if (newr2 == 0) newr2 = 0.1 //Non-zero params only
-      this.$set(this.simParamData, 5, newr2) //Inform Vue of an array element change
+      if (newr2 == 0) newr2 = 0.1; //Non-zero params only
+      this.$set(this.simParamData, 5, newr2); //Inform Vue of an array element change
       console.log(this.simParamData[5], "r2-change");
     },
     updateK2(newK2) {
-      if (newK2 == 0) newK2 = 20 //Non-zero params only
-      this.$set(this.simParamData, 6, newK2) //Inform Vue of an array element change
+      if (newK2 == 0) newK2 = 20; //Non-zero params only
+      this.$set(this.simParamData, 6, newK2); //Inform Vue of an array element change
       console.log(this.simParamData[6], "K2-change");
     },
     updatea2(newa2) {
-      if (newa2 == 0) newa2 = 0.1 //Non-zero params only
-      this.$set(this.simParamData, 7, newa2) //Inform Vue of an array element change
+      if (newa2 == 0) newa2 = 0.1; //Non-zero params only
+      this.$set(this.simParamData, 7, newa2); //Inform Vue of an array element change
       console.log(this.simParamData[7], "a2-change");
     },
     //Respond to emitted "change active parameter tab" events
@@ -394,7 +394,7 @@ export default {
         this.showSubmissionAlert(successAlertPayload);
         console.log("Preset saved");
       } catch (error) {
-        this.prepareServerAlert("saving preset", "Preset not saved")
+        this.prepareServerAlert("saving preset", "Preset not saved");
       }
     },
     //Bring user's presets to client-side
@@ -409,7 +409,7 @@ export default {
         console.log("Loaded user's Competing Species presets");
       } catch (error) {
         //Only show alert upon failure
-        this.prepareServerAlert("fetching presets", "Error fetching presets")
+        this.prepareServerAlert("fetching presets", "Error fetching presets");
       }
     },
     //Upon selecting a preset, get params from server
@@ -474,16 +474,15 @@ export default {
       try {
         const path = "http://localhost:5000/CompetingSpecies/RunSim";
         const payload = {
-          simParams: this.simParamData
-        }
-        this.spinnerOn = true;
+          simParams: this.simParamData,
+        };
+        this.spinnerOn = true; //Show loading spinner
         const response = await axios.post(path, payload);
         this.simData = response.data["sim_data"]; //Array of arrays, containing all sim data
-        this.simTimeData = response.data["time_data"]; //Times corresponding to sim's data
-        this.simMaxVal = response.data["sim_max_val"]; //Max value, for upper bound of visualisation's axis
+        this.graphBounds = response.data["graph_bounds"]; //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false;
         this.$store.commit("simRunningChange", true); //Signals to start visualising simulation
-        console.log("Competing Species simulation successfully run at server");
+        console.log("Competing species simulation successfully run at server");
       } catch (error) {
         this.endSim(); //Reset button
         this.prepareServerAlert("running simulation", "Simulation erorr");
@@ -498,14 +497,14 @@ export default {
       console.log(`${logString}, server problem`);
     },
     endSim() {
-      this.spinnerOn = false
-      this.$store.commit("simRunningChange", false)
-      this.simData = null
-      this.graphBounds = null
-      this.runIcon = "play"
-      this.runVariant = "success"
-      this.runText = "Run Simulation"
-    }
+      this.spinnerOn = false;
+      this.$store.commit("simRunningChange", false);
+      this.simData = null;
+      this.graphBounds = null;
+      this.runIcon = "play";
+      this.runVariant = "success";
+      this.runText = "Run Simulation";
+    },
   },
   mounted() {
     if (this.user.isActive) {
@@ -532,7 +531,7 @@ export default {
 <style scoped>
 .rhs-page-component {
   position: relative;
-  margin-left: 25em
+  margin-left: 25em;
 }
 .competing-species-view {
   min-width: 1024px;
@@ -566,7 +565,7 @@ export default {
   display: flex;
   justify-content: right;
   position: fixed;
-  right: 0
+  right: 0;
 }
 .alert-section .alert {
   width: 30%;

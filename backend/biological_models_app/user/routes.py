@@ -33,7 +33,7 @@ def sign_up():
         username = SignUp_data.get("username").lower()
         email = SignUp_data.get("email").lower()
         query = "INSERT INTO users (username, email, priv_info) VALUES (%s,%s,%s)"
-        #Salted hashing of password (one-way) for database storage, using the argonid algorithm
+        #Salted hashing of password (one-way) for database storage, using the argon2i algorithm
         hash = salted_hasher.hash(SignUp_data.get("password")) #Apply salted hashing
         cursor.execute(query, (username, SignUp_data.get("email").lower(), hash))
         db.commit()

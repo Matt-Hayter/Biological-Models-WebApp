@@ -23,13 +23,13 @@ export default {
   computed: {
     //Create array of tick labels, given max, min and step{
     createTickLabels() {
-      const tickArray = []
+      const tickArray = [];
       for (
         let i = this.sliderData.min;
         i <= this.sliderData.max;
         i += this.sliderData.tickStep
       ) {
-        tickArray.push(Number(Math.round(i+"e2")+"e-2"));
+        tickArray.push(Number(Math.round(i + "e2") + "e-2"));
       }
       return tickArray;
     },
@@ -59,6 +59,6 @@ export default {
   margin: auto;
 }
 .tick-content {
-  margin: auto
+  margin: auto;
 }
 </style>

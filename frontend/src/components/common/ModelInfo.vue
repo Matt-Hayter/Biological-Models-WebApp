@@ -1,7 +1,12 @@
 <template>
   <div class="model-info-button">
     <!--Mount collapse bar to button-->
-    <b-button v-b-toggle.collapse-bar variant="outline-info" size="sm" style="padding: 0.3em">
+    <b-button
+      v-b-toggle.collapse-bar
+      variant="outline-info"
+      size="sm"
+      style="padding: 0.3em"
+    >
       About this model
       <b-icon icon="chevron-down" font-scale="1"></b-icon>
     </b-button>
