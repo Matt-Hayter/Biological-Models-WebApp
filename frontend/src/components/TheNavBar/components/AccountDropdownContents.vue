@@ -546,7 +546,7 @@ export default {
         this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
         this.$store.commit("userUpdate", deleteVuexPayload);
         console.log("Account deleted");
-        //In case of axios problems, give error alert
+        //In case of axios problems, give error alertZ
       } catch (error) {
         this.$refs.deleteAccountModal.hide();
         this.emitServerErrorMessage("deleting account", "Account not deleted");
