@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c3d25839954735dc0bf0375862d330d633ae6e8a594c52e1d491958c8911df8c"
+            "sha256": "a340f6c4726a3ca390158cf966165609048d50f34eb7c4cb77acab1e9c69c196"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.9"
+            "python_version": "3.8"
         },
         "sources": [
             {
@@ -50,10 +50,6 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==21.2.0"
-        },
-        "biological-models-app": {
-            "editable": true,
-            "path": "."
         },
         "cffi": {
             "hashes": [

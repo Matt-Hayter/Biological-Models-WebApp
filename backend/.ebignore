@@ -1,0 +1,3 @@
+#Items to ignore upon EB bundle upload (uses requirements.txt)
+Pipfile
+Pipfile.lock
