@@ -1,13 +1,19 @@
 from flask import Flask
 from flask_cors import CORS #For connection between flask and Vue
 import mysql.connector #For connecting database
+import os
 
 application = Flask(__name__) #Define app within init -> used throughout program
 
-CORS(application, resources={r'/*':{'origins':"*"}})
+CORS(application)
 
-#Connect to MySQL and create cursor to make queries
-db = mysql.connector.connect(host="localhost", user="root", database="biologicalmodelswebapp", password="030103")
+#Connect to MySQL and create cursor to make queries. os env variables to disguise db information
+db = mysql.connector.connect(
+    user = os.environ["MODEL_VISUALISER_RDB_USER"],
+    database = os.environ["MODEL_VISUALISER_RDB_NAME"],
+    host = os.environ["MODEL_VISUALISER_RDB_HOST"],
+    port = os.environ["MODEL_VISUALISER_RDB_PORT"],
+    password = os.environ["MODEL_VISUALISER_RDB_PASSWORD"])
 
 #Import Blueprints here to avoid circular imports
 from biological_models_app.user.routes import user
