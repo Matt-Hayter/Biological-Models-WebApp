@@ -372,7 +372,8 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0]; //Identify preset
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `http://localhost:5000/PredPrey/PresetParams/${presetid}`;
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/PredPrey/PresetParams/${presetid}`;
+        console.log(path)
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 5;
