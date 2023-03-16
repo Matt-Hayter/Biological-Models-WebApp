@@ -1,4 +1,3 @@
-#Items to ignore upon EB bundle upload
 Pipfile
 Pipfile.lock
 .env
