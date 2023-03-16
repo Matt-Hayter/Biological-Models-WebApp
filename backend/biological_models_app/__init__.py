@@ -1,15 +1,16 @@
 from flask import Flask
 from flask_cors import CORS #For connection between flask and Vue
 import mysql.connector #For connecting database
+from dotenv import load_dotenv #For env vars when run locally in development
+load_dotenv() #Search .env file for env vars. In deployment, .env ignored -> searches host instead
 import os
 
 application = Flask(__name__) #Define app within init -> used throughout program
 
 CORS(application)
-
-#Connect to MySQL and create cursor to make queries. os env variables to disguise db information
+#Connect to MySQL and create cursor to make queries.
 db = mysql.connector.connect(
-    user = os.environ["MODEL_VISUALISER_RDB_USER"],
+    user = os.environ["MODEL_VISUALISER_RDB_USER"], #env vars from .env in development, and host in deployment
     database = os.environ["MODEL_VISUALISER_RDB_NAME"],
     host = os.environ["MODEL_VISUALISER_RDB_HOST"],
     port = os.environ["MODEL_VISUALISER_RDB_PORT"],

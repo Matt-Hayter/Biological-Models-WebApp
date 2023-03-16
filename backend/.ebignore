@@ -1,3 +1,4 @@
-#Items to ignore upon EB bundle upload (uses requirements.txt)
+#Items to ignore upon EB bundle upload
 Pipfile
 Pipfile.lock
+.env
