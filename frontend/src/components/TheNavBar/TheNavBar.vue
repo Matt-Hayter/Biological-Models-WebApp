@@ -91,7 +91,7 @@ export default {
     },
     onPredPreyClick() {
       this.$store.commit("simRunningChange", false); //End current sim before navigating to next view
-      this.$router.push("/PredatorPrey").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
+      this.$router.push("/").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
     },
     onCompSpecClick() {
       this.$store.commit("simRunningChange", false);

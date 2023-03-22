@@ -9,7 +9,7 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/PredatorPrey",
+    path: "/",
     name: "PredatorPrey",
     component: PredatorPrey,
   },
