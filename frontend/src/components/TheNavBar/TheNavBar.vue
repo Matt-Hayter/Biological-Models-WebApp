@@ -6,7 +6,7 @@
         class="navbar-model-categories"
         style="display: flex; justify-content: left"
       >
-        <a class="navbar-brand" href="#">Biological Models Visualiser</a>
+        <a class="navbar-brand">Biological Models Visualiser</a>
         <div id="navbarColor02">
           <b-dropdown
             class="nav-link dropdown-link"
@@ -114,9 +114,12 @@ export default {
 </script>
 
 <style scoped>
+/*
+For home page link, when developed
 .navbar-brand:hover {
   color: rgb(204, 204, 204);
 }
+*/
 .nav-text {
   font-size: 2em;
 }
