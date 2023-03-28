@@ -6,7 +6,7 @@ spread models (SIR, SEIDR). Select model, configure parameters, and run simulati
 range from degree of competition between species to disease infectious periods - you can follow the parameter suggestions or have a play around yourself, and observe how each parameter affects the simulation. Create an account to save interesting parameter presets for each model.
 
 ## App Composition:
-- Frontend: Vue.js
+- Frontend: Vue.js with Bootstrap
 - Backend: Flask RESTful API with MYSQL
 - Python packages utilised to structure backend, separating logical components
 
