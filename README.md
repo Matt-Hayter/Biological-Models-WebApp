@@ -16,6 +16,6 @@ and see how each affects the result. Create an account to save intereseting para
 - Salted password hashing using the Argon2i algorithm and protection against SQL injection attacks
 - Vuex for application state management
 - Chart.js for simulation visualisation
-- Extensive user input validation
+- Extensive user input validation (unique usernames, emails etc.)
 
 Matt Hayter
