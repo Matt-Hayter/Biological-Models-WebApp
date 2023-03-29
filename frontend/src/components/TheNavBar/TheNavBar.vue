@@ -6,7 +6,7 @@
         class="navbar-model-categories"
         style="display: flex; justify-content: left"
       >
-        <a class="navbar-brand">Biological Models Visualiser</a>
+        <a class="navbar-brand">Biological Models Visualizer</a>
         <div id="navbarColor02">
           <b-dropdown
             class="nav-link dropdown-link"
