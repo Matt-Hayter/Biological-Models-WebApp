@@ -15,7 +15,7 @@ range from degree of competition between species to disease infectious periods -
 - Salted password hashing using the Argon2i algorithm and protection against SQL injection attacks
 - Vuex for application state management
 - Chart.js for simulation visualisation
-- Extensive user input validation
+- Extensive user input validation (unique usernames, emails etc.)
 
 ## App Snapshots (using the SEIDR model view)
 
