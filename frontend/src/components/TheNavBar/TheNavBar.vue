@@ -6,7 +6,7 @@
         class="navbar-model-categories"
         style="display: flex; justify-content: left"
       >
-        <a class="navbar-brand" href="#">Biological Models Visualiser</a>
+        <a class="navbar-brand">Biological Models Visualizer</a>
         <div id="navbarColor02">
           <b-dropdown
             class="nav-link dropdown-link"
@@ -91,7 +91,7 @@ export default {
     },
     onPredPreyClick() {
       this.$store.commit("simRunningChange", false); //End current sim before navigating to next view
-      this.$router.push("/PredatorPrey").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
+      this.$router.push("/").catch(() => {}); //Navigate to view, and avoid duplicate navigation error
     },
     onCompSpecClick() {
       this.$store.commit("simRunningChange", false);
@@ -114,9 +114,12 @@ export default {
 </script>
 
 <style scoped>
+/*
+For home page link, when developed
 .navbar-brand:hover {
   color: rgb(204, 204, 204);
 }
+*/
 .nav-text {
   font-size: 2em;
 }

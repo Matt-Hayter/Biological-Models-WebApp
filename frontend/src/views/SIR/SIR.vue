@@ -284,7 +284,7 @@ export default {
     },
     async addPreset(payload) {
       try {
-        const path = "http://localhost:5000/SIR/AlterPresets";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/SIR/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
           message: `Added ${payload.presetName} to SIR presets`,
@@ -299,7 +299,7 @@ export default {
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = "http://localhost:5000/SIR/AllPresets";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/SIR/AllPresets";
         const payload = {
           userEmail: this.user.email,
         };
@@ -315,7 +315,7 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0]; //Identify preset
-        const path = `http://localhost:5000/SIR/PresetParams/${presetid}`;
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/SIR/PresetParams/${presetid}`;
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
         const presetParamsCount = 2;
@@ -345,7 +345,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0]; //Identify preset (non-sensitive -> use key)
-        const path = `http://localhost:5000/SIR/AlterPresets/${presetid}`;
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/SIR/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
@@ -371,7 +371,7 @@ export default {
     },
     async runSim() {
       try {
-        const path = "http://localhost:5000/SIR/RunSim";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/SIR/RunSim";
         const payload = {
           simParams: this.simParamData,
         };

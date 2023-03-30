@@ -435,7 +435,7 @@ export default {
     },
     //Add and validate user sign up data against database
     async addUser(payload) {
-      const path = "http://localhost:5000/Account/SignUp";
+      const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/Account/SignUp";
       try {
         const response = await axios.post(path, payload); //Send payload to server and async await response
         let input_valid = true;
@@ -472,7 +472,7 @@ export default {
     },
     //Add and validate user sign up data against database
     async signInUser(payload) {
-      const path = "http://localhost:5000/Account/SignIn";
+      const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/Account/SignIn";
       try {
         const response = await axios.post(path, payload); //Send payload to server and async await response
         //If email/password comb not found, show alert on form
@@ -503,7 +503,7 @@ export default {
       }
     },
     async changeUsername(payload) {
-      const path = "http://localhost:5000/Account/ChangeUsername";
+      const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/Account/ChangeUsername";
       try {
         const response = await axios.put(path, payload); //Send payload to server
         if (response.data["username_error"]) {
@@ -530,7 +530,7 @@ export default {
       }
     },
     async deleteAccount(payload) {
-      const path = "http://localhost:5000/Account/DeleteAccount";
+      const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/Account/DeleteAccount";
       try {
         await axios.put(path, payload); //Send payload to server
         const deleteVuexPayload = {
@@ -546,7 +546,7 @@ export default {
         this.$emit("showPageAlert", alertPayload); //Emit event to create failure alert on main page
         this.$store.commit("userUpdate", deleteVuexPayload);
         console.log("Account deleted");
-        //In case of axios problems, give error alert
+        //In case of axios problems, give error alertZ
       } catch (error) {
         this.$refs.deleteAccountModal.hide();
         this.emitServerErrorMessage("deleting account", "Account not deleted");
