@@ -1,9 +1,8 @@
 # Biological Models Visualizer - Web Application
 
 ## Description
-Visualizer for population models (predator-prey, competing species) and infectious disease
-spread models (SIR, SEIDR). Select model, configure parameters, and run simulations - dynamic bar and line charts will visualize the model's development over appropriate time periods. Model parameters 
-range from degree of competition between species to disease infectious periods - you can follow the parameter suggestions or have a play around yourself, and observe how each parameter affects the simulation. Create an account to save interesting parameter presets for each model.
+This is a visualizer for population models (predator-prey, competing species) and infectious disease
+spread models (SIR, SEIDR - COVID). Select model, configure parameters, and run simulations - dynamic bar and line charts will visualize the model's development over appropriate time periods. Model parameters range from degree of competition between species to disease infectious periods - you can follow the parameter suggestions or have a play around yourself, and observe how each parameter affects the simulation. Create an account to save interesting parameter presets for each model.
 
 URL: https://www.biologicalmodelsvisualizer.com
 
@@ -11,14 +10,14 @@ URL: https://www.biologicalmodelsvisualizer.com
 - Frontend: Vue.js with Bootstrap
 - Backend: Flask RESTful API with MYSQL
 - Python packages utilised to structure backend, separating logical components
+- Deployed in the cloud with AWS
 
 ## Features:
 - CRUD database: create account, manage account and save/delete presets
-- Salted password hashing using the Argon2i algorithm and protection against SQL injection attacks
 - Vuex for application state management
 - Chart.js for simulation visualisation
+- Salted password hashing using the argon2i algorithm and protection against SQL injection attacks
 - Extensive user input validation (unique usernames, emails etc.)
-- Deployed in the cloud with AWS
 
 ## App Snapshots (using the SEIDR model view)
 
