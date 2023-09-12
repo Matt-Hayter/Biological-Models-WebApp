@@ -20,8 +20,8 @@ db = mysql.connector.connect(
 from biological_models_app.user.routes import user
 from biological_models_app.pred_prey.routes import pred_prey
 from biological_models_app.competing_species.routes import competing_species
-from biological_models_app.SIR.routes import SIR
-from biological_models_app.SEIDR.routes import SEIDR
+from biological_models_app.sir.routes import SIR
+from biological_models_app.seidr.routes import SEIDR
 
 application.register_blueprint(user)
 application.register_blueprint(pred_prey)

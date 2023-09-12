@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import PredatorPrey from "@/views/PredatorPrey/PredatorPrey.vue";
-import CompetingSpecies from "@/views/CompetingSpecies/CompetingSpecies.vue";
-import SIR from "@/views/SIR/SIR.vue";
-import SEIDR from "@/views/SEIDR/SEIDR.vue";
+import PredatorPrey from "@/views/predator-prey/PredatorPrey.vue";
+import CompetingSpecies from "@/views/competing-species/CompetingSpecies.vue";
+import SIR from "@/views/sir/Sir.vue";
+import SEIDR from "@/views/seidr/Seidr.vue";
 
 Vue.use(VueRouter);
 

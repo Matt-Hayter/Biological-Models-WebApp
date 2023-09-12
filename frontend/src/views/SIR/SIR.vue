@@ -106,14 +106,14 @@
 </template>
 
 <script>
-import axios from "axios"; //For making client-side http requests
-import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
-import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
+import axios from "axios"; //For making http requests
+import TheNavBar from "@/components/the-nav-bar/TheNavBar.vue";
+import ConfigBar from "@/components/config-bar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
-import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import SIRBarConfig from "./SIRBarConfig.js";
-import SIRLineConfig from "./SIRLineConfig.js";
+import SimVisualiser from "@/components/sim-visualiser/SimVisualiser.vue";
+import SIRBarConfig from "./SirBarConfig.js";
+import SIRLineConfig from "./SirLineConfig.js";
 
 export default {
   components: {

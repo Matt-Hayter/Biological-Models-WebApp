@@ -74,9 +74,9 @@
 </template>
 
 <script>
-import SliderContent from "@/components/ConfigBar/components/SliderContent.vue";
-import SliderTicks from "@/components/ConfigBar/components/SliderTicks.vue";
-import PresetButtons from "@/components/ConfigBar/components/PresetButtons.vue";
+import SliderContent from "@/components/config-bar/components/SliderContent.vue";
+import SliderTicks from "@/components/config-bar/components/SliderTicks.vue";
+import PresetButtons from "@/components/config-bar/components/PresetButtons.vue";
 
 export default {
   props: {
