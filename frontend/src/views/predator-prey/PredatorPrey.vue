@@ -1,5 +1,5 @@
 <template>
-  <div class="competing-species-view">
+  <div class="predator-prey-view">
     <TheNavBar
       @showPageAlert="showSubmissionAlert"
       @loadPresets="getAllPresets"
@@ -17,18 +17,19 @@
       @presetNameInput="handlePresetName"
       @selectedPreset="getPresetParams"
       @deletePreset="deletePreset"
-      @changeN1_0="updateN1_0"
-      @changer1="updater1"
-      @changeK1="updateK1"
-      @changea1="updatea1"
-      @changeN2_0="updateN2_0"
-      @changer2="updater2"
-      @changeK2="updateK2"
-      @changea2="updatea2"
+      @changeN0="updateN0"
+      @changea="updatea"
+      @changeb="updateb"
+      @changeP0="updateP0"
+      @changec="updatec"
+      @changed="updated"
       @tabOneActive="activateTabOne"
       @tabTwoActive="activateTabTwo"
     />
-    <div class="rhs-page-component">
+    <div
+      class="rhs-page-component"
+      style="position: relative; margin-left: 25em"
+    >
       <div class="alert-section">
         <!--Upon sucessful sign up, sign in or preset save-->
         <TempAlert
@@ -42,44 +43,42 @@
       </div>
       <div class="top-section">
         <div class="title-and-formula">
-          <h4 style="float: left">Two Competing Species Model</h4>
+          <h4 style="float: left">Predator-Prey (Lotka-Volterra) Model</h4>
           <div class="formula">
-            <katex-element
-              expression="\Large\dfrac{dN_{1}}{dt}=r_{1}N_{1}(1-\dfrac{N_{1}+a_{1}N_{2}}{K_{1}})"
-            />
+            <katex-element expression="\Large\dfrac{dN}{dt}=N(a-bP)" />
             <br />
             <br />
-            <katex-element
-              expression="\Large\dfrac{dN_{2}}{dt}=r_{2}N_{2}(1-\dfrac{N_{2}+a_{2}N_{1}}{K_{2}})"
-            />
+            <katex-element expression="\Large\dfrac{dP}{dt}=P(cN-d)" />
           </div>
         </div>
         <ModelInfo style="padding-left: 1.5em; padding-right: 1.5em">
           <b-card-text>
-            This model describes two species occupying the same habitat, which
-            compete for shared and finite resources.
+            The Lotka-Volterra model simplistically describes population
+            variations within system containing a prey species (<katex-element
+              expression="N"
+            />) hunted by a predator species (<katex-element expression="P" />).
           </b-card-text>
           <b-card-text>
             <ul>
               <li>
-                <katex-element expression="N_{1}" /> - Species 1 population
+                <katex-element expression="N" /> - Prey population density
               </li>
               <li>
-                <katex-element expression="N_{2}" /> - Species 2 population
+                <katex-element expression="P" /> - Predator population density
               </li>
             </ul>
           </b-card-text>
           <b-card-text>
-            Within the habitat, each species exhibits its own carrying capacity,
-            <katex-element expression="K" />, which is the maximum species
-            population that the environment's resources could sustain.
+            This model assumes that prey populations are always able to bounce
+            back, even from extremely low populations. This, as we know, isn't
+            usually the case, and prey can infact be hunted to extinction. Other
+            assumptions include that there is no shortage of food for the prey,
+            and that the environment is constant.
           </b-card-text>
           <b-card-text>
-            The fate of each species depends on the paramaters assigned to the
-            model. For a chosen configuration, try varying initial populations,
-            <katex-element expression="N_{1, 0}" /> and
-            <katex-element expression="N_{2, 0}" />, and see how the populations
-            evolve to their final state!
+            Solutions are oscillatory in nature, with an increase in prey
+            population not only driving more prey reproduction, but also
+            increasing predation.
           </b-card-text>
         </ModelInfo>
       </div>
@@ -87,8 +86,8 @@
         <!--Use configuration file for bar chart-->
         <SimVisualiser
           @endSim="endSim"
-          :bar-chart-config="compSpecBarConfig"
-          :line-chart-config="compSpecLineConfig"
+          :bar-chart-config="predPreyBarConfig"
+          :line-chart-config="predPreyLineConfig"
           :vis-styling-class="visStylingClass"
           :initial-conditions="initialConditions"
           :sim-data="simData"
@@ -109,14 +108,14 @@
 </template>
 
 <script>
-import axios from "axios"; //For making client-side http requests
-import TheNavBar from "@/components/TheNavBar/TheNavBar.vue";
-import ConfigBar from "@/components/ConfigBar/ConfigBar.vue";
+import axios from "axios"; //For making http requests
+import TheNavBar from "@/components/the-nav-bar/TheNavBar.vue";
+import ConfigBar from "@/components/config-bar/ConfigBar.vue";
 import ModelInfo from "@/components/common/ModelInfo.vue";
 import TempAlert from "@/components/common/TempAlert.vue";
-import SimVisualiser from "@/components/SimVisualiser/SimVisualiser.vue";
-import compSpecBarConfig from "./CompSpecBarConfig.js";
-import compSpecLineConfig from "./CompSpecLineConfig.js";
+import SimVisualiser from "@/components/sim-visualiser/SimVisualiser.vue";
+import predPreyBarConfig from "./PredPreyBarConfig.js";
+import predPreyLineConfig from "./PredPreyLineConfig.js";
 
 export default {
   components: {
@@ -130,21 +129,19 @@ export default {
     return {
       //Params initially at slider's min values (non-zero)
       defaultParams: {
-        //Species 1
-        N1_0: 20,
-        r1: 1.2,
-        K1: 500,
-        a1: 0.7,
-        //Species 2
-        N2_0: 20,
-        r2: 0.8,
-        K2: 500,
-        a2: 0.8,
+        //Prey
+        N0: 0.5,
+        a: 0.1,
+        b: 0.1,
+        //Predator
+        P0: 0.5,
+        c: 0.05,
+        d: 0.1,
       },
       //Dynamic parameter array, containing params in their current state (initialised to default params)
       simParamData: [],
-      barPlotN1_0: null,
-      barPlotN2_0: null,
+      barPlotN0: null, //For use in reactive bar chart.
+      barPlotP0: null,
       simData: null, //Array of arrays, containing all sim data when obtained
       graphBounds: null, //Max value, for upper bound of visualisation's axis when obtained
       timeUnits: "years",
@@ -156,42 +153,31 @@ export default {
         {
           data: [
             {
-              label: "N_{1,0}",
-              units: "",
-              description: "Initial population of species 1 (time = 0)",
+              label: "N_{0}",
+              units: "(/area)",
+              description: "Initial prey population density (time = 0)",
               //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeN1_0",
-              inputStep: 20,
-              tickStep: 100,
+              emitEventName: "changeN0",
+              inputStep: 0.5,
+              tickStep: 1,
               min: 0,
-              max: 1000,
+              max: 10,
             },
             {
-              label: "r_{1}",
+              label: "a",
               units: "(/yr)",
-              description: "Growth rate of species 1 (birth rate - death rate)",
-              emitEventName: "changer1",
+              description: "Rate of natural prey reproduction",
+              emitEventName: "changea",
               inputStep: 0.1,
               tickStep: 0.2,
               min: 0,
               max: 2,
             },
             {
-              label: "K_{1}",
-              units: "",
-              description:
-                "Carrying capacity of species 1 (Max population that environment could sustain)",
-              emitEventName: "changeK1",
-              inputStep: 20,
-              tickStep: 100,
-              min: 0,
-              max: 1000,
-            },
-            {
-              label: "a_{1}",
+              label: "b",
               units: "(/yr)",
-              description: "Effect of species 2 on species 1",
-              emitEventName: "changea1",
+              description: "Rate of predator consuming prey",
+              emitEventName: "changeb",
               inputStep: 0.1,
               tickStep: 0.2,
               min: 0,
@@ -204,42 +190,32 @@ export default {
         {
           data: [
             {
-              label: "N_{2,0}",
-              units: "",
-              description: "Initial population of species 2 (time = 0)",
-              //Name of event emitted to page component to update simParamData upon input
-              emitEventName: "changeN2_0",
-              inputStep: 20,
-              tickStep: 100,
+              label: "P_{0}",
+              units: "(/area)",
+              description: "Initial predator population density (time = 0)",
+              emitEventName: "changeP0",
+              inputStep: 0.5,
+              tickStep: 1,
               min: 0,
-              max: 1000,
+              max: 10,
             },
             {
-              label: "r_{2}",
+              label: "c",
               units: "(/yr)",
-              description: "Growth rate of species 2 (birth rate - death rate)",
-              emitEventName: "changer2",
-              inputStep: 0.1,
-              tickStep: 0.2,
-              min: 0,
-              max: 2,
-            },
-            {
-              label: "K_{2}",
-              units: "",
               description:
-                "Carrying capacity of species 2 (Max population that environment could sustain)",
-              emitEventName: "changeK2",
-              inputStep: 20,
-              tickStep: 100,
+                "Rate of growth of predator population, in response to the size of \
+                prey population",
+              emitEventName: "changec",
+              inputStep: 0.05,
+              tickStep: 0.1,
               min: 0,
-              max: 1000,
+              max: 1,
             },
             {
-              label: "a_{2}",
+              label: "d",
               units: "(/yr)",
-              description: "Effect of species 1 on species 2",
-              emitEventName: "changea2",
+              description: "Rate of predator natural death",
+              emitEventName: "changed",
               inputStep: 0.1,
               tickStep: 0.2,
               min: 0,
@@ -249,31 +225,22 @@ export default {
           isActive: false,
         },
       ],
-      configTabTitles: ["Species 1", "Species 2"],
+      configTabTitles: ["Prey", "Predator"],
       paramSuggestions: [
         {
           id: 1,
-          text: "Default: Weak competition between species (neither species goes extinct, regardless of \
-            initial populations).",
-          maths:
-            "r_{1}=1.2,\\ K_{1}=500,\\ a_{1}=0.7,\\ \
-            r_{2}=0.8,\\ K_{2}=500,\\ a_{2}=0.8",
+          text: "Steady variations between predator and prey populations",
+          maths: "N_{0}=2,\\ a=1.2,\\ b=1,\\ P_{0}=1,\\ c=0.6,\\ d=1",
         },
         {
           id: 2,
-          text: "Unbalanced competition between species (species 1 always driven to extinction, \
-            regardless of starting populations)",
-          maths:
-            "r_{1}=1,\\ K_{1}=700,\\ a_{1}=1.5,\\ \
-            r_{2}=1,\\ K_{2}=500,\\ a_{2}=0.5",
+          text: "Minimal predation effects, lots of natural prey births and predator deaths.",
+          maths: "N_{0}=2,\\ a=2,\\ b=0.1,\\ P_{0}=1,\\ c=0.05,\\ d=2",
         },
         {
           id: 3,
-          text: "Strong competition between species (either species 1 or species 2 driven to \
-            extinction, depending on initial populations. See for yourself by varying them!)",
-          maths:
-            "r_{1}=1,\\ K_{1}=500,\\ a_{1}=1.5,\\ \
-            r_{2}=1,\\ K_{2}=500,\\ a_{2}=1.3",
+          text: "Heavy predation effects, little natural prey births and predator deaths.",
+          maths: "N_{0}=2,\\ a=0.2,\\ b=2,\\ P_{0}=1,\\ c=1,\\ d=0.2",
         },
       ],
       //For sign up, login or saved preset alert, to be inherited by TempAlert component
@@ -282,9 +249,9 @@ export default {
       showAlert: false,
       alertSecs: 4,
       //For data visualisation
-      compSpecBarConfig,
-      compSpecLineConfig,
-      visStylingClass: "comp-spec",
+      predPreyBarConfig,
+      predPreyLineConfig,
+      visStylingClass: "pred-prey",
       //Default run simulation button config
       runIcon: "play",
       runVariant: "success",
@@ -302,63 +269,53 @@ export default {
     },
     initialConditions() {
       //Array inherited by bar chart for reactive display
-      return [this.barPlotN1_0, this.barPlotN2_0];
+      return [this.barPlotN0, this.barPlotP0];
     },
   },
   methods: {
     //Update simulation data with emitted event data upon slider input
-    updateN1_0(newN1_0) {
-      if (newN1_0 == 0) newN1_0 = 20; //Non-zero params only, set to min if 0 encountered
-      this.$set(this.simParamData, 0, newN1_0); //Inform Vue of an array element change
-      this.barPlotN1_0 = newN1_0;
-      console.log(this.simParamData[0], "N1_0-change");
+    updateN0(newN0) {
+      if (newN0 == 0) newN0 = this.defaultParams.N0; //Non-zero params only, set to min (= default) if 0 encountered
+      this.$set(this.simParamData, 0, newN0); //Inform Vue of an array element change
+      this.barPlotN0 = newN0;
+      console.log(this.simParamData[0], "N0-change");
     },
-    updater1(newr1) {
-      if (newr1 == 0) newr1 = 0.1; //Non-zero params only
-      this.$set(this.simParamData, 1, newr1); //Inform Vue of an array element change
-      console.log(this.simParamData[1], "r1-change");
+    updatea(newa) {
+      if (newa == 0) newa = this.defaultParams.a; //Non-zero params only
+      this.$set(this.simParamData, 1, newa); //Inform Vue of an array element change
+      console.log(this.simParamData[1], "a-change");
     },
-    updateK1(newK1) {
-      if (newK1 == 0) newK1 = 20; //Non-zero params only
-      this.$set(this.simParamData, 2, newK1); //Inform Vue of an array element change
-      console.log(this.simParamData[2], "K1-change");
+    updateb(newb) {
+      if (newb == 0) newb = this.defaultParams.b; //Non-zero params only
+      this.$set(this.simParamData, 2, newb); //Inform Vue of an array element change
+      console.log(this.simParamData[2], "b-change");
     },
-    updatea1(newa1) {
-      if (newa1 == 0) newa1 = 0.1; //Non-zero params only
-      this.$set(this.simParamData, 3, newa1); //Inform Vue of an array element change
-      console.log(this.simParamData[3], "a1-change");
+    updateP0(newP0) {
+      if (newP0 == 0) newP0 = this.defaultParams.P0; //Non-zero params only
+      this.$set(this.simParamData, 3, newP0); //Inform Vue of an array element change
+      this.barPlotP0 = newP0;
+      console.log(this.simParamData[3], "P0-change");
     },
-    updateN2_0(newN2_0) {
-      if (newN2_0 == 0) newN2_0 = 20; //Non-zero params only
-      this.$set(this.simParamData, 4, newN2_0); //Inform Vue of an array element change
-      this.barPlotN2_0 = newN2_0;
-      console.log(this.simParamData[4], "N2_0-change");
+    updatec(newc) {
+      if (newc == 0) newc = this.defaultParams.c; //Non-zero params only
+      this.$set(this.simParamData, 4, newc); //Inform Vue of an array element change
+      console.log(this.simParamData[4], "c-change");
     },
-    updater2(newr2) {
-      if (newr2 == 0) newr2 = 0.1; //Non-zero params only
-      this.$set(this.simParamData, 5, newr2); //Inform Vue of an array element change
-      console.log(this.simParamData[5], "r2-change");
-    },
-    updateK2(newK2) {
-      if (newK2 == 0) newK2 = 20; //Non-zero params only
-      this.$set(this.simParamData, 6, newK2); //Inform Vue of an array element change
-      console.log(this.simParamData[6], "K2-change");
-    },
-    updatea2(newa2) {
-      if (newa2 == 0) newa2 = 0.1; //Non-zero params only
-      this.$set(this.simParamData, 7, newa2); //Inform Vue of an array element change
-      console.log(this.simParamData[7], "a2-change");
+    updated(newd) {
+      if (newd == 0) newd = this.defaultParams.d; //Non-zero params only
+      this.$set(this.simParamData, 5, newd); //Inform Vue of an array element change
+      console.log(this.simParamData[5], "d-change");
     },
     //Respond to emitted "change active parameter tab" events
     activateTabOne() {
       this.tabsData[0].isActive = true;
       this.tabsData[1].isActive = false;
-      console.log("opened species 1 tab");
+      console.log("opened prey tab");
     },
     activateTabTwo() {
       this.tabsData[1].isActive = true;
       this.tabsData[0].isActive = false;
-      console.log("opened species 2 tab");
+      console.log("opened predator tab");
     },
     //Recieve alert varient change
     alertVariantChanged(incomingVariant) {
@@ -385,14 +342,14 @@ export default {
     },
     async addPreset(payload) {
       try {
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/CompetingSpecies/AlterPresets";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/PredPrey/AlterPresets";
         await axios.post(path, payload);
         const successAlertPayload = {
-          message: `Saved ${payload.presetName} to Competing Species presets`,
+          message: `Added ${payload.presetName} to Predator-Prey presets`,
           variant: "success",
         };
         this.showSubmissionAlert(successAlertPayload);
-        console.log("Preset saved");
+        console.log("Preset added");
       } catch (error) {
         this.prepareServerAlert("saving preset", "Preset not saved");
       }
@@ -400,15 +357,14 @@ export default {
     //Bring user's presets to client-side
     async getAllPresets() {
       try {
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/CompetingSpecies/AllPresets";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/PredPrey/AllPresets";
         const payload = {
           userEmail: this.user.email,
         };
         const response = await axios.post(path, payload); //Identify user with email
         this.userPresets = response.data["presets"]; //Update frontend presets with those in database
-        console.log("Loaded user's Competing Species presets");
+        console.log("Loaded user's Pred-Prey presets");
       } catch (error) {
-        //Only show alert upon failure
         this.prepareServerAlert("fetching presets", "Error fetching presets");
       }
     },
@@ -416,19 +372,20 @@ export default {
     async getPresetParams(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0]; //Identify preset
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/CompetingSpecies/PresetParams/${presetid}`;
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/PredPrey/PresetParams/${presetid}`;
+        console.log(path)
         const response = await axios.get(path);
         //Set sim data (and slider values) to preset data
-        const presetParamsCount = 7;
+        const presetParamsCount = 5;
         for (let i = 0; i <= presetParamsCount; i++) {
           this.simParamData[i] = Number(response.data["preset_params"][i]);
         }
         //Set barplot initial value
-        const N1_0Index = 0;
-        const N2_0Index = 4;
-        this.barPlotN1_0 = null; //Change value for computed recalculation
-        this.barPlotN1_0 = this.simParamData[N1_0Index];
-        this.barPlotN2_0 = this.simParamData[N2_0Index];
+        const N0Index = 0;
+        const P0Index = 3;
+        this.barPlotN0 = null; //Change value for computed recalculation
+        this.barPlotN0 = this.simParamData[N0Index];
+        this.barPlotP0 = this.simParamData[P0Index];
         const successAlertPayload = {
           message: `Loaded ${this.userPresets[presetIndex][1]} preset`,
           variant: "success",
@@ -446,7 +403,7 @@ export default {
     async deletePreset(presetIndex) {
       try {
         const presetid = this.userPresets[presetIndex][0]; //Identify preset (non-sensitive -> use key)
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + `/CompetingSpecies/AlterPresets/${presetid}`;
+        const path =  process.env.VUE_APP_MODEL_VISUALISER_API + `/PredPrey/AlterPresets/${presetid}`;
         await axios.delete(path);
         const deletedAlertPayload = {
           message: `Deleted ${this.userPresets[presetIndex][0]} preset`,
@@ -472,7 +429,7 @@ export default {
     },
     async runSim() {
       try {
-        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/CompetingSpecies/RunSim";
+        const path = process.env.VUE_APP_MODEL_VISUALISER_API + "/PredPrey/RunSim";
         const payload = {
           simParams: this.simParamData,
         };
@@ -482,7 +439,7 @@ export default {
         this.graphBounds = response.data["graph_bounds"]; //Max value, for upper bound of visualisation's axis
         this.spinnerOn = false;
         this.$store.commit("simRunningChange", true); //Signals to start visualising simulation
-        console.log("Competing species simulation successfully run at server");
+        console.log("Pred Prey simulation successfully run at server");
       } catch (error) {
         this.endSim(); //Reset button
         this.prepareServerAlert("running simulation", "Simulation erorr");
@@ -512,28 +469,22 @@ export default {
       this.getAllPresets();
     }
     //Set simulation params to default values
-    this.simParamData.length = 8; //Number of params in this model
-    this.simParamData[0] = this.defaultParams.N1_0;
-    this.simParamData[1] = this.defaultParams.r1;
-    this.simParamData[2] = this.defaultParams.K1;
-    this.simParamData[3] = this.defaultParams.a1;
-    this.simParamData[4] = this.defaultParams.N2_0;
-    this.simParamData[5] = this.defaultParams.r2;
-    this.simParamData[6] = this.defaultParams.K2;
-    this.simParamData[7] = this.defaultParams.a2;
+    this.simParamData.length = 6; //Number of params in this model
+    this.simParamData[0] = this.defaultParams.N0;
+    this.simParamData[1] = this.defaultParams.a;
+    this.simParamData[2] = this.defaultParams.b;
+    this.simParamData[3] = this.defaultParams.P0;
+    this.simParamData[4] = this.defaultParams.c;
+    this.simParamData[5] = this.defaultParams.d;
     //Set initial bar plot values, calling initialConditions computed property to be inherited by plot
-    this.barPlotN1_0 = this.defaultParams.N1_0;
-    this.barPlotN2_0 = this.defaultParams.N2_0;
+    this.barPlotN0 = this.defaultParams.N0;
+    this.barPlotP0 = this.defaultParams.P0;
   },
 };
 </script>
 
 <style scoped>
-.rhs-page-component {
-  position: relative;
-  margin-left: 25em;
-}
-.competing-species-view {
+.predator-prey-view {
   min-width: 1024px;
 }
 .top-section {
@@ -554,6 +505,7 @@ export default {
   margin-bottom: 1em;
   bottom: 0;
   right: 0;
+  z-index: 2;
 }
 .loadingSpinner {
   margin-bottom: -9px;

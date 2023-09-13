@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import AccountDropdownContents from "@/components/TheNavBar/components/AccountDropdownContents.vue";
+import AccountDropdownContents from "@/components/the-nav-bar/components/AccountDropdownContents.vue";
 
 export default {
   components: {
